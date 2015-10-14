@@ -1,18 +1,18 @@
-getMostFrequentWords <- function(x, words, counts) {
-  cc <- counts[words%in%x]
-  ww <- words[words%in%x]
-  max_count <- max(cc)
-  max_words <- ww[which(cc==max_count)]
+getMostFrequentWords = function(x, words, counts) {
+  cc = counts[words%in%x]
+  ww = words[words%in%x]
+  max_count = max(cc)
+  max_words = ww[which(cc==max_count)]
   return(max_words)
 }
 
 
-tokenize <- function(text) {
-  #text <- lapply(text,gsub, pattern = "[‘’````[:punct:][:cntrl:][:digit:]]",replacement = "") # Remove punctuation
-  text <- lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
-  text <- lapply(text, gsub, pattern = "[[:punct:]]", replacement = "")
-  text <- lapply(text,tolower) # Lower case
-  tokenized <- sapply(text,strsplit,split = " ") # Split text by white space
+tokenize = function(text) {
+  #text = lapply(text,gsub, pattern = "[‘’````[:punct:][:cntrl:][:digit:]]",replacement = "") # Remove punctuation
+  text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
+  text = lapply(text, gsub, pattern = "[[:punct:]]", replacement = "")
+  text = lapply(text,tolower) # Lower case
+  tokenized = sapply(text,strsplit,split = " ") # Split text by white space
   return(tokenized)
 }
 
@@ -39,13 +39,13 @@ mapToken = function(token, source.tokens, target.tokens) {
 
 
 # Return a binary vector indicating which elements of x are in the stop word list
-findStopWords <- function(x, stoplist = ftaStopList) {
+findStopWords = function(x, stoplist = ftaStopList) {
   if (class(stoplist) != "character") {
     stop(paste("findStopWords: Expected stoplist to be a character verctor, instead got a: ", class(stoplist)))
   }
-  y <- vector("integer", length = length(x))
+  y = vector("integer", length = length(x))
   for (j in 1L:length(x)) {
-    if (x[j]%in%stoplist) y[j] <- 1
+    if (x[j]%in%stoplist) y[j] = 1
   }
   return(y)
 }
@@ -68,31 +68,31 @@ mapTokenizedText = function(tokenized, before, after) {
 
 
 
-nGramTokenize = function(tokenized,n) {
-  ngram_tokenized = vector("list",length=length(tokenized))
+nGramTokenize = function(tokenized, n) {
+  ngram_tokenized = vector("list", length = length(tokenized))
   for (j in 1L:length(tokenized)) {
-    ngram_tokenized[[j]] = getnGrams(tokenized[[j]],n)
+    ngram_tokenized[[j]] = getnGrams(tokenized[[j]], n)
   }
   return(ngram_tokenized)
 }
 
 
 
-getnGrams = function(x,n) {
+getnGrams = function(x, n) {
   x = x[which(x != " ")] #remove any blank tokens that have crept in
   x = x[which(x != "")]
   if(length(x) > (n-1)){
-    y = vector("character",length = length(x) - n + 1)
+    y = vector("character", length = length(x) - n + 1)
     for (j in 1L:length(y)) {
-      y[j] = paste(x[j:(j+n-1)],collapse = ' ')
+      y[j] = paste(x[j:(j+n-1)], collapse = ' ')
     }
     return(y)
   } else return("")
 }
 
 
-nGramsContaining = function(ngram_units,word) {
-  results = vector("integer",length = length(ngram_units))
+nGramsContaining = function(ngram_units, word) {
+  results = vector("integer", length = length(ngram_units))
   for (j in 1L:length(ngram_units)) {
     results[j] = any(ngram_units[[j]] == word)
   }

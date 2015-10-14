@@ -1,14 +1,14 @@
 # Binary search, assumes input is sorted
 # Returns the index of val in tab, otherwise -1
-dictBinSearch <- function(val, tab, L=1L, H=length(tab))
+dictBinSearch = function(val, tab, L=1L, H=length(tab))
 {
   while (H >= L) {
-    M <- L + (H - L) %/% 2L
+    M = L + (H - L) %/% 2L
     if (tab[M] > val) {
-      H <- M - 1L
+      H = M - 1L
     }
     else if (tab[M] < val) {
-      L <- M + 1L
+      L = M + 1L
     }
     else {
       return(M)
@@ -28,7 +28,7 @@ dictBinSearch <- function(val, tab, L=1L, H=length(tab))
 
 
 # Determine if a word is misspelled
-spellerror <- function(word, dict = ftaDictionary) {
+spellerror = function(word, dict = ftaDictionary) {
   if (length(grep("[:alpha:]", word)) == 0) {
     return(0)
   }
@@ -36,27 +36,27 @@ spellerror <- function(word, dict = ftaDictionary) {
     return(0)
   }
   else {
-    sperr <- 1
+    sperr = 1
     word.length = nchar(word)
     if(sperr == 1 & substr(word, word.length, word.length) == "s") {
-      reducedword <- substr(word, 1, (word.length-1))
-      if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+      reducedword = substr(word, 1, (word.length-1))
+      if(dictBinSearch(reducedword, dict) > -1) sperr = 0
     }
     if(sperr == 1 & substr(word, word.length-1, word.length) == "es") {
-      reducedword <- substr(word, 1, (word.length-2))
-      if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+      reducedword = substr(word, 1, (word.length-2))
+      if(dictBinSearch(reducedword, dict) > -1) sperr = 0
     }
     if(sperr == 1 & substr(word, word.length-1, word.length) == "ed") {
-      reducedword <- substr(word, 1, (word.length-2))
-      if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+      reducedword = substr(word, 1, (word.length-2))
+      if(dictBinSearch(reducedword, dict) > -1) sperr = 0
     }
     if(sperr == 1 & substr(word, word.length, word.length) == "d") {
-      reducedword <- substr(word, 1, (word.length-1))
-      if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+      reducedword = substr(word, 1, (word.length-1))
+      if(dictBinSearch(reducedword, dict) > -1) sperr = 0
     }
     if(sperr == 1 & regexpr("ise", word) > -1) {
-      reducedword <- sub("ise", "ize", word)
-      if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+      reducedword = sub("ise", "ize", word)
+      if(dictBinSearch(reducedword, dict) > -1) sperr = 0
     }
   }
   return(sperr)
@@ -78,14 +78,14 @@ findSpellingErrors = function(x, dictionary = ftaDictionary) {
 # This is used to search for spelling corrections.
 # Assumes x is sorted lexicographically.
 
-dictionaryLetterIndices <- function(x) {
-  letter_index <- list()
-  cur_letter <- substr(x[1],1,1)
-  letter_index[cur_letter] <- 1
+dictionaryLetterIndices = function(x) {
+  letter_index = list()
+  cur_letter = substr(x[1],1,1)
+  letter_index[cur_letter] = 1
   for (j in 2L:length(x)) {
     if(substr(x[j],1,1) != cur_letter) {
-      cur_letter <- substr(x[j],1,1)
-      letter_index[cur_letter] <- j
+      cur_letter = substr(x[j],1,1)
+      letter_index[cur_letter] = j
     }
   }
   return(letter_index)
@@ -135,13 +135,13 @@ getCorrections = function(wb) {
   return(corrections)
 }
 
-getCorrectedCounts <- function(wb) {
+getCorrectedCounts = function(wb) {
   if (wb$spelling_corrected) {
-    corrected_counts <- wb$counts
+    corrected_counts = wb$counts
     for (j in 1L:length(wb$tokens)) {
       if (wb$tokens[j] != wb$map[j,1]) {
-        corrected_counts[which(wb$tokens == wb$map[j,1])] <- corrected_counts[j] + corrected_counts[which(wb$tokens == wb$map[j,1])]
-        corrected_counts[j] <- 0
+        corrected_counts[which(wb$tokens == wb$map[j,1])] = corrected_counts[j] + corrected_counts[which(wb$tokens == wb$map[j,1])]
+        corrected_counts[j] = 0
       }
     }
     return(corrected_counts)
