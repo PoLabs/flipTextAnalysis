@@ -1,4 +1,4 @@
-initializeWordBag <- function(text) {
+initializeWordBag <- function(text ) {
   wordBag <- list()
   tokenized <- tokenize(text)
   tokens <- vector("character", length=1000)
