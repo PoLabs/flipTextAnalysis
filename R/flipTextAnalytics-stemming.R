@@ -1,5 +1,4 @@
 getStems = function(x) {
-  library(SnowballC)
   stems = vector("character", length=length(x))
   for (j in 1L:length(x)) {
     stems[j] = wordStem(x[j])

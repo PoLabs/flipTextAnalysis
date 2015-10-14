@@ -102,7 +102,6 @@ dictionaryLetterIndices = function(x) {
 # word, the function chooses the most frequent word as the correction.
 
 getCorrections = function(wb) {
-  library(cba)
   corrections = vector("character",length = length(wb$tokens))
   correct_words = wb$tokens[wb$spelling.errors == 0]
   alphabet = strsplit("abcdefghijklmnopqrstuvwxyz","")[[1]]

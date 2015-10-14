@@ -1,5 +1,4 @@
 cleanTweetText = function(string, remove.username = TRUE, remove.URLS = TRUE, remove.hashtags = FALSE, remove.ats = FALSE, remove.RT.tags = TRUE, remove.digits = TRUE) {
-  require(stringr)
   if (remove.URLS) {
     string = gsub("https?://\\S+", "", string)
   }
