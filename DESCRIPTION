@@ -1,13 +1,13 @@
 Package: flipTextAnalysis
 Type: Package
 Title: Functions for Simple Text Analytics
-Version: 0.01
+Version: 0.02
 Date: 2015-10-13
 Authors@R: person("Chris", "Facer", email = "chris.facer@numbers.net.au", role = c("aut", "cre"))
 Description: Functions to make a bag-of-words and term-document-matrix using spelling correction and stemming.
 License: GPL-2
 LazyData: TRUE
-Imports: 
+Imports:
     stringr,
     SnowballC,
     cba
