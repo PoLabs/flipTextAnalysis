@@ -1,4 +1,4 @@
-getMostFrequentWords <- function(x,words,counts) {
+getMostFrequentWords <- function(x, words, counts) {
   cc <- counts[words%in%x]
   ww <- words[words%in%x]
   max_count <- max(cc)
@@ -39,7 +39,7 @@ mapToken = function(token, source.tokens, target.tokens) {
 
 
 # Return a binary vector indicating which elements of x are in the stop word list
-findStopWords <- function(x, stoplist) {
+findStopWords <- function(x, stoplist = ftaStopList) {
   if (class(stoplist) != "character") {
     stop(paste("findStopWords: Expected stoplist to be a character verctor, instead got a: ", class(stoplist)))
   }
@@ -50,7 +50,7 @@ findStopWords <- function(x, stoplist) {
   return(y)
 }
 
-mapTokenizedText = function(tokenized,before,after) {
+mapTokenizedText = function(tokenized, before, after) {
   new_tokenized = vector("list",length = length(tokenized))
   for (j in 1L:length(tokenized)) {
     cur_tokes = tokenized[[j]]

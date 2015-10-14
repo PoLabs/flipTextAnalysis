@@ -28,7 +28,7 @@ dictBinSearch <- function(val, tab, L=1L, H=length(tab))
 
 
 # Determine if a word is misspelled
-spellerror <- function(word, dict) {
+spellerror <- function(word, dict = ftaDictionary) {
   if (length(grep("[:alpha:]", word)) == 0) {
     return(0)
   }
@@ -66,7 +66,7 @@ spellerror <- function(word, dict) {
 # Return a binary vector indicating which of the elements of x are
 # misspelled according to the input dictionary and the rules in
 # the function spellerror
-findSpellingErrors = function(x, dictionary) {
+findSpellingErrors = function(x, dictionary = ftaDictionary) {
   if (class(dictionary) != "character") {
     stop(paste("findSpellingErrors: Expected dictionary to be a character verctor, instead got a: ", class(dictionary)))
   }

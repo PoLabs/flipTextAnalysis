@@ -1,6 +1,6 @@
 
 
-initializeBigramBag = function(wb, map_type="stem") {
+initializeBigramBag = function(wb, map_type = "stem") {
   bigramBag = list()
   # Replace tokenized text with stemmed text or spelling-corrected text
   # depending on which option has been chosen.

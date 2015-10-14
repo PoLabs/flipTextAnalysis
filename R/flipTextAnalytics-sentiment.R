@@ -1,7 +1,7 @@
 # Function to identify tokens as positive, negative, or neutral.
 # Does not handle negation - this should be done later one when looking at
 # the context of the token.
-tagSentiment = function(tokens, pos.words, neg.words) {
+tagSentiment = function(tokens, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords) {
   tagger = function(token) {
     if (token %in% pos.words) {
       return("[pos]")

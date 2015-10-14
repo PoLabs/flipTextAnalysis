@@ -1,5 +1,5 @@
 
-makeTermList = function(wb,threshold) {
+makeTermList = function(wb, threshold) {
   if (wb$stemmed) {
     token_list = wb$map[,2]
     counts_used = wb$stemmed_counts
@@ -39,8 +39,8 @@ makeTermList = function(wb,threshold) {
 
 
 
-makeTermMatrixFromTermList = function(tl,binary=TRUE) {
-  term_matrix = matrix(0,nrow = length(tl$term_list),ncol = length(tl$unique_tokens),dimnames = list(NULL,tl$unique_tokens))
+makeTermMatrixFromTermList = function(tl, binary = TRUE) {
+  term_matrix = matrix(0,nrow = length(tl$term_list), ncol = length(tl$unique_tokens), dimnames = list(NULL, tl$unique_tokens))
   if (binary) {
     for (j in 1L:length(tl$term_list)) {
       if (length(tl$term_list[[j]]) > 0) {
@@ -179,13 +179,6 @@ bigramTermMatrixFromScratch = function(text,mydict,stoplist,threshold = 2) {
 
 
 
-
-
-
-
-
-
-
 # This funnction megres the list of bigrams from bb with the list of unigrams from wb and
 # updates the counts of each unigram if it is found within one of the bigrams that are
 # being kept. If two bigrams overlap ("clash") then the most frequent one is kept in the
@@ -194,7 +187,7 @@ bigramTermMatrixFromScratch = function(text,mydict,stoplist,threshold = 2) {
 # This function returns the combined list in combined_grams, and the updated counts in
 # combined_counts. These two form a two-element list.
 
-combineUnigramsAndBigrams = function(wb, bb, bigram_threshold) {
+combineUnigramsAndBigrams = function(wb, bb, bigram_threshold = 5) {
   full_stemmed_counts = wb$stemmed_counts[wb$stopwords == 0]
   unigrams = wb$map[wb$stopwords == 0,2]
   unigrams = unigrams[full_stemmed_counts > 0]
