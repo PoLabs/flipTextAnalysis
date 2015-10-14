@@ -1,18 +1,19 @@
-initializeWordBag = function(text, remove.stopwords = TRUE, stopwords = ftaStopList, correct.spelling = TRUE, spelling.dictionary = ftaDictionary, do.stemming = TRUE) {
-  wordBag = list()
+InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopList, correct.spelling = TRUE, spelling.dictionary = ftaDictionary, do.stemming = TRUE) {
+  word.bag = list()
   tokenized = tokenize(text)
   tokens = vector("character", length = 1000)
   counts = vector("integer", length = 1000)
   word_counter = 1
-  for (j in 1L:length(tokenized)) { # Collect and count unique tokens
+  # Collect and count unique tokens
+  for (j in 1L:length(tokenized)) { 
     curtokes = tokenized[[j]]
     if (length(curtokes) > 0) {
       for (k in 1L:length(curtokes)) {
-        cur_word = curtokes[k]
-        if (nchar(cur_word) > 0 & !is.na(cur_word)) {
-          ind = which(tokens == cur_word)
+        cur.word = curtokes[k]
+        if (nchar(cur.word) > 0 & !is.na(cur.word)) {
+          ind = which(tokens == cur.word)
           if (length(ind) == 0) {
-            tokens[word_counter] = cur_word
+            tokens[word_counter] = cur.word
             counts[word_counter] = 1
             word_counter = word_counter + 1
             if (word_counter >= length(tokens)) {
@@ -28,17 +29,34 @@ initializeWordBag = function(text, remove.stopwords = TRUE, stopwords = ftaStopL
   counts = counts[1:(word_counter - 1)]
   counts = counts[order(tokens)]
   tokens = sort(tokens)
-  wordBag[["tokens"]] = tokens
-  wordBag[["counts"]] = counts
-  wordBag[["tokenized"]] = tokenized
-  wordBag[["word_lengths"]] = sapply(tokens, nchar)
-  wordBag[["spelling_errors"]] = vector("integer", length = length(tokens))
-  wordBag[["map"]] = matrix("character", nrow = length(tokens), ncol = 2)
-  wordBag[["stopwords"]] = vector("integer", length = length(tokens))
-  wordBag[["corrected_counts"]] = vector("integer", length = length(tokens))
-  wordBag[["stemmed_counts"]] = vector("integer", length = length(tokens))
-  wordBag[["spelling_corrected"]] = FALSE
-  wordBag[["stemmed"]] = FALSE
-  class(wordBag) = "wordBag"
-  return(wordBag)
+  word.bag[["tokens"]] = tokens
+  word.bag[["counts"]] = counts
+  word.bag[["tokenized"]] = tokenized
+  word.bag[["word.lengths"]] = sapply(tokens, nchar)
+  word.bag[["spelling.errors"]] = vector("integer", length = length(tokens))
+  word.bag[["map"]] = matrix("character", nrow = length(tokens), ncol = 2)
+  word.bag[["stopwords"]] = vector("integer", length = length(tokens))
+  word.bag[["corrected.counts"]] = vector("integer", length = length(tokens))
+  word.bag[["stemmed.counts"]] = vector("integer", length = length(tokens))
+  word.bag[["spelling.corrected"]] = FALSE
+  word.bag[["stemmed"]] = FALSE
+  class(word.bag) = "wordBag"
+
+  if (remove.stopwords) {
+    word.bag$stopwords = findStopWords(word.bag$tokens, stoplist)
+  }
+
+  if (correct.spelling) {
+    word.bag$map[,1] = getCorrections(word.bag)
+    word.bag$spelling.corrected = TRUE
+    word.bag$corrected.counts = getCorrectedCounts(word.bag)
+  }
+
+  if (do.stemming) {
+    word.bag$map[,2] = getStemNames(word.bag)
+    word.bag$stemmed = TRUE
+    word.bag$stemmed.counts = getStemmedCounts(word.bag)
+  }
+
+  return(word.bag)
 }

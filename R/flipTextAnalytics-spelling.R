@@ -104,11 +104,11 @@ dictionaryLetterIndices = function(x) {
 getCorrections = function(wb) {
   library(cba)
   corrections = vector("character",length = length(wb$tokens))
-  correct_words = wb$tokens[wb$spelling_errors == 0]
+  correct_words = wb$tokens[wb$spelling.errors == 0]
   alphabet = strsplit("abcdefghijklmnopqrstuvwxyz","")[[1]]
-  letter_index = dictionaryLetterIndices(wb$tokens[wb$spelling_errors == 0])
+  letter_index = dictionaryLetterIndices(wb$tokens[wb$spelling.errors == 0])
   for (j in 1L:length(wb$tokens)) {
-    if (!wb$stopwords[j] & wb$spelling_errors[j]) {
+    if (!wb$stopwords[j] & wb$spelling.errors[j]) {
       checkword = wb$tokens[j]
       firstletter = substr(checkword,1,1)
       if (firstletter%in%names(letter_index)) {
@@ -136,7 +136,7 @@ getCorrections = function(wb) {
 }
 
 getCorrectedCounts = function(wb) {
-  if (wb$spelling_corrected) {
+  if (wb$spelling.corrected) {
     corrected_counts = wb$counts
     for (j in 1L:length(wb$tokens)) {
       if (wb$tokens[j] != wb$map[j,1]) {
