@@ -1,3 +1,13 @@
+#' Create a bag-of-words
+#' 
+#' Create a bag-of-words object from a vector of strings.
+#'
+#' @param text A character vector containing the text to be analyzed.
+#' @param remove.stopwords A boolean value specifying whether or not to identify stopwords and remove them from subsequent analyses.
+#' @param stoplist A character vector containg the stopwords. The default value is this package's built-in stopwords list, ftaStopList.
+#' @param correct.spelling A boolean value specifying whether or not to identify spelling mistakes and to generate corrections.
+#' @param spelling.dictionary A character vector containing the dictionary to use to check each word for mis-spellings. The default value is this package's built-in english dictionary, ftaDictionary. 
+#' @param do.stemming A boolean value specifying whether or not to stem the words and replace each stem with the most commonly-occuring word that matches that stem.
 InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopList, correct.spelling = TRUE, spelling.dictionary = ftaDictionary, do.stemming = TRUE) {
   word.bag = list()
   tokenized = tokenize(text)
