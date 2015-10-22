@@ -1,37 +1,37 @@
 
 makeTermList = function(wb, threshold) {
   if (wb$stemmed) {
-    token_list = wb$map[,2]
-    counts_used = wb$stemmed_counts
-  } else if (wb$spelling_corrected) {
-    token_list = wb$map[,1]
-    counts_used = wb$corrected_counts
+    token.list = wb$map[,2]
+    counts.used = wb$stemmed.counts
+  } else if (wb$spelling.corrected) {
+    token.list = wb$map[,1]
+    counts.used = wb$corrected.counts
   } else {
-    token_list = wb$tokens
-    counts_used = wb$counts
+    token.list = wb$tokens
+    counts.used = wb$counts
   }
-  term_list = vector("list",length = length(wb$tokenized))
-  unique_tokens = unique(token_list[((wb$stopwords == 0) & (counts_used > threshold))])
+  term.list = vector("list",length = length(wb$tokenized))
+  unique.tokens = unique(token.list[((wb$stopwords == 0) & (counts.used > threshold))])
   print(length(wb$stopwords))
-  print(length(counts_used))
+  print(length(counts.used))
   for (j in 1L:length(wb$tokenized)) {
-    cur_tokes = wb$tokenized[[j]]
-    cur_ind = vector("integer",length = length(cur_tokes))
+    cur.tokes = wb$tokenized[[j]]
+    cur.ind = vector("integer",length = length(cur.tokes))
     counter = 1
-    if (length(cur_tokes > 0)) {
-      for (k in 1L:length(cur_tokes)) {
-        ind = match(cur_tokes[k],unique_tokens)
+    if (length(cur.tokes > 0)) {
+      for (k in 1L:length(cur.tokes)) {
+        ind = match(cur.tokes[k],unique.tokens)
         if (!is.na(ind)) {
-          cur_ind[counter] = ind
+          cur.ind[counter] = ind
           counter = counter + 1
         }
       }
     }
     if (counter > 1) {
-      term_list[[j]] = cur_ind[1:(counter-1)]
-    } else term_list[[j]] = vector("integer",length=0)
+      term.list[[j]] = cur.ind[1:(counter-1)]
+    } else term.list[[j]] = vector("integer",length=0)
   }
-  termList = list(term_list = term_list, unique_tokens = unique_tokens)
+  termList = list(term.list = term.list, unique.tokens = unique.tokens)
   return(termList)
 }
 
@@ -40,137 +40,126 @@ makeTermList = function(wb, threshold) {
 
 
 makeTermMatrixFromTermList = function(tl, binary = TRUE) {
-  term_matrix = matrix(0,nrow = length(tl$term_list), ncol = length(tl$unique_tokens), dimnames = list(NULL, tl$unique_tokens))
+  term.matrix = matrix(0,nrow = length(tl$term.list), ncol = length(tl$unique.tokens), dimnames = list(NULL, tl$unique.tokens))
   if (binary) {
-    for (j in 1L:length(tl$term_list)) {
-      if (length(tl$term_list[[j]]) > 0) {
-        for (k in 1L:length(tl$term_list[[j]])) {
-          if (term_matrix[j,tl$term_list[[j]][k]] == 0) term_matrix[j,tl$term_list[[j]][k]] = 1
+    for (j in 1L:length(tl$term.list)) {
+      if (length(tl$term.list[[j]]) > 0) {
+        for (k in 1L:length(tl$term.list[[j]])) {
+          if (term.matrix[j,tl$term.list[[j]][k]] == 0) term.matrix[j,tl$term.list[[j]][k]] = 1
         }
       }
     }
   } else {
-    for (j in 1L:length(tl$term_list)) {
-      if (length(tl$term_list[[j]]) > 0) {
-        for (k in 1L:length(tl$term_list[[j]])) {
-          term_matrix[j,tl$term_list[[j]][k]] = term_matrix[j,tl$term_list[[j]][k]] + 1
+    for (j in 1L:length(tl$term.list)) {
+      if (length(tl$term.list[[j]]) > 0) {
+        for (k in 1L:length(tl$term.list[[j]])) {
+          term.matrix[j,tl$term.list[[j]][k]] = term.matrix[j,tl$term.list[[j]][k]] + 1
         }
       }
     }
   }
-  return(term_matrix)
+  return(term.matrix)
 }
 
 
 
 
 
-termMatrixFromScratch = function(text,threshold, binary = TRUE) {
-  myWordBag = initializeWordBag(text)
-  myWordBag$stopwords = findStopWords(myWordBag$tokens,stoplist)
-
-  myWordBag$spelling_errors = findSpellingErrors(myWordBag$tokens,mydict)
-
-  myWordBag$map[,1] = getCorrections(myWordBag)
-  myWordBag$spelling_corrected = TRUE
-  myWordBag$corrected_counts = getCorrectedCounts(myWordBag)
-
-
-  myWordBag$map[,2] = getStemNames(myWordBag)
-  myWordBag$stemmed = TRUE
-  myWordBag$stemmed_counts = getStemmedCounts(myWordBag)
-
-
-  myTermList = makeTermList(myWordBag,threshold)
-
-  myTermMatrix = makeTermMatrixFromTermList(myTermList,binary)
-
+termMatrixFromScratch = function(text, threshold = 5, binary = TRUE, remove.stopwords = TRUE, stoplist = ftaStopList, correct.spelling = TRUE, spelling.dictionary = ftaDictionary, do.stemming = TRUE) {
+  myWordBag = initializeWordBag(text, remove.stopwords, stoplist, correct.spelling, spelling.dictionary, do.stemming)
+  myTermList = makeTermList(myWordBag, threshold)
+  myTermMatrix = makeTermMatrixFromTermList(myTermList, binary)
   return(myTermMatrix)
 }
 
+termMatrixFromWordBag = function(word.bag, threshold = 5, binary = TRUE) {
+    myTermList = makeTermList(word.bag,threshold)
+    myTermMatrix = makeTermMatrixFromTermList(myTermList ,binary)
+    return(myTermMatrix)
+}
 
 
 mergeBigramAndUnigramTokenizedText  = function(wb, bb,bigrams,tokens) {
-  new_bigram_tokenized = vector("list",length=length(bb$tokenized))
+  new.bigram.tokenized = vector("list",length=length(bb$tokenized))
   for (j in 1L:length(bb$tokenized)) {
-    cur_tokes = bb$tokenized[[j]]
+    cur.tokes = bb$tokenized[[j]]
     counter = 1
-    if (length(cur_tokes) > 0) {
-      for (k in 1L:length(cur_tokes)) {
-        if (any(bigrams == cur_tokes[k])) {
-          new_bigram_tokenized[[j]][counter] = cur_tokes[k]
+    if (length(cur.tokes) > 0) {
+      for (k in 1L:length(cur.tokes)) {
+        if (any(bigrams == cur.tokes[k])) {
+          new.bigram.tokenized[[j]][counter] = cur.tokes[k]
           counter = counter + 1
         }
       }
     }
   }
-  final_tokenized = vector("list",length = length(wb$tokenized))
-  for (j in 1L:length(final_tokenized)) {
-    if (length(bb$mapped_tokenized[[j]]) > 0) {
-      cur_tokes = bb$mapped_tokenized[[j]]
+  final.tokenized = vector("list",length = length(wb$tokenized))
+  for (j in 1L:length(final.tokenized)) {
+    if (length(bb$mapped.tokenized[[j]]) > 0) {
+      cur.tokes = bb$mapped.tokenized[[j]]
       counter = 1
-      if (length(cur_tokes) > 1) {
-        for (k in 1L:(length(cur_tokes)-1)) {
-          if (paste(cur_tokes[k],cur_tokes[k+1],sep = " ") %in% new_bigram_tokenized[[j]]) {
-            final_tokenized[[j]][counter] = paste(cur_tokes[k],cur_tokes[k+1],sep = " ")
-            bigram_added = TRUE
+      if (length(cur.tokes) > 1) {
+        for (k in 1L:(length(cur.tokes)-1)) {
+          if (paste(cur.tokes[k],cur.tokes[k+1],sep = " ") %in% new.bigram.tokenized[[j]]) {
+            final.tokenized[[j]][counter] = paste(cur.tokes[k],cur.tokes[k+1],sep = " ")
+            bigram.added = TRUE
             counter = counter + 1
           } else {
-            final_tokenized[[j]][counter] = cur_tokes[k]
-            bigram_added = FALSE
+            final.tokenized[[j]][counter] = cur.tokes[k]
+            bigram.added = FALSE
             counter = counter + 1
           }
         }
-        if (!bigram_added) {
-          final_tokenized[[j]][counter] = cur_tokes[length(cur_tokes)]
+        if (!bigram.added) {
+          final.tokenized[[j]][counter] = cur.tokes[length(cur.tokes)]
         }
-      } else if (length(cur_tokes) > 0) {
-        final_tokenized[[j]][1] = cur_tokes[1]
+      } else if (length(cur.tokes) > 0) {
+        final.tokenized[[j]][1] = cur.tokes[1]
       }
     }
   }
-  return(final_tokenized)
+  return(final.tokenized)
 }
 
 makeTermListWithBigrams = function(wb, bb, threshold) {
   com = combineUnigramsAndBigrams(wb, bb, threshold)
-  final_tokens = com$combined_grams[com$combined_counts > threshold]
+  final.tokens = com$combined.grams[com$combined.counts > threshold]
   bigrams = bb$bigrams[bb$collocations == 1 & bb$bicounts > threshold]
-  final_tokenized = mergeBigramAndUnigramTokenizedText(wb, bb, bigrams, final_tokens)
-  term_list = vector("list", length = length(final_tokenized))
-  for (j in 1L:length(final_tokenized)) {
-    cur_tokes = final_tokenized[[j]]
-    cur_ind = vector("integer",length = length(cur_tokes))
+  final.tokenized = mergeBigramAndUnigramTokenizedText(wb, bb, bigrams, final.tokens)
+  term.list = vector("list", length = length(final.tokenized))
+  for (j in 1L:length(final.tokenized)) {
+    cur.tokes = final.tokenized[[j]]
+    cur.ind = vector("integer",length = length(cur.tokes))
     counter = 1
-    if (length(cur_tokes > 0)) {
-      for (k in 1L:length(cur_tokes)) {
-        ind = match(cur_tokes[k],final_tokens)
+    if (length(cur.tokes > 0)) {
+      for (k in 1L:length(cur.tokes)) {
+        ind = match(cur.tokes[k],final.tokens)
         if (!is.na(ind)) {
-          cur_ind[counter] = ind
+          cur.ind[counter] = ind
           counter = counter + 1
         }
       }
     }
     if (counter > 1) {
-      term_list[[j]] = cur_ind[1:(counter-1)]
-    } else term_list[[j]] = vector("integer",length=0)
+      term.list[[j]] = cur.ind[1:(counter-1)]
+    } else term.list[[j]] = vector("integer",length=0)
   }
-  termList = list(term_list = term_list, unique_tokens = final_tokens)
+  termList = list(term.list = term.list, unique.tokens = final.tokens)
 }
 
 
 bigramTermMatrixFromScratch = function(text,mydict,stoplist,threshold = 2) {
   wb = initializeWordBag(text)
   wb$stopwords = findStopWords(wb$tokens,stoplist)
-  wb$spelling_errors = findSpellingErrors(wb$tokens,mydict)
+  wb$spelling.errors = findSpellingErrors(wb$tokens,mydict)
   wb$map[,1] = getCorrections(wb)
-  wb$spelling_corrected = TRUE
-  wb$corrected_counts = getCorrectedCounts(wb)
+  wb$spelling.corrected = TRUE
+  wb$corrected.counts = getCorrectedCounts(wb)
   wb$map[,2] = getStemNames(wb)
   wb$stemmed = TRUE
-  wb$stemmed_counts = getStemmedCounts(wb)
+  wb$stemmed.counts = getStemmedCounts(wb)
   bb = initializeBigramBag(wb)
-  bb$stopwords = findBigramStopwords(bb$bigram_units,stoplist)
+  bb$stopwords = findBigramStopwords(bb$bigram.units,stoplist)
   bb$collocations = detectCollocations(bb,wb,"stem")
   tl = makeTermListWithBigrams(wb,bb,threshold)
   tm = makeTermMatrixFromTermList(tl)
@@ -184,22 +173,22 @@ bigramTermMatrixFromScratch = function(text,mydict,stoplist,threshold = 2) {
 # being kept. If two bigrams overlap ("clash") then the most frequent one is kept in the
 # list while the other is discarded. This is to prevent double-counting.
 #
-# This function returns the combined list in combined_grams, and the updated counts in
-# combined_counts. These two form a two-element list.
+# This function returns the combined list in combined.grams, and the updated counts in
+# combined.counts. These two form a two-element list.
 
-combineUnigramsAndBigrams = function(wb, bb, bigram_threshold = 5) {
-  full_stemmed_counts = wb$stemmed_counts[wb$stopwords == 0]
+combineUnigramsAndBigrams = function(wb, bb, bigram.threshold = 5) {
+  full.stemmed.counts = wb$stemmed.counts[wb$stopwords == 0]
   unigrams = wb$map[wb$stopwords == 0,2]
-  unigrams = unigrams[full_stemmed_counts > 0]
-  unicounts = wb$stemmed_counts[wb$stopwords == 0]
-  unicounts = unicounts[full_stemmed_counts > 0]
+  unigrams = unigrams[full.stemmed.counts > 0]
+  unicounts = wb$stemmed.counts[wb$stopwords == 0]
+  unicounts = unicounts[full.stemmed.counts > 0]
 
-  bigrams = bb$bigrams[bb$collocations == 1 & bb$bicounts > bigram_threshold]
-  bicounts = bb$bicounts[bb$collocations == 1 & bb$bicounts > bigram_threshold]
-  units = bb$bigram_units[bb$collocations == 1 & bb$bicounts > bigram_threshold]
+  bigrams = bb$bigrams[bb$collocations == 1 & bb$bicounts > bigram.threshold]
+  bicounts = bb$bicounts[bb$collocations == 1 & bb$bicounts > bigram.threshold]
+  units = bb$bigram.units[bb$collocations == 1 & bb$bicounts > bigram.threshold]
 
   if (length(bigrams) > 0) {
-    bigrams_to_keep = rep(1,length = length(bigrams))
+    bigrams.to.keep = rep(1,length = length(bigrams))
     bcm = matrix(0,nrow = length(bigrams),ncol = length(bigrams)) # Bigram clash matrix
 
     # Identify bigram-bigram clashes
@@ -210,32 +199,32 @@ combineUnigramsAndBigrams = function(wb, bb, bigram_threshold = 5) {
           merged = paste(units[[j]][1],units[[j]][2],units[[k]][2],sep = " ")
           if (any(bb$trigrams == merged)) {
             bcm[j,k] = 1
-            if (bicounts[j] > bicounts[k]) bigrams_to_keep[k] = 0
-            else bigrams_to_keep[j] = 0
+            if (bicounts[j] > bicounts[k]) bigrams.to.keep[k] = 0
+            else bigrams.to.keep[j] = 0
           }
         }
       }
     }
 
-    bigrams = bigrams[which(bigrams_to_keep == 1)]
-    bicounts = bicounts[which(bigrams_to_keep == 1)]
-    units = units[which(bigrams_to_keep == 1)]
+    bigrams = bigrams[which(bigrams.to.keep == 1)]
+    bicounts = bicounts[which(bigrams.to.keep == 1)]
+    units = units[which(bigrams.to.keep == 1)]
 
-    combined_grams = c(unigrams,bigrams)
-    combined_counts = vector("integer",length = length(unigrams) + length(bigrams))
+    combined.grams = c(unigrams,bigrams)
+    combined.counts = vector("integer",length = length(unigrams) + length(bigrams))
 
     for (j in 1L:length(bigrams)) {
       unicounts[which(unigrams == units[[j]][1])] = unicounts[which(unigrams == units[[j]][1])] - bicounts[j]
       unicounts[which(unigrams == units[[j]][2])] = unicounts[which(unigrams == units[[j]][2])] - bicounts[j]
     }
 
-    combined_counts = c(unicounts,bicounts)
+    combined.counts = c(unicounts,bicounts)
   } else {
-    combined_grams = unigrams
-    combined_counts = unicounts
+    combined.grams = unigrams
+    combined.counts = unicounts
   }
 
-  return(list(combined_grams = combined_grams, combined_counts = combined_counts))
+  return(list(combined.grams = combined.grams, combined.counts = combined.counts))
 }
 
 

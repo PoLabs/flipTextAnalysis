@@ -1,7 +1,7 @@
 getStems = function(x) {
-  stems = vector("character", length=length(x))
+  stems = vector("character", length = length(x))
   for (j in 1L:length(x)) {
-    stems[j] = wordStem(x[j])
+    stems[j] = SnowballC::wordStem(x[j])
   }
   return(stems)
 }

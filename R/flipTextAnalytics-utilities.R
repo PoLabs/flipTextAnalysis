@@ -12,7 +12,7 @@ tokenize = function(text) {
   text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
   text = lapply(text, gsub, pattern = "[[:punct:]]", replacement = "")
   text = lapply(text,tolower) # Lower case
-  tokenized = sapply(text,strsplit,split = " ") # Split text by white space
+  tokenized = sapply(text, strsplit, split = " ") # Split text by white space
   return(tokenized)
 }
 
@@ -50,14 +50,25 @@ findStopWords = function(x, stoplist = ftaStopList) {
   return(y)
 }
 
+removeWords = function(tokens, remove.words) {
+  if (class(tokens) != "character") {
+    stop("removeWords: expected 'tokens' to be a character vector.")
+  }
+  if (class(remove.words) != "character") {
+    stop("removeWords: expected 'remove.words' to be a character vector.")
+  }
+
+  return(setdiff(tokens, remove.words))
+}
+
 mapTokenizedText = function(tokenized, before, after) {
-  new_tokenized = vector("list",length = length(tokenized))
+  new_tokenized = vector("list", length = length(tokenized))
   for (j in 1L:length(tokenized)) {
     cur_tokes = tokenized[[j]]
     cur_tokes = cur_tokes[cur_tokes != ""] #Exclude blank/empty strings and NA entries
     cur_tokes = cur_tokes[cur_tokes != " "]
     cur_tokes = cur_tokes[!is.na(cur_tokes)]
-    new_cur_tokes = vector('character',length = length(cur_tokes))
+    new_cur_tokes = vector('character', length = length(cur_tokes))
     for (k in seq(cur_tokes)) {
       new_cur_tokes[k] = after[which(before == cur_tokes[k])]
     }
@@ -100,3 +111,26 @@ nGramsContaining = function(ngram_units, word) {
 }
 
 
+getUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
+  if (class(initial.tokens) != "character") {
+    stop("getUpdatedCounts: expected 'initial.tokens' to be a character vector.")
+  }
+  if (class(mapped.tokens) != "character") {
+    stop("getUpdatedCounts: expected 'mapped.tokens' to be a character vector.")
+  }
+  if (class(initial.counts) != "numeric") {
+    stop("getUpdatedCounts: expected 'initial.counts' to be a numeric vector.")
+  }
+  if (length(initial.tokens) != length(mapped.tokens) || length(initial.counts) != length(mapped.tokens)) {
+    stop("getUpdatedCounts: expected all inputs to be the same length")
+  }
+
+  mapped.counts = initial.counts
+  for (j in 1L:length(initial.tokens)) {
+    if (initial.tokens[j] != mapped.tokens[j]) {
+      mapped.counts[which(initial.tokens == mapped.tokens[j])] = mapped.counts[j] + mapped.counts[which(initial.tokens == mapped.tokens[j])]
+      mapped.counts[j] = 0
+    }
+  }
+  return(mapped.counts)
+}

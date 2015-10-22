@@ -21,7 +21,13 @@ InitializeWordBag(text, remove.stopwords = TRUE, stoplist = ftaStopList,
 
 \item{do.stemming}{A boolean value specifying whether or not to stem the words and replace each stem with the most commonly-occuring word that matches that stem.}
 }
+\value{
+A list containing the word bag details
+}
 \description{
 Create a bag-of-words object from a vector of strings.
+}
+\examples{
+wb = InitializeWordBag(nasaTweetText)
 }
 
