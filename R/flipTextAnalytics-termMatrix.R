@@ -1,10 +1,10 @@
 
 makeTermList = function(wb, threshold) {
   if (wb$stemmed) {
-    token.list = wb$map[,2]
+    token.list = wb$stemmed.tokens
     counts.used = wb$stemmed.counts
   } else if (wb$spelling.corrected) {
-    token.list = wb$map[,1]
+    token.list = wb$corrected.tokens
     counts.used = wb$corrected.counts
   } else {
     token.list = wb$tokens
@@ -148,20 +148,20 @@ makeTermListWithBigrams = function(wb, bb, threshold) {
 }
 
 
-bigramTermMatrixFromScratch = function(text,mydict,stoplist,threshold = 2) {
+bigramTermMatrixFromScratch = function(text, mydict, stoplist, threshold = 2) {
   wb = initializeWordBag(text)
-  wb$stopwords = findStopWords(wb$tokens,stoplist)
-  wb$spelling.errors = findSpellingErrors(wb$tokens,mydict)
-  wb$map[,1] = getCorrections(wb)
+  wb$stopwords = findStopWords(wb$tokens, stoplist)
+  wb$spelling.errors = findSpellingErrors(wb$tokens, mydict)
+  wb$corrected.tokens = getCorrections(wb)
   wb$spelling.corrected = TRUE
   wb$corrected.counts = getCorrectedCounts(wb)
   wb$map[,2] = getStemNames(wb)
   wb$stemmed = TRUE
   wb$stemmed.counts = getStemmedCounts(wb)
   bb = initializeBigramBag(wb)
-  bb$stopwords = findBigramStopwords(bb$bigram.units,stoplist)
+  bb$stopwords = findBigramStopwords(bb$bigram.units, stoplist)
   bb$collocations = detectCollocations(bb,wb,"stem")
-  tl = makeTermListWithBigrams(wb,bb,threshold)
+  tl = makeTermListWithBigrams(wb, bb, threshold)
   tm = makeTermMatrixFromTermList(tl)
   return(tm)
 }

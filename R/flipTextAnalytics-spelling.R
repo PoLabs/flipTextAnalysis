@@ -103,20 +103,59 @@ dictionaryLetterIndices = function(x) {
 # Given a list of potential corrections, including the original misspelled
 # word, the function chooses the most frequent word as the correction.
 
-getCorrections = function(wb) {
-  corrections = vector("character", length = length(wb$tokens))
-  correct_words = wb$tokens[wb$spelling.errors == 0]
+# getCorrections = function(wb) {
+#   corrections = vector("character", length = length(wb$tokens))
+#   correct_words = wb$tokens[wb$spelling.errors == 0]
+#   alphabet = strsplit("abcdefghijklmnopqrstuvwxyz", "")[[1]]
+#   letter_index = dictionaryLetterIndices(correct_words)
+#   for (j in 1L:length(wb$tokens)) {
+#     if (!wb$stopwords[j] & wb$spelling.errors[j]) {
+#       checkword = wb$tokens[j]
+#       firstletter = substr(checkword, 1, 1)
+#       if (firstletter %in% names(letter_index)) {
+#         start = letter_index[[firstletter]]
+#         if (which(letter_index == start) < length(letter_index)) {
+#           end = letter_index[[which(letter_index == start) + 1]] -1
+#         } else {end = length(correct_words)}
+#         if (start == end) {
+#           comparisons = ""
+#         } else {
+#           comparisons = correct_words[start:end] #check only words that begin with the same letter
+#         }
+#         len = nchar(checkword)
+#         comparisons = comparisons[abs(nchar(comparisons) - len) < 2] #check only words whose length is within 1 character
+#         edist = cba::sdists(checkword, comparisons, weight = c(1, 1, 0, 1)) # compute edit distances with potential corrections
+#         potential_corrections = comparisons[which(edist == 1)] # Identify the list of potential corrections within the limits of the heuristics
+#         if (length(potential_corrections) > 0) {
+#           potential_corrections = c(checkword, potential_corrections)
+#           wc = wb$counts[which(wb$tokens %in% potential_corrections)] # Identify the frequencies of the potential corrections
+#           max_count = max(wc) # Find the frequency of the most frequent one(s)
+#           max_corrections = potential_corrections[which(wc == max_count)] # Identify the most frequent correction(s)
+#           corrections[j] = max_corrections[1]
+#         } else corrections[j] = wb$tokens[j] # No corrections found within limits of heuristics
+#       } else corrections[j] = wb$tokens[j]
+#     } else corrections[j] = wb$tokens[j]
+#   }
+#   return(corrections)
+# }
+
+
+getCorrections = function(tokens, counts, spelling.errors, do.not.correct) {
+  corrections = vector("character", length = length(tokens))
+  correct_words = tokens[spelling.errors == 0]
   alphabet = strsplit("abcdefghijklmnopqrstuvwxyz", "")[[1]]
   letter_index = dictionaryLetterIndices(correct_words)
-  for (j in 1L:length(wb$tokens)) {
-    if (!wb$stopwords[j] & wb$spelling.errors[j]) {
-      checkword = wb$tokens[j]
+  for (j in 1L:length(tokens)) {
+    if (!do.not.correct[j] & spelling.errors[j]) {
+      checkword = tokens[j]
       firstletter = substr(checkword, 1, 1)
       if (firstletter %in% names(letter_index)) {
         start = letter_index[[firstletter]]
         if (which(letter_index == start) < length(letter_index)) {
           end = letter_index[[which(letter_index == start) + 1]] -1
-        } else {end = length(correct_words)}
+        } else {
+          end = length(correct_words)
+        }
         if (start == end) {
           comparisons = ""
         } else {
@@ -128,27 +167,13 @@ getCorrections = function(wb) {
         potential_corrections = comparisons[which(edist == 1)] # Identify the list of potential corrections within the limits of the heuristics
         if (length(potential_corrections) > 0) {
           potential_corrections = c(checkword, potential_corrections)
-          wc = wb$counts[which(wb$tokens %in% potential_corrections)] # Identify the frequencies of the potential corrections
+          wc = counts[which(tokens %in% potential_corrections)] # Identify the frequencies of the potential corrections
           max_count = max(wc) # Find the frequency of the most frequent one(s)
           max_corrections = potential_corrections[which(wc == max_count)] # Identify the most frequent correction(s)
           corrections[j] = max_corrections[1]
-        } else corrections[j] = wb$tokens[j] # No corrections found within limits of heuristics
-      } else corrections[j] = wb$tokens[j]
-    } else corrections[j] = wb$tokens[j]
+        } else corrections[j] = tokens[j] # No corrections found within limits of heuristics
+      } else corrections[j] = tokens[j]
+    } else corrections[j] = tokens[j]
   }
   return(corrections)
 }
-
-getCorrectedCounts = function(wb) {
-  if (wb$spelling.corrected) {
-    corrected_counts = wb$counts
-    for (j in 1L:length(wb$tokens)) {
-      if (wb$tokens[j] != wb$map[j,1]) {
-        corrected_counts[which(wb$tokens == wb$map[j,1])] = corrected_counts[j] + corrected_counts[which(wb$tokens == wb$map[j,1])]
-        corrected_counts[j] = 0
-      }
-    }
-    return(corrected_counts)
-  } else return(NULL)
-}
-

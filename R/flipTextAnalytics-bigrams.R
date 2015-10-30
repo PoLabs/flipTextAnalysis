@@ -5,10 +5,10 @@ initializeBigramBag = function(wb, map_type = "stem") {
   # Replace tokenized text with stemmed text or spelling-corrected text
   # depending on which option has been chosen.
   if (map_type == "stem") {
-    mapped_tokenized = mapTokenizedText(wb$tokenized, wb$tokens, wb$map[, 2])
+    mapped_tokenized = mapTokenizedText(wb$tokenized, wb$tokens, wb$stemmed.tokens)
   } else {
     if (map_type == "corrected") {
-      mapped_tokenized = mapTokenizedText(wb$tokenized, wb$tokens, wb$map[, 1])
+      mapped_tokenized = mapTokenizedText(wb$tokenized, wb$tokens, wb$corrected.tokens)
     } else mapped_tokenized = wb$tokenized
   }
 
