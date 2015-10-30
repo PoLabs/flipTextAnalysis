@@ -1,3 +1,7 @@
+
+# Return the words in x which occur most frequently
+# according to counts. Multiple words are returned if
+# they have the same frequency.
 getMostFrequentWords = function(x, words, counts) {
   cc = counts[words%in%x]
   ww = words[words%in%x]
