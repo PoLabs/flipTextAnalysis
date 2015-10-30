@@ -1,3 +1,5 @@
+# Go
+
 #' Create a bag-of-words
 #'
 #' Create a bag-of-words object from a vector of strings.
