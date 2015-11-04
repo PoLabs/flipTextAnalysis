@@ -20,10 +20,10 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   do.stemming = TRUE, manual.replacements = NULL) {
 
   word.bag = list()
-  tokenized = tokenize(text)
+  tokenized = Tokenize(text)
 
   # Get list of unique tokens and their counts
-  tokens.counts = countUniqueTokens(tokenized)
+  tokens.counts = CountUniqueTokens(tokenized)
   tokens = tokens.counts$tokens
   counts = tokens.counts$counts
 
@@ -69,16 +69,16 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   class(word.bag) = "wordBag"
 
   if (remove.stopwords) {
-    word.bag$stopwords = findStopWords(current.tokens, stoplist)
+    word.bag$stopwords = FindStopWords(current.tokens, stoplist)
   }
 
 
   if (correct.spelling) {
-    spelling.errors = findSpellingErrors(current.tokens, spelling.dictionary)
-    corrected.tokens = getCorrections(current.tokens, current.counts, spelling.errors, do.not.correct = word.bag$stopwords)
+    spelling.errors = FindSpellingErrors(current.tokens, spelling.dictionary)
+    corrected.tokens = GetCorrections(current.tokens, current.counts, spelling.errors, do.not.correct = word.bag$stopwords)
     word.bag$corrected.tokens = corrected.tokens #remove
     word.bag$spelling.corrected = TRUE
-    corrected.counts = getUpdatedCounts(current.tokens, current.counts, corrected.tokens)
+    corrected.counts = GetUpdatedCounts(current.tokens, current.counts, corrected.tokens)
     word.bag$corrected.counts = corrected.counts #remove
     current.tokens = corrected.tokens
     current.counts = corrected.counts
@@ -96,7 +96,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
     }
 
     # Update counts
-    new.counts = getUpdatedCounts(current.tokens, current.counts, new.tokens)
+    new.counts = GetUpdatedCounts(current.tokens, current.counts, new.tokens)
 
     # Update our current tokens and counts
     current.tokens = new.tokens
@@ -105,10 +105,10 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   }
 
   if (do.stemming) {
-    stemmed.tokens = getStemNames(current.tokens, current.counts)
+    stemmed.tokens = GetStemNames(current.tokens, current.counts)
     word.bag$stemmed = TRUE
     word.bag$stemmed.tokens = stemmed.tokens #remove
-    stemmed.counts = getUpdatedCounts(current.tokens, current.counts, stemmed.tokens)
+    stemmed.counts = GetUpdatedCounts(current.tokens, current.counts, stemmed.tokens)
     word.bag$stemmed.counts = stemmed.counts #remove
     current.tokens = stemmed.tokens
     current.counts = stemmed.counts
@@ -121,7 +121,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
       transformed.tokenized = lapply(tokenized, setdiff, y = tokens[word.bag$stopwords == 1])
     }
 
-    transformed.tokenized = mapTokenizedText(transformed.tokenized, before = tokens, after = current.tokens)
+    transformed.tokenized = MapTokenizedText(transformed.tokenized, before = tokens, after = current.tokens)
 
     word.bag$final.tokens = current.tokens
     word.bag$final.counts = current.counts

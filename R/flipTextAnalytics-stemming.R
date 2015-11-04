@@ -6,7 +6,7 @@ getStems = function(x) {
   return(stems)
 }
 
-getStemNames = function(tokens, counts) {
+GetStemNames = function(tokens, counts) {
   
   # Obtain the stemmed version of each token
   cur.stems = getStems(tokens)
@@ -23,7 +23,7 @@ getStemNames = function(tokens, counts) {
   # first one in the list.
   stem.identifiers = vector("character", length = length(unique.stems))
   for (j in 1L:length(unique.stems)) {
-    max.words = getMostFrequentWords(stem.sets[[j]], tokens, counts)
+    max.words = GetMostFrequentWords(stem.sets[[j]], tokens, counts)
     stem.identifiers[j] = max.words[1]
   }
 

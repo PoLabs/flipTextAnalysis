@@ -1,7 +1,7 @@
 # Function to identify tokens as positive, negative, or neutral.
 # Does not handle negation - this should be done later one when looking at
 # the context of the token.
-tagSentiment = function(tokens, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords) {
+TagSentiment = function(tokens, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords) {
   tagger = function(token) {
     if (token %in% pos.words) {
       return("[pos]")
@@ -14,11 +14,11 @@ tagSentiment = function(tokens, pos.words = ftaPositiveWords, neg.words = ftaNeg
   return(sapply(tokens, tagger))
 }
 
-scoreSentimentForString = function(string, tokens, sentiment.tags) {
+ScoreSentimentForString = function(string, tokens, sentiment.tags) {
     negation.unigrams = c("no", "not", "wasnt", "werent", "wouldnt", "couldnt", "didnt", "never", "nobody", "nothing", "dont")
     negation.bigrams = c("not very")
 
-    current.tokens = unlist(tokenize(string))
+    current.tokens = unlist(Tokenize(string))
     current.tokens = stringr::str_trim(current.tokens)
     current.tokens = current.tokens[which(nchar(current.tokens) > 0)]
     # nothing left after tokenization

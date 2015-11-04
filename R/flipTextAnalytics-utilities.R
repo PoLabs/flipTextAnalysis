@@ -2,7 +2,7 @@
 # Return the words in x which occur most frequently
 # according to counts. Multiple words are returned if
 # they have the same frequency.
-getMostFrequentWords = function(x, words, counts) {
+GetMostFrequentWords = function(x, words, counts) {
   cc = counts[words%in%x]
   ww = words[words%in%x]
   max_count = max(cc)
@@ -11,7 +11,7 @@ getMostFrequentWords = function(x, words, counts) {
 }
 
 
-tokenize = function(text) {
+Tokenize = function(text) {
   #text = lapply(text,gsub, pattern = "[‘’````[:punct:][:cntrl:][:digit:]]",replacement = "") # Remove punctuation
   text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
   text = lapply(text, gsub, pattern = "[[:punct:]]", replacement = "")
@@ -25,7 +25,7 @@ tokenize = function(text) {
 
 
 # Find token in source.tokens and return corresponding token in target
-mapToken = function(token, source.tokens, target.tokens) {
+MapToken = function(token, source.tokens, target.tokens) {
   if (length(source.tokens) != length(target.tokens)) {
     stop("mapToken: expected source.tokens and target.tokens to be the same length.")
   }
@@ -43,9 +43,9 @@ mapToken = function(token, source.tokens, target.tokens) {
 
 
 # Return a binary vector indicating which elements of x are in the stop word list
-findStopWords = function(x, stoplist = ftaStopList) {
+FindStopWords = function(x, stoplist = ftaStopList) {
   if (class(stoplist) != "character") {
-    stop(paste("findStopWords: Expected stoplist to be a character verctor, instead got a: ", class(stoplist)))
+    stop(paste("FindStopWords: Expected stoplist to be a character verctor, instead got a: ", class(stoplist)))
   }
   y = vector("integer", length = length(x))
   for (j in 1L:length(x)) {
@@ -54,18 +54,18 @@ findStopWords = function(x, stoplist = ftaStopList) {
   return(y)
 }
 
-removeWords = function(tokens, remove.words) {
+RemoveWords = function(tokens, remove.words) {
   if (class(tokens) != "character") {
-    stop("removeWords: expected 'tokens' to be a character vector.")
+    stop("RemoveWords: expected 'tokens' to be a character vector.")
   }
   if (class(remove.words) != "character") {
-    stop("removeWords: expected 'remove.words' to be a character vector.")
+    stop("RemoveWords: expected 'remove.words' to be a character vector.")
   }
 
   return(setdiff(tokens, remove.words))
 }
 
-mapTokenizedText = function(tokenized, before, after) {
+MapTokenizedText = function(tokenized, before, after) {
   new_tokenized = vector("list", length = length(tokenized))
   for (j in 1L:length(tokenized)) {
     cur_tokes = tokenized[[j]]
@@ -82,18 +82,18 @@ mapTokenizedText = function(tokenized, before, after) {
 }
 
 
-getUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
+GetUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
   if (class(initial.tokens) != "character") {
-    stop("getUpdatedCounts: expected 'initial.tokens' to be a character vector.")
+    stop("GetUpdatedCounts: expected 'initial.tokens' to be a character vector.")
   }
   if (class(mapped.tokens) != "character") {
-    stop("getUpdatedCounts: expected 'mapped.tokens' to be a character vector.")
+    stop("GetUpdatedCounts: expected 'mapped.tokens' to be a character vector.")
   }
   if (class(initial.counts) != "numeric") {
-    stop("getUpdatedCounts: expected 'initial.counts' to be a numeric vector.")
+    stop("GetUpdatedCounts: expected 'initial.counts' to be a numeric vector.")
   }
   if (length(initial.tokens) != length(mapped.tokens) || length(initial.counts) != length(mapped.tokens)) {
-    stop("getUpdatedCounts: expected all inputs to be the same length")
+    stop("GetUpdatedCounts: expected all inputs to be the same length")
   }
 
   mapped.counts = initial.counts
@@ -106,7 +106,7 @@ getUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
   return(mapped.counts)
 }
 
-countUniqueTokens = function(tokenized) {
+CountUniqueTokens = function(tokenized) {
   tokens = vector("character", length = 1000)
   counts = vector("integer", length = 1000)
   word_counter = 1

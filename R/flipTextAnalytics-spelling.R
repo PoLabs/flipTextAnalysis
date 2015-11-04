@@ -68,9 +68,9 @@ spellerror = function(word, dict = ftaDictionary) {
 # Return a binary vector indicating which of the elements of x are
 # misspelled according to the input dictionary and the rules in
 # the function spellerror
-findSpellingErrors = function(x, dictionary = ftaDictionary) {
+FindSpellingErrors = function(x, dictionary = ftaDictionary) {
   if (class(dictionary) != "character") {
-    stop(paste("findSpellingErrors: Expected dictionary to be a character verctor, instead got a: ", class(dictionary)))
+    stop(paste("FindSpellingErrors: Expected dictionary to be a character verctor, instead got a: ", class(dictionary)))
   }
   y = sapply(x, spellerror, dict = dictionary)
   names(y) = x
@@ -104,7 +104,7 @@ dictionaryLetterIndices = function(x) {
 # Given a list of potential corrections, including the original misspelled
 # word, the function chooses the most frequent word as the correction.
 
-getCorrections = function(tokens, counts, spelling.errors, do.not.correct) {
+GetCorrections = function(tokens, counts, spelling.errors, do.not.correct) {
   corrections = tokens
   correct_words = tokens[spelling.errors == 0]
   alphabet = strsplit("abcdefghijklmnopqrstuvwxyz", "")[[1]]
