@@ -1,16 +1,22 @@
-TermMatrixFromWordBag = function(word.bag) {
+TermMatrixFromWordBag = function(word.bag, min.frequency = 5) {
 	source = tm::VectorSource(word.bag$transformed.text)
     corpus = tm::VCorpus(source)
-    my.tdm = tm::TermDocumentMatrix(corpus)
+    my.tdm = tm::DocumentTermMatrix(corpus)
+    my.tdm = tm::weightBin(my.tdm)
+    # Get words which appear with certain frequency
+    # and generate term matrix based on those words
+    my.dictionary = tm::findFreqTerms(my.tdm, lowfreq = min.frequency)
+    my.tdm = tm::DocumentTermMatrix(corpus, list(dictionary = my.dictionary))
+    my.tdm = tm::weightBin(my.tdm)
     return(tm::inspect(my.tdm))
 }
 
-AsTermMatrix = function(text, remove.stopwords = TRUE, stoplist = ftaStopList,
+AsTermMatrix = function(text, min.frequency = 5, remove.stopwords = TRUE, stoplist = ftaStopList,
   correct.spelling = TRUE, spelling.dictionary = ftaDictionary,
   do.stemming = TRUE, manual.replacements = NULL) {
 	word.bag = InitializeWordBag(text, remove.stopwords = remove.stopwords, stoplist = stoplist, correct.spelling = correct.spelling, 
 		spelling.dictionary = spelling.dictionary, do.stemming = do.stemming, manual.replacements = manual.replacements)
-	return(TermMatrixFromWordBag(word.bag))
+	return(TermMatrixFromWordBag(word.bag, min.frequency = min.frequency))
 }
 
 SentimentScoresFromWordBag = function(word.bag, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords) {

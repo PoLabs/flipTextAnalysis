@@ -25,8 +25,7 @@ ScoreSentimentForString = function(string, tokens, sentiment.tags) {
     if (length(current.tokens) == 0) {
         return(c(0,0))
     }
-    #print(paste("current string: '", string, "'"))
-    current.tags = sapply(current.tokens, mapToken, source.tokens = tokens, target.tokens = sentiment.tags)
+    current.tags = sapply(current.tokens, MapToken, source.tokens = tokens, target.tokens = sentiment.tags)
     positive.score = 0
     negative.score = 0
 
