@@ -10,5 +10,6 @@ LazyData: TRUE
 Imports:
     stringr,
     SnowballC,
-    cba
+    cba,
+    tm
 Suggests: testthat

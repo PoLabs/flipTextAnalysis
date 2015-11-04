@@ -14,7 +14,7 @@ stringReplacement = function(x, replacement.matrix) {
         index = which(replacement.matrix[, 1] == tokens[j])
         if (length(index) > 0) {
             if (length(index) > 1) {
-                warning(paste("stringReplacementTransformer: multiple entries for: ", tokens[j], ", using first replacement:", replacement.matrix[index, 2]))
+                warning(paste("stringReplacement: multiple entries for: ", tokens[j], ", using first replacement:", replacement.matrix[index, 2]))
             }
             tokens[j] = replacement.matrix[index, 2]
         }

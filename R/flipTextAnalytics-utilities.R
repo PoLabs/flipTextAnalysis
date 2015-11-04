@@ -34,7 +34,7 @@ mapToken = function(token, source.tokens, target.tokens) {
   }
   index = match(token, source.tokens)
   if (is.na(index)) {
-    warning(paste("mapToken: token '", token, "' not found in source.tokens"))
+    warning(paste("mapToken: token '", token, "' not found in source.tokens", sep = ""))
     return(token)
   }
   return(target.tokens[index])
@@ -82,39 +82,6 @@ mapTokenizedText = function(tokenized, before, after) {
 }
 
 
-
-nGramTokenize = function(tokenized, n) {
-  ngram_tokenized = vector("list", length = length(tokenized))
-  for (j in 1L:length(tokenized)) {
-    ngram_tokenized[[j]] = getnGrams(tokenized[[j]], n)
-  }
-  return(ngram_tokenized)
-}
-
-
-
-getnGrams = function(x, n) {
-  x = x[which(x != " ")] #remove any blank tokens that have crept in
-  x = x[which(x != "")]
-  if(length(x) > (n-1)){
-    y = vector("character", length = length(x) - n + 1)
-    for (j in 1L:length(y)) {
-      y[j] = paste(x[j:(j+n-1)], collapse = ' ')
-    }
-    return(y)
-  } else return("")
-}
-
-
-nGramsContaining = function(ngram_units, word) {
-  results = vector("integer", length = length(ngram_units))
-  for (j in 1L:length(ngram_units)) {
-    results[j] = any(ngram_units[[j]] == word)
-  }
-  return(results)
-}
-
-
 getUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
   if (class(initial.tokens) != "character") {
     stop("getUpdatedCounts: expected 'initial.tokens' to be a character vector.")
@@ -137,4 +104,38 @@ getUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
     }
   }
   return(mapped.counts)
+}
+
+countUniqueTokens = function(tokenized) {
+  tokens = vector("character", length = 1000)
+  counts = vector("integer", length = 1000)
+  word_counter = 1
+   # Collect and count unique tokens
+  for (j in 1L:length(tokenized)) {
+    curtokes = tokenized[[j]]
+    if (length(curtokes) > 0) {
+      for (k in 1L:length(curtokes)) {
+        cur.word = curtokes[k]
+        if (nchar(cur.word) > 0 & !is.na(cur.word)) {
+          ind = which(tokens == cur.word)
+          if (length(ind) == 0) {
+            tokens[word_counter] = cur.word
+            counts[word_counter] = 1
+            word_counter = word_counter + 1
+            if (word_counter >= length(tokens)) {
+              tokens = c(tokens, vector("character", length = 1000))
+              counts = c(counts, vector("integer", length = 1000))
+            }
+          } else counts[ind] = counts[ind] + 1
+        }
+      }
+    }
+  }
+  
+  # Trim the vectors and sort alphabetically
+  tokens = tokens[1:(word_counter - 1)]
+  counts = counts[1:(word_counter - 1)]
+  counts = counts[order(tokens)]
+  tokens = sort(tokens)
+  return(list(tokens = tokens, counts = counts))
 }
