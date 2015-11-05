@@ -16,10 +16,19 @@
 #' @examples
 #' wb = InitializeWordBag(nasaTweetText)
 InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopList,
-  correct.spelling = TRUE, spelling.dictionary = ftaDictionary,
-  do.stemming = TRUE, manual.replacements = NULL) {
+  operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
+  manual.replacements = NULL) {
+
+  # Check that the options supplied make sense
+  checkWordBagOperations(operations = operations, 
+                         remove.stopwords = remove.stopwords, 
+                         stoplist = stoplist, 
+                         spelling.dictionary = spelling.dictionary, 
+                         manual.replacements = manual.replacements)
 
   word.bag = list()
+
+  # Tokenize the text
   tokenized = Tokenize(text)
 
   # Get list of unique tokens and their counts
@@ -27,19 +36,9 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   tokens = tokens.counts$tokens
   counts = tokens.counts$counts
 
-
-
   # If manual replacements have been specified, these words need to
   # be added to the tokens
   if (!is.null(manual.replacements)) {
-
-    # The first column of the replacements can't have duplicates.
-    # Which of the duplicates should be mapped?
-    duplicates = manual.replacements[duplicated(manual.replacements[, 1]), 1]
-    if (length(duplicates) > 0) {
-      stop(paste("manual.replacements contains duplicates in the first column, for example: ", duplicates[1], sep = ""))
-    }
-
     # Add entries for any new tokens to the existing vector of tokens
     # and initialize the count to zero
     extra.tokens = as.vector(manual.replacements)
@@ -62,9 +61,6 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   word.bag$tokens = tokens
   word.bag$counts = counts
   word.bag$tokenized = tokenized
-  word.bag$stopwords = rep(0, length(tokens))
-  word.bag$spelling.corrected = FALSE
-  word.bag$stemmed = FALSE
   word.bag$manual.replacements = manual.replacements
   class(word.bag) = "wordBag"
 
@@ -72,50 +68,46 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
     word.bag$stopwords = FindStopWords(current.tokens, stoplist)
   }
 
-
-  if (correct.spelling) {
-    spelling.errors = FindSpellingErrors(current.tokens, spelling.dictionary)
-    corrected.tokens = GetCorrections(current.tokens, current.counts, spelling.errors, do.not.correct = word.bag$stopwords)
-    word.bag$corrected.tokens = corrected.tokens #remove
-    word.bag$spelling.corrected = TRUE
-    corrected.counts = GetUpdatedCounts(current.tokens, current.counts, corrected.tokens)
-    word.bag$corrected.counts = corrected.counts #remove
-    current.tokens = corrected.tokens
-    current.counts = corrected.counts
-  }
-
-  # Conduct manual replacements
-  if (!is.null(manual.replacements)) {
-    # Do replacements
-    new.tokens = current.tokens
-    for (j in 1L:length(tokens)) {
-      index = which(manual.replacements[, 1] == new.tokens[j])
-      if (length(index) > 0) {
-        new.tokens[j] = manual.replacements[index, 2]
+  for (j in 1L:length(operations)) {
+    op = operations[j]
+    if (op == "spelling") {
+      spelling.errors = FindSpellingErrors(current.tokens, spelling.dictionary)
+      corrected.tokens = GetCorrections(current.tokens, current.counts, spelling.errors, do.not.correct = word.bag$stopwords)
+      word.bag$corrected.tokens = corrected.tokens #remove
+      word.bag$spelling.corrected = TRUE
+      corrected.counts = GetUpdatedCounts(current.tokens, current.counts, corrected.tokens)
+      word.bag$corrected.counts = corrected.counts #remove
+      current.tokens = corrected.tokens
+      current.counts = corrected.counts
+    } else if (op == "replacement") {
+      # Do replacements
+      new.tokens = current.tokens
+      for (j in 1L:length(tokens)) {
+        index = which(manual.replacements[, 1] == new.tokens[j])
+        if (length(index) > 0) {
+          new.tokens[j] = manual.replacements[index, 2]
+        }
       }
+
+      # Update counts
+      new.counts = GetUpdatedCounts(current.tokens, current.counts, new.tokens)
+
+      # Update our current tokens and counts
+      current.tokens = new.tokens
+      current.counts = new.counts
+    } else if (op == "stemming") {
+      stemmed.tokens = GetStemNames(current.tokens, current.counts)
+      word.bag$stemmed = TRUE
+      word.bag$stemmed.tokens = stemmed.tokens #remove
+      stemmed.counts = GetUpdatedCounts(current.tokens, current.counts, stemmed.tokens)
+      word.bag$stemmed.counts = stemmed.counts #remove
+      current.tokens = stemmed.tokens
+      current.counts = stemmed.counts
     }
-
-    # Update counts
-    new.counts = GetUpdatedCounts(current.tokens, current.counts, new.tokens)
-
-    # Update our current tokens and counts
-    current.tokens = new.tokens
-    current.counts = new.counts
-    #print(cbind(tokens, current.tokens))
-  }
-
-  if (do.stemming) {
-    stemmed.tokens = GetStemNames(current.tokens, current.counts)
-    word.bag$stemmed = TRUE
-    word.bag$stemmed.tokens = stemmed.tokens #remove
-    stemmed.counts = GetUpdatedCounts(current.tokens, current.counts, stemmed.tokens)
-    word.bag$stemmed.counts = stemmed.counts #remove
-    current.tokens = stemmed.tokens
-    current.counts = stemmed.counts
   }
 
   # Transform the original text
-  if (do.stemming || correct.spelling || remove.stopwords || !is.null(manual.replacements) ) {
+  if (remove.stopwords || length(operations) > 0) {
 
     if (remove.stopwords) {
       transformed.tokenized = lapply(tokenized, setdiff, y = tokens[word.bag$stopwords == 1])
@@ -123,17 +115,69 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
 
     transformed.tokenized = MapTokenizedText(transformed.tokenized, before = tokens, after = current.tokens)
 
-    word.bag$final.tokens = current.tokens
-    word.bag$final.counts = current.counts
     word.bag$transformed.tokenized = transformed.tokenized
     word.bag$transformed.text = sapply(transformed.tokenized, paste, collapse = " ")
-
   } else {
-    word.bag$final.tokens = NULL
-    word.bag$final.counts = NULL
-    word.bag$transformed.tokenized = NULL
-    word.bag$transformed.text = NULL
+    word.bag$transformed.tokenized = text
+    word.bag$transformed.text = tokenized
   }
 
+  word.bag$final.tokens = current.tokens
+  word.bag$final.counts = current.counts
+
   return(word.bag)
+}
+
+
+checkWordBagOperations = function(operations, remove.stopwords, stoplist, spelling.dictionary, manual.replacements) {
+  
+  valid.operations = c("spelling", "replacement", "stemming")
+  invalid.operations = operations[which(! operations %in% valid.operations)]
+  if (length(invalid.operations) > 0) {
+    stop(paste(invalid.operations[1], " is not a valid operation. Valid operations are: ", valid.operations, sep = ""))
+  }
+
+  if ("replacement" %in% operations) {
+    if (is.null(manual.replacements)) {
+      stop("A manual replacement step has been included in the wordbag operations, but no replacements have been specified.")
+    }
+
+    # Check dimensions and properties of replacements matrix
+    if (class(manual.replacements) != "matrix" 
+      || class(manual.replacements[1, ]) != "character" 
+      || ncol(manual.replacements) != 2) {
+      stop("Manual replacements should be specified as a two-column matrix with entries that are characters (words).")
+    }
+
+    # The first column of the replacements can't have duplicates.
+    # Which of the duplicates should be mapped?
+    duplicates = manual.replacements[duplicated(manual.replacements[, 1]), 1]
+    if (length(duplicates) > 0) {
+      stop(paste("manual.replacements contains duplicates in the first column, for example: ", duplicates[1], sep = ""))
+    }
+  }
+
+  if (remove.stopwords) {
+    if (is.null(stoplist)) {
+      stop("Stopword removal has been used, but no list of stopwords has been provided.")
+    }
+    if (class(stoplist) != "character") {
+      stop("'stoplist' should be a character vector.")
+    }
+  }
+
+  if ("spelling" %in% operations) {
+    if (is.null(spelling.dictionary)) {
+      stop("A spelling correction step has been included in the opearations, but no dictionary has been provided.")
+    }
+    if (class(spelling.dictionary) != "character") {
+      stop("'spelling.dictionary' should be a vector of characters.")
+    }
+  }
+
+  if (!is.null(manual.replacements) && ! "replacement" %in% operations) {
+    stop("Replacements have been specified, but the list of operations does not contain a 'replacement' step.")
+  }
+
+  return(TRUE)
 }

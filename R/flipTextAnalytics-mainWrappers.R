@@ -12,10 +12,10 @@ TermMatrixFromWordBag = function(word.bag, min.frequency = 5) {
 }
 
 AsTermMatrix = function(text, min.frequency = 5, remove.stopwords = TRUE, stoplist = ftaStopList,
-  correct.spelling = TRUE, spelling.dictionary = ftaDictionary,
-  do.stemming = TRUE, manual.replacements = NULL) {
-	word.bag = InitializeWordBag(text, remove.stopwords = remove.stopwords, stoplist = stoplist, correct.spelling = correct.spelling, 
-		spelling.dictionary = spelling.dictionary, do.stemming = do.stemming, manual.replacements = manual.replacements)
+  operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
+  manual.replacements = NULL) {
+	word.bag = InitializeWordBag(text, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations, 
+		spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
 	return(TermMatrixFromWordBag(word.bag, min.frequency = min.frequency))
 }
 
@@ -31,10 +31,28 @@ SentimentScoresFromWordBag = function(word.bag, pos.words = ftaPositiveWords, ne
 
 
 AsSentimentMatrix = function(text, remove.stopwords = TRUE, stoplist = ftaStopList,
-  correct.spelling = TRUE, spelling.dictionary = ftaDictionary,
-  do.stemming = TRUE, manual.replacements = NULL, pos.words = ftaPositiveWords, 
+  operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
+  manual.replacements = NULL, pos.words = ftaPositiveWords, 
   neg.words = ftaNegativeWords) {
-	word.bag = InitializeWordBag(text, remove.stopwords = remove.stopwords, stoplist = stoplist, correct.spelling = correct.spelling, 
-		spelling.dictionary = spelling.dictionary, do.stemming = do.stemming, manual.replacements = manual.replacements)
+	word.bag = InitializeWordBag(text, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations, 
+		spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
 	sentiment.matrix = SentimentScoresFromWordBag(word.bag, pos.words = pos.words, neg.words = neg.words)
+}
+
+MostFrequentWords = function(text, min.frequency = 2, remove.stopwords = TRUE, stoplist = ftaStopList,
+  operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
+  manual.replacements = NULL) {
+  	word.bag = InitializeWordBag(text, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations, 
+		spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
+  	tokens = word.bag$final.tokens
+  	counts = word.bag$final.counts
+  	if (remove.stopwords) {
+  		tokens = tokens[word.bag$stopwords == 0]
+  		counts = counts[word.bag$stopwords == 0]
+  	}
+  	tokens = tokens[order(counts, decreasing = TRUE)]
+  	counts = sort(counts, decreasing = TRUE)
+  	tokens = tokens[counts >= min.frequency]
+  	counts = counts[counts >= min.frequency]
+  	return(data.frame(tokens, counts))
 }
