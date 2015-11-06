@@ -17,3 +17,20 @@ InterpretMergeWordsString = function(string) {
   replacement.matrix = matrix(split.elements, ncol = 2, byrow = TRUE)
   return(replacement.matrix)
 }
+
+gerateOperations = function(do.spell, so.stem, replacement.matrix) {
+	counter = 1;
+	operations = vector("character", 1)
+	if (do.spell) {
+	    operations[counter] = "spelling"
+	    counter = counter + 1
+	}
+	if (!is.null(replacement.matrix)) {
+	    operations[counter] = "replacement"
+	    counter = counter + 1
+	}
+	if (do.stem) {
+	    operations[counter] = "stemming"
+	}
+	return(operations)
+}
