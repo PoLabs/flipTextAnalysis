@@ -18,7 +18,7 @@ InterpretMergeWordsString = function(string) {
   return(replacement.matrix)
 }
 
-generateOperations = function(do.spell, so.stem, replacement.matrix) {
+generateOperations = function(do.spell, do.stem, replacement.matrix) {
 	counter = 1;
 	operations = vector("character", 1)
 	if (do.spell) {
