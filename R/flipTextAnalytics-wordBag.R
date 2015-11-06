@@ -131,7 +131,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
 
 checkWordBagOperations = function(operations, remove.stopwords, stoplist, spelling.dictionary, manual.replacements) {
   
-  valid.operations = c("spelling", "replacement", "stemming")
+  valid.operations = c("spelling", "replacement", "stemming", "")
   invalid.operations = operations[which(! operations %in% valid.operations)]
   if (length(invalid.operations) > 0) {
     stop(paste(invalid.operations[1], " is not a valid operation. Valid operations are: ", valid.operations, sep = ""))
