@@ -1,22 +1,36 @@
 TermMatrixFromWordBag = function(word.bag, min.frequency = 5) {
-	source = tm::VectorSource(word.bag$transformed.text)
-    corpus = tm::VCorpus(source)
-    my.tdm = tm::DocumentTermMatrix(corpus)
-    my.tdm = tm::weightBin(my.tdm)
-    # Get words which appear with certain frequency
-    # and generate term matrix based on those words
-    my.dictionary = tm::findFreqTerms(my.tdm, lowfreq = min.frequency)
-    my.tdm = tm::DocumentTermMatrix(corpus, list(dictionary = my.dictionary))
-    my.tdm = tm::weightBin(my.tdm)
-    return(tm::inspect(my.tdm))
+	return(termMatrixFromText(word.bag$transformed.text))
 }
 
-AsTermMatrix = function(text, min.frequency = 5, remove.stopwords = TRUE, stoplist = ftaStopList,
+
+# Wrapper function for package tm's Term Matrix Construction
+# Returns a matrix with documents in rows, and terms in columns.
+termMatrixFromText = function(text, min.frequency) {
+  source = tm::VectorSource(text)
+  corpus = tm::VCorpus(source)
+  my.tdm = tm::DocumentTermMatrix(corpus)
+  my.tdm = tm::weightBin(my.tdm)
+  # Get words which appear with certain frequency
+  # and generate term matrix based on those words
+  my.dictionary = tm::findFreqTerms(my.tdm, lowfreq = min.frequency)
+  my.tdm = tm::DocumentTermMatrix(corpus, list(dictionary = my.dictionary))
+  my.tdm = tm::weightBin(my.tdm)
+  return(tm::inspect(my.tdm))
+}
+
+AsTermMatrix = function(x, min.frequency = 5, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
   manual.replacements = NULL) {
-	word.bag = InitializeWordBag(text, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations, 
-		spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
-	return(TermMatrixFromWordBag(word.bag, min.frequency = min.frequency))
+  if (class(x) == "wordBag") {
+    stop("Input argument is a wordBag object. Use function TermMatrixFromWordBag() instead.")
+  } else if (class(x) == "character") {
+    word.bag = InitializeWordBag(x, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations, 
+                                spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
+    tdm = termMatrixFromText(word.bag$transformed.text, min.frequency = min.frequency)
+  } else if (class(x) == "TidyText") {
+    tdm = termMatrixFromText(x, min.frequency = min.frequency)
+  }
+	return(tdm)
 }
 
 SentimentScoresFromWordBag = function(word.bag, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords) {

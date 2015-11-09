@@ -76,6 +76,7 @@ MapTokenizedText = function(tokenized, before, after) {
     for (k in seq(cur_tokes)) {
       new_cur_tokes[k] = after[which(before == cur_tokes[k])]
     }
+    new_cur_tokes = new_cur_tokes[new_cur_tokes != ""]
     new_tokenized[[j]] = new_cur_tokes
   }
   return(new_tokenized)
