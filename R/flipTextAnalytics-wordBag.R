@@ -227,7 +227,7 @@ checkWordBagOperations = function(operations, remove.stopwords, stoplist, spelli
 
 print.wordBag = function(x) {
   cat("Word Frequencies:\r\n\r\n")
-  cat(printableTokensAndCounts(x$final.tokens, x$final.counts, alphabetical = wb$alphabetical.sort))
+  cat(printableTokensAndCounts(x$final.tokens, x$final.counts, alphabetical = x$alphabetical.sort))
   cat("")
   cat("\r\n\r\nText Cleaning:\r\n\r\n")
   output.text = cbind(x$original.text, makeWordBagTextReadable(x$transformed.text))
