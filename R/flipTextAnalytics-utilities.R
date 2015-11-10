@@ -12,10 +12,13 @@ GetMostFrequentWords = function(x, words, counts) {
 
 
 Tokenize = function(text) {
-  #text = lapply(text,gsub, pattern = "[‘’````[:punct:][:cntrl:][:digit:]]",replacement = "") # Remove punctuation
-  text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
-  text = lapply(text, gsub, pattern = "[[:punct:]]", replacement = "")
-  text = lapply(text,tolower) # Lower case
+  #text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
+  
+  # Remove all non-aplhanumeric characters, except + which is being used to
+  # denote tokens joined as phrases
+  text = lapply(text, gsub, pattern = "[^[:alnum:][:space:]\\+]", replacement = "")
+
+  text = lapply(text, tolower) # Lower case
   tokenized = sapply(text, strsplit, split = " ") # Split text by white space
   return(tokenized)
 }

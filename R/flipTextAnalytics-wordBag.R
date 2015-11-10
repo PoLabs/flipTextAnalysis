@@ -11,6 +11,7 @@
 #' @param spelling.dictionary A character vector containing the dictionary to use to check each word for mis-spellings. The default value is this package's built-in english dictionary, ftaDictionary.
 #' @param do.stemming A boolean value specifying whether or not to stem the words and replace each stem with the most commonly-occuring word that matches that stem.
 #' @param manual.replacements A matrix of characters with two columms. The first column specifies the words to replace, and the second column specifies the corresponding replacements.
+#' @param phrases A character vector containing strings that should be treated as single units during processing.
 #' @param min.frequency An integer specifiying the smallest frequency of word to keep in the transformed text.
 #' @return A list containing the word bag details
 #'
@@ -18,7 +19,8 @@
 #' wb = InitializeWordBag(nasaTweetText)
 InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
-  manual.replacements = NULL, min.frequency = 1) {
+  manual.replacements = NULL, phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE) 
+{
 
   # Check that the options supplied make sense
   checkWordBagOperations(operations = operations, 
@@ -28,6 +30,24 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
                          manual.replacements = manual.replacements)
 
   word.bag = list()
+  original.text = text
+
+  # Convert all the text to lowercase first
+  # Makes all other steps easier
+  text = tolower(text)
+  
+
+  # Catch any phrases specified by the user now
+  # so that they get treated as a unit.
+  # Phrases are two or more words, where each
+  # word is joined by a +. Never print the +
+  if (!is.null(phrases)) 
+  {
+    phrases = tolower(phrases)
+    text = replacePhrasesInText(text, phrases)
+  }
+
+
 
   # Tokenize the text
   tokenized = Tokenize(text)
@@ -58,11 +78,12 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   current.tokens = tokens
   current.counts = counts
 
-  word.bag$original.text = text
+  word.bag$original.text = original.text
   word.bag$tokens = tokens
   word.bag$counts = counts
   word.bag$tokenized = tokenized
   word.bag$manual.replacements = manual.replacements
+  word.bag$alphabetical.sort = alphabetical.sort
   class(word.bag) = "wordBag"
 
   if (remove.stopwords) {
@@ -108,22 +129,35 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   }
 
   # Transform the original text
-  if (remove.stopwords || length(operations) > 0 || min.frequency > 1) {
+  if (remove.stopwords || length(operations) > 0 || min.frequency > 1 || !is.null(phrases)) {
 
+    replace.tokens = current.tokens
     if (remove.stopwords) {
-      transformed.tokenized = lapply(tokenized, setdiff, y = tokens[word.bag$stopwords == 1])
+      # transformed.tokenized = lapply(tokenized, setdiff, y = tokens[word.bag$stopwords == 1])
+      replace.tokens[which(word.bag$stopwords == 1)] = ""
     }
 
     # Remove words which are less frequent that the minimum specified
-    replace.tokens = current.tokens
     if (min.frequency > 1) {
       replace.tokens[which(current.counts < min.frequency)] = ""
     }
+    transformed.tokenized = MapTokenizedText(tokenized, before = tokens, after = replace.tokens)
+    transformed.text = sapply(transformed.tokenized, paste, collapse = " ")
 
-    transformed.tokenized = MapTokenizedText(transformed.tokenized, before = tokens, after = replace.tokens)
+    # Do a final phrase replacement and get final tokens
+    if (!is.null(phrases)) {
+      transformed.text = replacePhrasesInText(transformed.text, phrases)
+    }
+
+    transformed.tokenized = Tokenize(transformed.text)
+
+    tokens.counts = CountUniqueTokens(transformed.tokenized)
+    current.tokens = tokens.counts$tokens
+    current.counts = tokens.counts$counts
 
     word.bag$transformed.tokenized = transformed.tokenized
-    word.bag$transformed.text = sapply(transformed.tokenized, paste, collapse = " ")
+    word.bag$transformed.text = transformed.text
+
   } else {
     word.bag$transformed.tokenized = text
     word.bag$transformed.text = tokenized
@@ -187,4 +221,19 @@ checkWordBagOperations = function(operations, remove.stopwords, stoplist, spelli
   }
 
   return(TRUE)
+}
+
+
+
+print.wordBag = function(x) {
+  cat("Word Frequencies:\r\n\r\n")
+  cat(printableTokensAndCounts(x$final.tokens, x$final.counts, alphabetical = wb$alphabetical.sort))
+  cat("")
+  cat("\r\n\r\nText Cleaning:\r\n\r\n")
+  output.text = cbind(x$original.text, makeWordBagTextReadable(x$transformed.text))
+  colnames(output.text) = c("Original text", "Tidied Text")
+  rownames(output.text) = NULL
+  output.text = head(output.text, 10)
+  print(output.text)
+  cat("...")
 }

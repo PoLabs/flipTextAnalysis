@@ -10,7 +10,7 @@ CleanAndTidyText = function(text, min.frequency = 1, remove.stopwords = TRUE, st
 	return(cleaned.text)
 }
 
-print.TidyText = function(text) {
+print.TidyText = function(text, alphabetical = FALSE) {
   # Print function will show the word frequencies before the cleaned text
 
   # Tokenize the text
@@ -21,11 +21,42 @@ print.TidyText = function(text) {
   tokens.counts = CountUniqueTokens(tokenized)
   tokens = tokens.counts$tokens
   counts = tokens.counts$counts
-  tokens = tokens[order(counts, decreasing = TRUE)]
-  counts = sort(counts, decreasing = TRUE)
 
   cat("Frequency of words in the cleaned text:\r\n\r\n")
-  cat(paste(tokens, rep(":", length(tokens)), counts, collapse = ", "))
+  cat(printableTokensAndCounts(tokens, counts, alphabetical = alphabetical))
   cat("\r\n\r\n")
   print.default(text)
+}
+
+
+# Generate a string from the tokens and their counts (seprated by : ). If alphabetical is true
+# the tokens are printed in alphatical order, otherwise they are printed in order of count
+printableTokensAndCounts = function(tokens, counts, alphabetical = FALSE) 
+{
+  if (length(counts) != length(tokens)) 
+  {
+    stop("Expected tokens and counts to be the same length")
+  }
+
+  tokens = makeWordBagTextReadable(tokens)
+
+  if (alphabetical) 
+  {
+    counts = counts[order(tokens)]
+    tokens = sort(tokens)
+  } else {
+    tokens = tokens[order(counts, decreasing = TRUE)]
+    counts = sort(counts, decreasing = TRUE)
+  }
+
+  printable = paste(tokens, counts, collapse = " , ")
+  return(printable)
+}
+
+
+# Phrases are represented with '+' joining the words,
+# but we don't want to print these out for the user.
+makeWordBagTextReadable = function(text) 
+{
+  return(gsub("[+]", " ", text))
 }
