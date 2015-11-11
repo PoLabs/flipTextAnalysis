@@ -129,7 +129,8 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   }
 
   # Transform the original text
-  if (remove.stopwords || length(operations) > 0 || min.frequency > 1 || !is.null(phrases)) {
+  if (remove.stopwords || length(operations) > 0 || min.frequency > 1 || !is.null(phrases)) 
+  {
 
     replace.tokens = current.tokens
     if (remove.stopwords) {
@@ -159,8 +160,8 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
     word.bag$transformed.text = transformed.text
 
   } else {
-    word.bag$transformed.tokenized = text
-    word.bag$transformed.text = tokenized
+    word.bag$transformed.tokenized = tokenized
+    word.bag$transformed.text = text
   }
 
   word.bag$final.tokens = current.tokens
@@ -227,8 +228,13 @@ checkWordBagOperations = function(operations, remove.stopwords, stoplist, spelli
 
 print.wordBag = function(x) {
   cat("Word Frequencies:\r\n\r\n")
-  cat(printableTokensAndCounts(x$final.tokens, x$final.counts, alphabetical = x$alphabetical.sort))
-  cat("")
+  word.list.text = printableTokensAndCounts(x$final.tokens, x$final.counts, alphabetical = x$alphabetical.sort)
+  wrapped.text = strwrap(word.list.text, 120)
+  for (j in 1L:length(wrapped.text))
+  {
+    cat(wrapped.text[j])
+    cat("\r\n")
+  }
   cat("\r\n\r\nText Cleaning:\r\n\r\n")
   output.text = cbind(x$original.text, makeWordBagTextReadable(x$transformed.text))
   colnames(output.text) = c("Original text", "Tidied Text")

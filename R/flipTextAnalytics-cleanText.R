@@ -49,7 +49,29 @@ printableTokensAndCounts = function(tokens, counts, alphabetical = FALSE)
     counts = sort(counts, decreasing = TRUE)
   }
 
-  printable = paste(tokens, counts, collapse = " , ")
+
+  printable = paste(tokens, counts, collapse = ", ")
+
+  # # Manual wrapping of text
+  # n.chars.per.line = 80
+  # text.chunks = vector("character")
+  # counter = 1
+  # reset = TRUE
+  # for (j in 1L:length(printable.bits)) 
+  # {
+  #   if (reset) 
+  #   {
+  #     current.chunk = printable.bits[j]
+  #     reset = FALSE
+  #   } else {
+  #     current.chunk = paste(current.chunk, printable.bits[j], sep = ", ")
+  #   }
+  #   if (nchar(current.chunk) > n.chars.per.line) {
+  #     reset = TRUE
+  #     text.chunks[counter] =  
+  #   }
+  # }
+
   return(printable)
 }
 
