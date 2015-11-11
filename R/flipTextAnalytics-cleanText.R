@@ -10,22 +10,9 @@ CleanAndTidyText = function(text, min.frequency = 1, remove.stopwords = TRUE, st
 	return(cleaned.text)
 }
 
-print.TidyText = function(text, alphabetical = FALSE) {
-  # Print function will show the word frequencies before the cleaned text
-
-  # Tokenize the text
-  tokenized = Tokenize(text)
-
-  # Get list of unique tokens and their counts, and sort by descending
-  # word frequency
-  tokens.counts = CountUniqueTokens(tokenized)
-  tokens = tokens.counts$tokens
-  counts = tokens.counts$counts
-
-  cat("Frequency of words in the cleaned text:\r\n\r\n")
-  cat(printableTokensAndCounts(tokens, counts, alphabetical = alphabetical))
-  cat("\r\n\r\n")
-  print.default(text)
+print.tidyText = function(x) {
+    dd = data.frame("Original Text" = names(x), "Transformed Text" = as.character(x))
+    print(DT::datatable(dd))
 }
 
 

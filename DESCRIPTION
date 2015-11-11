@@ -11,5 +11,6 @@ Imports:
     stringr,
     SnowballC,
     cba,
-    tm
+    tm,
+    DT
 Suggests: testthat
