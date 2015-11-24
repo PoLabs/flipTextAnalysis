@@ -29,10 +29,10 @@ AsTermMatrix = function(x, min.frequency = 5, remove.stopwords = TRUE, stoplist 
     word.bag = InitializeWordBag(x, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations, 
                                 spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
     tdm = termMatrixFromText(word.bag$transformed.text, min.frequency = min.frequency)
-  } else if (class(x) == "TidyText") {
+  } else if (class(x) == "tidyText") {
     tdm = termMatrixFromText(x, min.frequency = min.frequency)
   }
-    return(tdm)
+  return(tdm)
 }
 
 SentimentScoresFromWordBag = function(word.bag, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords) {

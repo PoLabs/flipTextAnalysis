@@ -15,14 +15,11 @@ testthat::expect_equal_to_reference(test.sentiment.matrix, "sent-matrix-fav.rds"
 
 
 # Most Frequent Words
-test.freq.words = MostFrequentWords(ftaFavoriteThings, operations = c("spelling", "replacement", "stemming"), manual.replacements = test.replacements, min.frequency = 2)
+test.wb = InitializeWordBag(ftaFavoriteThings, operations = c("spelling", "replacement", "stemming"), manual.replacements = test.replacements, min.frequency = 2)
+test.freq.words = MostFrequentWords(test.wb)
 testthat::expect_equal_to_reference(test.freq.words, "freq-words-fav.rds")
 
-# Cleaned text
-test.cleaned = CleanAndTidyText(ftaFavoriteThings, min.frequency = 3)
-testthat::expect_equal_to_reference(test.cleaned, "cleaned-text-fav.rds")
-
 # Term matrix from cleaned Text
-test.matrix.from.cleaned = AsTermMatrix(test.cleaned, min.frequency = 4)
+test.matrix.from.cleaned = AsTermMatrix(test.wb$transformed.text, min.frequency = 4)
 testthat::expect_equal_to_reference(test.matrix.from.cleaned, "cleaned-matrix-fav.rds")
 

@@ -1,15 +1,3 @@
-# Clean Text
-CleanAndTidyText = function(text, min.frequency = 1, remove.stopwords = TRUE, stoplist = ftaStopList,
-  operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
-  manual.replacements = NULL) {
-
-	word.bag = InitializeWordBag(text, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations, 
-		spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements, min.frequency = min.frequency)
-	cleaned.text = word.bag$transformed.text
-	class(cleaned.text) = "TidyText"
-	return(cleaned.text)
-}
-
 print.tidyText = function(x) {
     dd = data.frame("Original Text" = names(x), "Transformed Text" = as.character(x))
     print(DT::datatable(dd))
@@ -18,7 +6,7 @@ print.tidyText = function(x) {
 
 # Generate a string from the tokens and their counts (seprated by : ). If alphabetical is true
 # the tokens are printed in alphatical order, otherwise they are printed in order of count
-printableTokensAndCounts = function(tokens, counts, alphabetical = FALSE) 
+printableTokensAndCounts = function(tokens, counts, alphabetical = FALSE, min.frequency = 1) 
 {
   if (length(counts) != length(tokens)) 
   {
@@ -35,6 +23,9 @@ printableTokensAndCounts = function(tokens, counts, alphabetical = FALSE)
     tokens = tokens[order(counts, decreasing = TRUE)]
     counts = sort(counts, decreasing = TRUE)
   }
+
+  tokens = tokens[counts >= min.frequency]
+  counts = counts[counts >= min.frequency]
 
 
   printable = paste(tokens, counts, collapse = ", ")

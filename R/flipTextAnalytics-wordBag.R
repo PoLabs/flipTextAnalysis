@@ -15,8 +15,6 @@
 #' @param min.frequency An integer specifiying the smallest frequency of word to keep in the transformed text.
 #' @return A list containing the word bag details
 #'
-#' @examples
-#' wb = InitializeWordBag(nasaTweetText)
 InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
   manual.replacements = NULL, phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE) 
@@ -84,6 +82,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   word.bag$tokenized = tokenized
   word.bag$manual.replacements = manual.replacements
   word.bag$alphabetical.sort = alphabetical.sort
+  word.bag$min.frequency = min.frequency
   class(word.bag) = "wordBag"
 
   if (remove.stopwords) {
@@ -128,7 +127,11 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
     }
   }
 
-  # Transform the original text
+  # Store the tokens that are replacing the original tokens
+  word.bag$replace.tokens = current.tokens
+  word.bag$replace.counts = current.counts
+
+  # Transform the original text, and re-tokenize
   if (remove.stopwords || length(operations) > 0 || min.frequency > 1 || !is.null(phrases)) 
   {
 
@@ -228,8 +231,8 @@ checkWordBagOperations = function(operations, remove.stopwords, stoplist, spelli
 
 print.wordBag = function(x) {
   cat("Word Frequencies:\r\n\r\n")
-  word.list.text = printableTokensAndCounts(x$final.tokens, x$final.counts, alphabetical = x$alphabetical.sort)
-  wrapped.text = strwrap(word.list.text, 120)
+  word.list.text = printableTokensAndCounts(x$final.tokens, x$final.counts, alphabetical = x$alphabetical.sort, min.frequency = )
+  wrapped.text = strwrap(word.list.text, 80)
   for (j in 1L:length(wrapped.text))
   {
     cat(wrapped.text[j])

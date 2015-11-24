@@ -5,8 +5,9 @@
 \title{Create a bag-of-words}
 \usage{
 InitializeWordBag(text, remove.stopwords = TRUE, stoplist = ftaStopList,
-  correct.spelling = TRUE, spelling.dictionary = ftaDictionary,
-  do.stemming = TRUE)
+  operations = c("spelling", "stemming"),
+  spelling.dictionary = ftaDictionary, manual.replacements = NULL,
+  phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE)
 }
 \arguments{
 \item{text}{A character vector containing the text to be analyzed.}
@@ -15,9 +16,15 @@ InitializeWordBag(text, remove.stopwords = TRUE, stoplist = ftaStopList,
 
 \item{stoplist}{A character vector containg the stopwords. The default value is this package's built-in stopwords list, ftaStopList.}
 
-\item{correct.spelling}{A boolean value specifying whether or not to identify spelling mistakes and to generate corrections.}
-
 \item{spelling.dictionary}{A character vector containing the dictionary to use to check each word for mis-spellings. The default value is this package's built-in english dictionary, ftaDictionary.}
+
+\item{manual.replacements}{A matrix of characters with two columms. The first column specifies the words to replace, and the second column specifies the corresponding replacements.}
+
+\item{phrases}{A character vector containing strings that should be treated as single units during processing.}
+
+\item{min.frequency}{An integer specifiying the smallest frequency of word to keep in the transformed text.}
+
+\item{correct.spelling}{A boolean value specifying whether or not to identify spelling mistakes and to generate corrections.}
 
 \item{do.stemming}{A boolean value specifying whether or not to stem the words and replace each stem with the most commonly-occuring word that matches that stem.}
 }
@@ -26,8 +33,5 @@ A list containing the word bag details
 }
 \description{
 Create a bag-of-words object from a vector of strings.
-}
-\examples{
-wb = InitializeWordBag(nasaTweetText)
 }
 
