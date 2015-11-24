@@ -206,3 +206,37 @@ combineUnigramsAndBigrams <- function(wb,bb) {
 
   return(list(combined_grams = combined_grams,combined_counts = combined_counts))
 }
+
+getnGrams <- function(x,n) {
+  x <- x[which(x != " ")] #remove any blank tokens that have crept in
+  x <- x[which(x != "")]
+  if(length(x) > (n-1)){
+    y <- vector("character",length = length(x) - n + 1)
+    for (j in 1L:length(y)) {
+      y[j] <- paste(x[j:(j+n-1)],collapse = ' ')
+    }
+    return(y)
+  } else return("")
+}
+
+getMostFrequentPhrases <- function(text, num.words = c(2,3), min.frequency = 3) 
+{
+  tokenized = Tokenize(text)
+  tokens = vector("character")
+  counts = vector("numeric")
+  for (j in 1L:length(num.words))
+  {
+    ngrams.tokenized = nGramTokenize(tokenized, num.words[j])
+    ngrams.counts = CountUniqueTokens(ngrams.tokenized)
+    new.tokens = ngrams.counts$tokens
+    new.counts = ngrams.counts$counts
+    tokens = c(tokens, new.tokens)
+    counts = c(counts, new.counts)
+  }
+
+  tokens = tokens[order(counts, decreasing = TRUE)]
+  counts = sort(counts, decreasing = TRUE)
+  tokens = tokens[counts > min.frequency]
+  counts = counts[counts > min.frequency]
+  return(data.frame(phrases = tokens, counts = counts))
+}
