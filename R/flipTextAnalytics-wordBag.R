@@ -13,11 +13,13 @@
 #' @param manual.replacements A matrix of characters with two columms. The first column specifies the words to replace, and the second column specifies the corresponding replacements.
 #' @param phrases A character vector containing strings that should be treated as single units during processing.
 #' @param min.frequency An integer specifiying the smallest frequency of word to keep in the transformed text.
+#' @param alphabetical.sort A logical value indicating whether word lists associated with this Word Bag should be printed in alphabetical order or in order of word frequencies.
+#' @param print.type A string indicating the type of printing that should be performed when the Word Bag is printed. The two options are "frequencies", which will print the unique tokens next to their frequencies, and "transformations", which will print the original text next to the new transformed text. All printing is done using datatable from package D3.
 #' @return A list containing the word bag details
 #'
 InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
-  manual.replacements = NULL, phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE) 
+  manual.replacements = NULL, phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE, print.type = "frequencies") 
 {
 
   # Check that the options supplied make sense
@@ -83,6 +85,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   word.bag$manual.replacements = manual.replacements
   word.bag$alphabetical.sort = alphabetical.sort
   word.bag$min.frequency = min.frequency
+  word.bag$print.type = print.type
   class(word.bag) = "wordBag"
 
   if (remove.stopwords) {
@@ -230,19 +233,61 @@ checkWordBagOperations = function(operations, remove.stopwords, stoplist, spelli
 
 
 print.wordBag = function(x) {
-  cat("Word Frequencies:\r\n\r\n")
-  word.list.text = printableTokensAndCounts(x$final.tokens, x$final.counts, alphabetical = x$alphabetical.sort, min.frequency = )
-  wrapped.text = strwrap(word.list.text, 80)
-  for (j in 1L:length(wrapped.text))
+
+  if (x$print.type != "transformations") 
   {
-    cat(wrapped.text[j])
-    cat("\r\n")
+    # Print word frequencies
+    if (x$print.type != "frequencies")
+      warning(paste("Don't recognise the print type", x$print.type))
+    tokens <- x$final.tokens
+    counts <- x$final.counts
+    if (x$alphabetical.sort) 
+    {
+      counts = counts[order(tokens)]
+      tokens = sort(tokens)
+    } else {
+      tokens = tokens[order(counts, decreasing = TRUE)]
+      counts = sort(counts, decreasing = TRUE)
+    }
+
+    # Remove words below the frequency threshhold
+    tokens <- tokens[counts >= x$min.frequency]
+    counts <- counts[counts >= x$min.frequency] 
+
+    dd <- data.frame("Words" = tokens, "Frequencies" = counts)
+
+  } else {
+    # Print original and transformed text
+    dd <- data.frame("Original Text" = x$original.text, "Transformed Text" = makeWordBagTextReadable(x$transformed.text))
   }
-  cat("\r\n\r\nText Cleaning:\r\n\r\n")
-  output.text = cbind(x$original.text, makeWordBagTextReadable(x$transformed.text))
-  colnames(output.text) = c("Original text", "Tidied Text")
-  rownames(output.text) = NULL
-  output.text = head(output.text, 10)
-  print(output.text)
-  cat("...")
+
+  # Build the datatable and print
+
+  # Specify the header style information that will be used by datatables to draw the output.
+  # For some reason this is handled separately to the style of the cell contents
+  header.style <- "font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 15.px; text-align: left;"
+
+  num.col <- ncol(dd)
+  col.names <- colnames(dd)
+  col.names <- gsub("\\.", " ", col.names)
+  my.container <-  htmltools::withTags(table(
+    #class = 'display',
+    thead(
+      tr(
+          lapply(col.names, th, style = header.style)
+      )
+    )
+  ))
+  
+  mydt <- DT::datatable(dd, 
+                        rownames = FALSE, 
+                        class = 'row-border compact hover stripe',
+                        container = my.container
+                        )
+
+  print(formatStyle(mydt, 
+                    columns = 0:(num.col - 1), 
+                    fontFamily = "Segoe UI",
+                    textAlign = "left"
+                    )) 
 }

@@ -7,7 +7,8 @@
 InitializeWordBag(text, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"),
   spelling.dictionary = ftaDictionary, manual.replacements = NULL,
-  phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE)
+  phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE,
+  print.type = "frequencies")
 }
 \arguments{
 \item{text}{A character vector containing the text to be analyzed.}
@@ -23,6 +24,10 @@ InitializeWordBag(text, remove.stopwords = TRUE, stoplist = ftaStopList,
 \item{phrases}{A character vector containing strings that should be treated as single units during processing.}
 
 \item{min.frequency}{An integer specifiying the smallest frequency of word to keep in the transformed text.}
+
+\item{alphabetical.sort}{A logical value indicating whether word lists associated with this Word Bag should be printed in alphabetical order or in order of word frequencies.}
+
+\item{print.type}{A string indicating the type of printing that should be performed when the Word Bag is printed. The two options are "frequencies", which will print the unique tokens next to their frequencies, and "transformations", which will print the original text next to the new transformed text. All printing is done using datatable from package D3.}
 
 \item{correct.spelling}{A boolean value specifying whether or not to identify spelling mistakes and to generate corrections.}
 

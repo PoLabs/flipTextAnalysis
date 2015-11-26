@@ -12,5 +12,6 @@ Imports:
     SnowballC,
     cba,
     tm,
-    DT
+    DT,
+    htmltools
 Suggests: testthat
