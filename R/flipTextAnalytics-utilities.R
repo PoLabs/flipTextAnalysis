@@ -2,7 +2,7 @@
 # Return the words in x which occur most frequently
 # according to counts. Multiple words are returned if
 # they have the same frequency.
-GetMostFrequentWords = function(x, words, counts) {
+getMostFrequentWords = function(x, words, counts) {
   cc = counts[words%in%x]
   ww = words[words%in%x]
   max_count = max(cc)
@@ -10,8 +10,11 @@ GetMostFrequentWords = function(x, words, counts) {
   return(max_words)
 }
 
-
-Tokenize = function(text) {
+# Tokenizer for ftaTextAnalysis. Remove all characters which are not alphanumeric, 
+# or a plus-sign (which is used internally to denote joined words / phases).
+# Convert to lower case.
+# Split by whitespace.
+ftaTokenize = function(text) {
   #text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
   
   # Remove all non-aplhanumeric characters, except + which is being used to
@@ -23,12 +26,8 @@ Tokenize = function(text) {
   return(tokenized)
 }
 
-
-
-
-
 # Find token in source.tokens and return corresponding token in target
-MapToken = function(token, source.tokens, target.tokens) {
+mapToken = function(token, source.tokens, target.tokens) {
   if (length(source.tokens) != length(target.tokens)) {
     stop("mapToken: expected source.tokens and target.tokens to be the same length.")
   }
@@ -43,12 +42,10 @@ MapToken = function(token, source.tokens, target.tokens) {
   return(target.tokens[index])
 }
 
-
-
 # Return a binary vector indicating which elements of x are in the stop word list
-FindStopWords = function(x, stoplist = ftaStopList) {
+findStopWords = function(x, stoplist = ftaStopList) {
   if (class(stoplist) != "character") {
-    stop(paste("FindStopWords: Expected stoplist to be a character verctor, instead got a: ", class(stoplist)))
+    stop(paste("findStopWords: Expected stoplist to be a character verctor, instead got a: ", class(stoplist)))
   }
   y = vector("integer", length = length(x))
   for (j in 1L:length(x)) {
@@ -57,18 +54,9 @@ FindStopWords = function(x, stoplist = ftaStopList) {
   return(y)
 }
 
-RemoveWords = function(tokens, remove.words) {
-  if (class(tokens) != "character") {
-    stop("RemoveWords: expected 'tokens' to be a character vector.")
-  }
-  if (class(remove.words) != "character") {
-    stop("RemoveWords: expected 'remove.words' to be a character vector.")
-  }
-
-  return(setdiff(tokens, remove.words))
-}
-
-MapTokenizedText = function(tokenized, before, after) {
+# Given a list of tokenized text (vectors of words created by ftaTokenize) map the
+# tokens according to the word lists before and after.
+mapTokenizedText = function(tokenized, before, after) {
   new_tokenized = vector("list", length = length(tokenized))
   for (j in 1L:length(tokenized)) {
     cur_tokes = tokenized[[j]]
@@ -85,19 +73,18 @@ MapTokenizedText = function(tokenized, before, after) {
   return(new_tokenized)
 }
 
-
-GetUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
+getUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
   if (class(initial.tokens) != "character") {
-    stop("GetUpdatedCounts: expected 'initial.tokens' to be a character vector.")
+    stop("getUpdatedCounts: expected 'initial.tokens' to be a character vector.")
   }
   if (class(mapped.tokens) != "character") {
-    stop("GetUpdatedCounts: expected 'mapped.tokens' to be a character vector.")
+    stop("getUpdatedCounts: expected 'mapped.tokens' to be a character vector.")
   }
   if (class(initial.counts) != "numeric") {
-    stop("GetUpdatedCounts: expected 'initial.counts' to be a numeric vector.")
+    stop("getUpdatedCounts: expected 'initial.counts' to be a numeric vector.")
   }
   if (length(initial.tokens) != length(mapped.tokens) || length(initial.counts) != length(mapped.tokens)) {
-    stop("GetUpdatedCounts: expected all inputs to be the same length")
+    stop("getUpdatedCounts: expected all inputs to be the same length")
   }
 
   mapped.counts = initial.counts
@@ -110,7 +97,8 @@ GetUpdatedCounts = function(initial.tokens, initial.counts, mapped.tokens) {
   return(mapped.counts)
 }
 
-CountUniqueTokens = function(tokenized) {
+# Give a list of tokenized text (created for example by ftaTokenize)
+countUniqueTokens = function(tokenized) {
   tokens = vector("character", length = 1000)
   counts = vector("integer", length = 1000)
   word_counter = 1

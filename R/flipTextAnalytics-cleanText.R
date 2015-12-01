@@ -1,58 +1,9 @@
-print.tidyText = function(x) {
+#' @export
+print.tidyText = function(x, ...) 
+{
     dd = data.frame("Original Text" = names(x), "Transformed Text" = as.character(x))
     print(DT::datatable(dd))
 }
-
-
-# Generate a string from the tokens and their counts (seprated by : ). If alphabetical is true
-# the tokens are printed in alphatical order, otherwise they are printed in order of count
-printableTokensAndCounts = function(tokens, counts, alphabetical = FALSE, min.frequency = 1) 
-{
-  if (length(counts) != length(tokens)) 
-  {
-    stop("Expected tokens and counts to be the same length")
-  }
-
-  tokens = makeWordBagTextReadable(tokens)
-
-  if (alphabetical) 
-  {
-    counts = counts[order(tokens)]
-    tokens = sort(tokens)
-  } else {
-    tokens = tokens[order(counts, decreasing = TRUE)]
-    counts = sort(counts, decreasing = TRUE)
-  }
-
-  tokens = tokens[counts >= min.frequency]
-  counts = counts[counts >= min.frequency]
-
-
-  printable = paste(tokens, counts, collapse = ", ")
-
-  # # Manual wrapping of text
-  # n.chars.per.line = 80
-  # text.chunks = vector("character")
-  # counter = 1
-  # reset = TRUE
-  # for (j in 1L:length(printable.bits)) 
-  # {
-  #   if (reset) 
-  #   {
-  #     current.chunk = printable.bits[j]
-  #     reset = FALSE
-  #   } else {
-  #     current.chunk = paste(current.chunk, printable.bits[j], sep = ", ")
-  #   }
-  #   if (nchar(current.chunk) > n.chars.per.line) {
-  #     reset = TRUE
-  #     text.chunks[counter] =  
-  #   }
-  # }
-
-  return(printable)
-}
-
 
 # Phrases are represented with '+' joining the words,
 # but we don't want to print these out for the user.

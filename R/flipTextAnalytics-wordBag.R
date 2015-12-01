@@ -1,8 +1,6 @@
-# Go
-
-#' Create a bag-of-words
+#' \code{InitializeWordBag}
 #'
-#' Create a bag-of-words object from a vector of strings.
+#' Create a wordBag object from a vector of strings.
 #'
 #' @param text A character vector containing the text to be analyzed.
 #' @param remove.stopwords A boolean value specifying whether or not to identify stopwords and remove them from subsequent analyses.
@@ -15,19 +13,92 @@
 #' @param min.frequency An integer specifiying the smallest frequency of word to keep in the transformed text.
 #' @param alphabetical.sort A logical value indicating whether word lists associated with this Word Bag should be printed in alphabetical order or in order of word frequencies.
 #' @param print.type A string indicating the type of printing that should be performed when the Word Bag is printed. The two options are "frequencies", which will print the unique tokens next to their frequencies, and "transformations", which will print the original text next to the new transformed text. All printing is done using datatable from package D3.
-#' @return A list containing the word bag details
-#'
+#' @return An object of class \code{wordBag} containing the word bag details.
+#' @export
 InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
   manual.replacements = NULL, phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE, print.type = "frequencies") 
 {
 
+# Function to check that the inputs to the wordBag creation make sense
+  .checkWordBagOperations <- function(operations, remove.stopwords, stoplist, spelling.dictionary, manual.replacements) 
+  {
+    
+    valid.operations <- c("spelling", "replacement", "stemming", "")
+
+    # Check that the user has entered operations that we support
+    invalid.operations <- operations[which(! operations %in% valid.operations)]
+    if (length(invalid.operations) > 0) 
+    {
+      stop(paste(invalid.operations[1], " is not a valid operation. Valid operations are: ", valid.operations, sep = ""))
+    }
+
+    # If the user wants to do manual replacements they should
+    # specify at least one replacement to make.
+    if ("replacement" %in% operations) 
+    {
+      if (is.null(manual.replacements)) 
+      {
+        stop("A manual replacement step has been included in the wordbag operations, but no replacements have been specified.")
+      }
+
+      # Check dimensions and properties of replacements matrix
+      if (class(manual.replacements) != "matrix" 
+        || class(manual.replacements[1, ]) != "character" 
+        || ncol(manual.replacements) != 2) 
+      {
+        stop("Manual replacements should be specified as a two-column matrix with entries that are characters (words).")
+      }
+
+      # The first column of the replacements can't have duplicates.
+      # Which of the duplicates should be mapped?
+      duplicates = manual.replacements[duplicated(manual.replacements[, 1]), 1]
+      if (length(duplicates) > 0) 
+      {
+        stop(paste("manual.replacements contains duplicates in the first column, for example: ", duplicates[1], sep = ""))
+      }
+    }
+
+    if (remove.stopwords) 
+    {
+      if (is.null(stoplist)) 
+      {
+        stop("Stopword removal has been used, but no list of stopwords has been provided.")
+      }
+      if (class(stoplist) != "character") 
+      {
+        stop("'stoplist' should be a character vector.")
+      }
+    }
+
+    if ("spelling" %in% operations) 
+    {
+      if (is.null(spelling.dictionary)) 
+      {
+        stop("A spelling correction step has been included in the opearations, but no dictionary has been provided.")
+      }
+      if (class(spelling.dictionary) != "character") 
+      {
+        stop("'spelling.dictionary' should be a vector of characters.")
+      }
+    }
+
+    if (!is.null(manual.replacements) && ! "replacement" %in% operations) 
+    {
+      stop("Replacements have been specified, but the list of operations does not contain a 'replacement' step.")
+    }
+
+    return(TRUE)
+  }
+
+
   # Check that the options supplied make sense
-  checkWordBagOperations(operations = operations, 
+  .checkWordBagOperations(operations = operations, 
                          remove.stopwords = remove.stopwords, 
                          stoplist = stoplist, 
                          spelling.dictionary = spelling.dictionary, 
                          manual.replacements = manual.replacements)
+
 
   word.bag = list()
   original.text = text
@@ -50,10 +121,10 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
 
 
   # Tokenize the text
-  tokenized = Tokenize(text)
+  tokenized = ftaTokenize(text)
 
   # Get list of unique tokens and their counts
-  tokens.counts = CountUniqueTokens(tokenized)
+  tokens.counts = countUniqueTokens(tokenized)
   tokens = tokens.counts$tokens
   counts = tokens.counts$counts
 
@@ -89,7 +160,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
   class(word.bag) = "wordBag"
 
   if (remove.stopwords) {
-    word.bag$stopwords = FindStopWords(current.tokens, stoplist)
+    word.bag$stopwords = findStopWords(current.tokens, stoplist)
   }
 
   for (j in 1L:length(operations)) {
@@ -99,7 +170,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
       corrected.tokens = GetCorrections(current.tokens, current.counts, spelling.errors, do.not.correct = word.bag$stopwords)
       word.bag$corrected.tokens = corrected.tokens #remove
       word.bag$spelling.corrected = TRUE
-      corrected.counts = GetUpdatedCounts(current.tokens, current.counts, corrected.tokens)
+      corrected.counts = getUpdatedCounts(current.tokens, current.counts, corrected.tokens)
       word.bag$corrected.counts = corrected.counts #remove
       current.tokens = corrected.tokens
       current.counts = corrected.counts
@@ -114,7 +185,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
       }
 
       # Update counts
-      new.counts = GetUpdatedCounts(current.tokens, current.counts, new.tokens)
+      new.counts = getUpdatedCounts(current.tokens, current.counts, new.tokens)
 
       # Update our current tokens and counts
       current.tokens = new.tokens
@@ -123,7 +194,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
       stemmed.tokens = GetStemNames(current.tokens, current.counts)
       word.bag$stemmed = TRUE
       word.bag$stemmed.tokens = stemmed.tokens #remove
-      stemmed.counts = GetUpdatedCounts(current.tokens, current.counts, stemmed.tokens)
+      stemmed.counts = getUpdatedCounts(current.tokens, current.counts, stemmed.tokens)
       word.bag$stemmed.counts = stemmed.counts #remove
       current.tokens = stemmed.tokens
       current.counts = stemmed.counts
@@ -148,7 +219,7 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
     if (min.frequency > 1) {
       replace.tokens[which(current.counts < min.frequency)] = ""
     }
-    transformed.tokenized = MapTokenizedText(tokenized, before = tokens, after = replace.tokens)
+    transformed.tokenized = mapTokenizedText(tokenized, before = tokens, after = replace.tokens)
     transformed.text = sapply(transformed.tokenized, paste, collapse = " ")
 
     # Do a final phrase replacement and get final tokens
@@ -156,9 +227,9 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
       transformed.text = replacePhrasesInText(transformed.text, phrases)
     }
 
-    transformed.tokenized = Tokenize(transformed.text)
+    transformed.tokenized = ftaTokenize(transformed.text)
 
-    tokens.counts = CountUniqueTokens(transformed.tokenized)
+    tokens.counts = countUniqueTokens(transformed.tokenized)
     current.tokens = tokens.counts$tokens
     current.counts = tokens.counts$counts
 
@@ -177,77 +248,37 @@ InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopLi
 }
 
 
-checkWordBagOperations = function(operations, remove.stopwords, stoplist, spelling.dictionary, manual.replacements) {
   
-  valid.operations = c("spelling", "replacement", "stemming", "")
-  invalid.operations = operations[which(! operations %in% valid.operations)]
-  if (length(invalid.operations) > 0) {
-    stop(paste(invalid.operations[1], " is not a valid operation. Valid operations are: ", valid.operations, sep = ""))
-  }
-
-  if ("replacement" %in% operations) {
-    if (is.null(manual.replacements)) {
-      stop("A manual replacement step has been included in the wordbag operations, but no replacements have been specified.")
-    }
-
-    # Check dimensions and properties of replacements matrix
-    if (class(manual.replacements) != "matrix" 
-      || class(manual.replacements[1, ]) != "character" 
-      || ncol(manual.replacements) != 2) {
-      stop("Manual replacements should be specified as a two-column matrix with entries that are characters (words).")
-    }
-
-    # The first column of the replacements can't have duplicates.
-    # Which of the duplicates should be mapped?
-    duplicates = manual.replacements[duplicated(manual.replacements[, 1]), 1]
-    if (length(duplicates) > 0) {
-      stop(paste("manual.replacements contains duplicates in the first column, for example: ", duplicates[1], sep = ""))
-    }
-  }
-
-  if (remove.stopwords) {
-    if (is.null(stoplist)) {
-      stop("Stopword removal has been used, but no list of stopwords has been provided.")
-    }
-    if (class(stoplist) != "character") {
-      stop("'stoplist' should be a character vector.")
-    }
-  }
-
-  if ("spelling" %in% operations) {
-    if (is.null(spelling.dictionary)) {
-      stop("A spelling correction step has been included in the opearations, but no dictionary has been provided.")
-    }
-    if (class(spelling.dictionary) != "character") {
-      stop("'spelling.dictionary' should be a vector of characters.")
-    }
-  }
-
-  if (!is.null(manual.replacements) && ! "replacement" %in% operations) {
-    stop("Replacements have been specified, but the list of operations does not contain a 'replacement' step.")
-  }
-
-  return(TRUE)
-}
 
 
-
-print.wordBag = function(x) {
+# Use the package DT to generate nice-looking tables. There are two modes,
+# which are specified in the word bag creation. "frequencies" creates a table
+# of the words and their frequencies. "transformations" creates a table
+# showing the before and after text.
+#' @export
+print.wordBag <- function(x, ...)
+{
 
   if (x$print.type != "transformations") 
   {
     # Print word frequencies
     if (x$print.type != "frequencies")
+    {
       warning(paste("Don't recognise the print type", x$print.type))
+    }
+    
     tokens <- x$final.tokens
     counts <- x$final.counts
+    
+    # Sort tokens and counts according to alphabetical
+    # order or frequency
     if (x$alphabetical.sort) 
     {
-      counts = counts[order(tokens)]
-      tokens = sort(tokens)
+      counts <- counts[order(tokens)]
+      tokens <- sort(tokens)
     } else {
-      tokens = tokens[order(counts, decreasing = TRUE)]
-      counts = sort(counts, decreasing = TRUE)
+      tokens <- tokens[order(counts, decreasing = TRUE)]
+      counts <- sort(counts, decreasing = TRUE)
     }
 
     # Remove words below the frequency threshhold
@@ -271,7 +302,6 @@ print.wordBag = function(x) {
   col.names <- colnames(dd)
   col.names <- gsub("\\.", " ", col.names)
   my.container <-  htmltools::withTags(table(
-    #class = 'display',
     thead(
       tr(
           lapply(col.names, th, style = header.style)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/flipTextAnalytics-wordBag.R
 \name{InitializeWordBag}
 \alias{InitializeWordBag}
-\title{Create a bag-of-words}
+\title{\code{InitializeWordBag}}
 \usage{
 InitializeWordBag(text, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"),
@@ -34,9 +34,9 @@ InitializeWordBag(text, remove.stopwords = TRUE, stoplist = ftaStopList,
 \item{do.stemming}{A boolean value specifying whether or not to stem the words and replace each stem with the most commonly-occuring word that matches that stem.}
 }
 \value{
-A list containing the word bag details
+An object of class \code{wordBag} containing the word bag details.
 }
 \description{
-Create a bag-of-words object from a vector of strings.
+Create a wordBag object from a vector of strings.
 }
 
