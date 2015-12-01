@@ -21,6 +21,7 @@ termMatrixFromText = function(text, min.frequency = 5) {
 #' @param x Either a character vector or a WordBag object, created for example by the function InitializeWordBag.
 #'          If \code{x} is a character vector then additional parameters can be supplied for processing the
 #'          text before scoring sentiment. For a description of the options see \code{\link{InitializeWordBag}}.
+#' @inheritParams InitializeWordBag
 #'
 #' @return  A \code{matrix} with one row for each text response (referred to as a \code{document}) and once column for
 #'          each word or phrase extracted from the text.
@@ -55,6 +56,8 @@ AsTermMatrix = function(x, min.frequency = 5, remove.stopwords = TRUE, stoplist 
 #'          text before scoring sentiment. For a description of the options see \code{\link{InitializeWordBag}}.
 #' @param pos.words A character vector containing words that should be scored positively.
 #' @param neg.words A character vector containing words that should be scored negatively.
+#' @inheritParams InitializeWordBag
+#'
 #' @return A matrix with three columns, and one row for each of the original text responses in the word bag. 
 #'         The first column provides a count of the positive words that have been identified in each
 #'         response, the second column gives a count of the negative words, and the third column gives the

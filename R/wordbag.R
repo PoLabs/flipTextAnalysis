@@ -3,11 +3,11 @@
 #' Create a wordBag object from a vector of strings.
 #'
 #' @param text A character vector containing the text to be analyzed.
+#' @param operations A character vector specifying the sequence of operations to be performed on the text. Valid operations are
+#'                   \code{"spelling"}, \code{"stemming"}, and \code{"replacement"} (for manually replacing words).
 #' @param remove.stopwords A boolean value specifying whether or not to identify stopwords and remove them from subsequent analyses.
 #' @param stoplist A character vector containg the stopwords. The default value is this package's built-in stopwords list, ftaStopList.
-#' @param correct.spelling A boolean value specifying whether or not to identify spelling mistakes and to generate corrections.
 #' @param spelling.dictionary A character vector containing the dictionary to use to check each word for mis-spellings. The default value is this package's built-in english dictionary, ftaDictionary.
-#' @param do.stemming A boolean value specifying whether or not to stem the words and replace each stem with the most commonly-occuring word that matches that stem.
 #' @param manual.replacements A matrix of characters with two columms. The first column specifies the words to replace, and the second column specifies the corresponding replacements.
 #' @param phrases A character vector containing strings that should be treated as single units during processing.
 #' @param min.frequency An integer specifiying the smallest frequency of word to keep in the transformed text.
@@ -15,8 +15,8 @@
 #' @param print.type A string indicating the type of printing that should be performed when the Word Bag is printed. The two options are "frequencies", which will print the unique tokens next to their frequencies, and "transformations", which will print the original text next to the new transformed text. All printing is done using datatable from package D3.
 #' @return An object of class \code{wordBag} containing the word bag details.
 #' @export
-InitializeWordBag = function(text, remove.stopwords = TRUE, stoplist = ftaStopList,
-  operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
+InitializeWordBag = function(text, operations = c("spelling", "stemming"), remove.stopwords = TRUE,
+  stoplist = ftaStopList, spelling.dictionary = ftaDictionary,
   manual.replacements = NULL, phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE, print.type = "frequencies") 
 {
 
