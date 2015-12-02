@@ -10,7 +10,7 @@ termMatrixFromText = function(text, min.frequency = 5) {
   my.dictionary = tm::findFreqTerms(my.tdm, lowfreq = min.frequency)
   my.tdm = tm::DocumentTermMatrix(corpus, list(dictionary = my.dictionary))
   my.tdm = tm::weightBin(my.tdm)
-  return(invisible(tm::inspect(my.tdm)))
+  return(invisible(as.matrix(my.tdm)))
 }
 
 
