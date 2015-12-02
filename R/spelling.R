@@ -1,29 +1,4 @@
-# Binary search, assumes input is sorted
-# Returns the index of val in tab, otherwise -1
-dictBinSearch <- function(val, tab, L = 1L, H = length(tab))
-{
-  while (H >= L) {
-    M <- L + (H - L) %/% 2L
-    if (tab[M] > val) {
-      H <- M - 1L
-    }
-    else if (tab[M] < val) {
-      L <- M + 1L
-    }
-    else {
-      return(M)
-    }
-  }
-  if (L == 1) {
-    return(-1)
-  }
-  if (tab[L-1L] == val) {
-    return(L - 1L)
-  }
-  else {
-    return(-1)
-  }
-}
+
 
 
 #' \code{FindSpellingErrors}
@@ -46,11 +21,39 @@ dictBinSearch <- function(val, tab, L = 1L, H = length(tab))
 FindSpellingErrors <- function(x, dictionary = ftaDictionary) 
 {
 
+  # Binary search, assumes input is sorted
+  # Returns the index of val in tab, otherwise -1
+  .dictBinSearch <- function(val, tab, L = 1L, H = length(tab))
+  {
+    while (H >= L) {
+      M <- L + (H - L) %/% 2L
+      if (tab[M] > val) {
+        H <- M - 1L
+      }
+      else if (tab[M] < val) {
+        L <- M + 1L
+      }
+      else {
+        return(M)
+      }
+    }
+    if (L == 1) {
+      return(-1)
+    }
+    if (tab[L-1L] == val) {
+      return(L - 1L)
+    }
+    else {
+      return(-1)
+    }
+  }
+
+
   # Function to determine if a word is misspelled
-  spellerror <- function(word, dict = ftaDictionary) 
+  .spellError <- function(word, dict = ftaDictionary) 
   {
     # Found the word in the dictionary.
-    if (dictBinSearch(word, dict) > -1) 
+    if (.dictBinSearch(word, dict) > -1) 
     {
       return(0)
     } else {
@@ -62,28 +65,28 @@ FindSpellingErrors <- function(x, dictionary = ftaDictionary)
       if(sperr == 1 & substr(word, word.length, word.length) == "s") 
       {
         reducedword <- substr(word, 1, (word.length-1))
-        if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0
       }
       
       if(sperr == 1 & substr(word, word.length-1, word.length) == "es") 
       {
         reducedword <- substr(word, 1, (word.length-2))
-        if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0
       }
       
       if(sperr == 1 & substr(word, word.length-1, word.length) == "ed") 
       {
         reducedword <- substr(word, 1, (word.length-2))
-        if(dictBinSearch(reducedword, dict) > -1) sperr <- 0  
+        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0  
       }
       if(sperr == 1 & substr(word, word.length, word.length) == "d") {
         reducedword <- substr(word, 1, (word.length-1))
-        if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0
         
       }
       if(sperr == 1 & regexpr("ise", word) > -1) {
         reducedword <- sub("ise", "ize", word)
-        if(dictBinSearch(reducedword, dict) > -1) sperr <- 0
+        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0
         
       }
     }
@@ -95,7 +98,7 @@ FindSpellingErrors <- function(x, dictionary = ftaDictionary)
     stop(paste("FindSpellingErrors: Expected dictionary to be a character verctor, instead got a: ", class(dictionary)))
   }
 
-  y <- sapply(x, spellerror, dict = dictionary)
+  y <- sapply(x, .spellError, dict = dictionary)
   names(y) <- x
   return(y)
 }

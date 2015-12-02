@@ -100,12 +100,12 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
                          manual.replacements = manual.replacements)
 
 
-  word.bag = list()
-  original.text = text
+  word.bag <- list()
+  original.text <- text
 
   # Convert all the text to lowercase first
   # Makes all other steps easier
-  text = tolower(text)
+  text <- tolower(text)
   
 
   # Catch any phrases specified by the user now
@@ -114,135 +114,135 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
   # word is joined by a +. Never print the +
   if (!is.null(phrases)) 
   {
-    phrases = tolower(phrases)
-    text = replacePhrasesInText(text, phrases)
+    phrases <- tolower(phrases)
+    text <- replacePhrasesInText(text, phrases)
   }
 
 
 
   # Tokenize the text
-  tokenized = ftaTokenize(text)
+  tokenized <- ftaTokenize(text)
 
   # Get list of unique tokens and their counts
-  tokens.counts = countUniqueTokens(tokenized)
-  tokens = tokens.counts$tokens
-  counts = tokens.counts$counts
+  tokens.counts <- countUniqueTokens(tokenized)
+  tokens <- tokens.counts$tokens
+  counts <- tokens.counts$counts
 
   # If manual replacements have been specified, these words need to
   # be added to the tokens
   if (!is.null(manual.replacements)) {
     # Add entries for any new tokens to the existing vector of tokens
     # and initialize the count to zero
-    extra.tokens = as.vector(manual.replacements)
-    extra.tokens = unique(extra.tokens)
+    extra.tokens <- as.vector(manual.replacements)
+    extra.tokens <- unique(extra.tokens)
     
     for (j in 1L:length(extra.tokens)) {
       if (! extra.tokens[j] %in% tokens) {
-        current.length = length(tokens)
-        tokens[current.length + 1] = extra.tokens[j]
-        counts[current.length + 1] = 0
+        current.length <- length(tokens)
+        tokens[current.length + 1] <- extra.tokens[j]
+        counts[current.length + 1] <- 0
       }
     }
   }
 
   # These keep track of the tokens as we move through the different processes
-  current.tokens = tokens
-  current.counts = counts
+  current.tokens <- tokens
+  current.counts <- counts
 
-  word.bag$original.text = original.text
-  word.bag$tokens = tokens
-  word.bag$counts = counts
-  word.bag$tokenized = tokenized
-  word.bag$manual.replacements = manual.replacements
-  word.bag$alphabetical.sort = alphabetical.sort
-  word.bag$min.frequency = min.frequency
-  word.bag$print.type = print.type
-  class(word.bag) = "wordBag"
+  word.bag$original.text <- original.text
+  word.bag$tokens <- tokens
+  word.bag$counts <- counts
+  word.bag$tokenized <- tokenized
+  word.bag$manual.replacements <- manual.replacements
+  word.bag$alphabetical.sort <- alphabetical.sort
+  word.bag$min.frequency <- min.frequency
+  word.bag$print.type <- print.type
+  class(word.bag) <- "wordBag"
 
   if (remove.stopwords) {
-    word.bag$stopwords = findStopWords(current.tokens, stoplist)
+    word.bag$stopwords <- findStopWords(current.tokens, stoplist)
   }
 
   for (j in 1L:length(operations)) {
-    op = operations[j]
+    op <- operations[j]
     if (op == "spelling") {
-      spelling.errors = FindSpellingErrors(current.tokens, spelling.dictionary)
-      corrected.tokens = GetCorrections(current.tokens, current.counts, spelling.errors, do.not.correct = word.bag$stopwords)
-      word.bag$corrected.tokens = corrected.tokens #remove
-      word.bag$spelling.corrected = TRUE
-      corrected.counts = getUpdatedCounts(current.tokens, current.counts, corrected.tokens)
-      word.bag$corrected.counts = corrected.counts #remove
-      current.tokens = corrected.tokens
-      current.counts = corrected.counts
+      spelling.errors <- FindSpellingErrors(current.tokens, spelling.dictionary)
+      corrected.tokens <- GetCorrections(current.tokens, current.counts, spelling.errors, do.not.correct = word.bag$stopwords)
+      word.bag$corrected.tokens <- corrected.tokens #remove
+      word.bag$spelling.corrected <- TRUE
+      corrected.counts <- getUpdatedCounts(current.tokens, current.counts, corrected.tokens)
+      word.bag$corrected.counts <- corrected.counts #remove
+      current.tokens <- corrected.tokens
+      current.counts <- corrected.counts
     } else if (op == "replacement") {
       # Do replacements
-      new.tokens = current.tokens
+      new.tokens <- current.tokens
       for (j in 1L:length(tokens)) {
-        index = which(manual.replacements[, 1] == new.tokens[j])
+        index <- which(manual.replacements[, 1] == new.tokens[j])
         if (length(index) > 0) {
-          new.tokens[j] = manual.replacements[index, 2]
+          new.tokens[j] <- manual.replacements[index, 2]
         }
       }
 
       # Update counts
-      new.counts = getUpdatedCounts(current.tokens, current.counts, new.tokens)
+      new.counts <- getUpdatedCounts(current.tokens, current.counts, new.tokens)
 
       # Update our current tokens and counts
-      current.tokens = new.tokens
-      current.counts = new.counts
+      current.tokens <- new.tokens
+      current.counts <- new.counts
     } else if (op == "stemming") {
-      stemmed.tokens = GetStemNames(current.tokens, current.counts)
-      word.bag$stemmed = TRUE
-      word.bag$stemmed.tokens = stemmed.tokens #remove
-      stemmed.counts = getUpdatedCounts(current.tokens, current.counts, stemmed.tokens)
-      word.bag$stemmed.counts = stemmed.counts #remove
-      current.tokens = stemmed.tokens
-      current.counts = stemmed.counts
+      stemmed.tokens <- GetStemNames(current.tokens, current.counts)
+      word.bag$stemmed <- TRUE
+      word.bag$stemmed.tokens <- stemmed.tokens #remove
+      stemmed.counts <- getUpdatedCounts(current.tokens, current.counts, stemmed.tokens)
+      word.bag$stemmed.counts <- stemmed.counts #remove
+      current.tokens <- stemmed.tokens
+      current.counts <- stemmed.counts
     }
   }
 
   # Store the tokens that are replacing the original tokens
-  word.bag$replace.tokens = current.tokens
-  word.bag$replace.counts = current.counts
+  word.bag$replace.tokens <- current.tokens
+  word.bag$replace.counts <- current.counts
 
   # Transform the original text, and re-tokenize
   if (remove.stopwords || length(operations) > 0 || min.frequency > 1 || !is.null(phrases)) 
   {
 
-    replace.tokens = current.tokens
+    replace.tokens <- current.tokens
     if (remove.stopwords) {
       # transformed.tokenized = lapply(tokenized, setdiff, y = tokens[word.bag$stopwords == 1])
-      replace.tokens[which(word.bag$stopwords == 1)] = ""
+      replace.tokens[which(word.bag$stopwords == 1)] <- ""
     }
 
     # Remove words which are less frequent that the minimum specified
     if (min.frequency > 1) {
-      replace.tokens[which(current.counts < min.frequency)] = ""
+      replace.tokens[which(current.counts < min.frequency)] <- ""
     }
-    transformed.tokenized = mapTokenizedText(tokenized, before = tokens, after = replace.tokens)
-    transformed.text = sapply(transformed.tokenized, paste, collapse = " ")
+    transformed.tokenized <- mapTokenizedText(tokenized, before = tokens, after = replace.tokens)
+    transformed.text <- sapply(transformed.tokenized, paste, collapse = " ")
 
     # Do a final phrase replacement and get final tokens
     if (!is.null(phrases)) {
-      transformed.text = replacePhrasesInText(transformed.text, phrases)
+      transformed.text <- replacePhrasesInText(transformed.text, phrases)
     }
 
-    transformed.tokenized = ftaTokenize(transformed.text)
+    transformed.tokenized <- ftaTokenize(transformed.text)
 
-    tokens.counts = countUniqueTokens(transformed.tokenized)
-    current.tokens = tokens.counts$tokens
-    current.counts = tokens.counts$counts
+    tokens.counts <- countUniqueTokens(transformed.tokenized)
+    current.tokens <- tokens.counts$tokens
+    current.counts <- tokens.counts$counts
 
-    word.bag$transformed.tokenized = transformed.tokenized
-    word.bag$transformed.text = transformed.text
+    word.bag$transformed.tokenized <- transformed.tokenized
+    word.bag$transformed.text <- transformed.text
 
   } else {
-    word.bag$transformed.tokenized = tokenized
-    word.bag$transformed.text = text
+    word.bag$transformed.tokenized <- tokenized
+    word.bag$transformed.text <- text
   }
 
-  word.bag$final.tokens = current.tokens
-  word.bag$final.counts = current.counts
+  word.bag$final.tokens <- current.tokens
+  word.bag$final.counts <- current.counts
 
   return(word.bag)
 }

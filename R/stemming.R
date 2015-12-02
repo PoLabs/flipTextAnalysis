@@ -19,6 +19,19 @@
 #' @export
 GetStemNames <- function(tokens, counts) 
 {
+
+
+  # Return the words in x which occur most frequently
+  # according to counts. Multiple words are returned if
+  # they have the same frequency.
+  .getMostFrequentWords = function(x, words, counts) {
+    cc = counts[words%in%x]
+    ww = words[words%in%x]
+    max_count = max(cc)
+    max_words = ww[which(cc==max_count)]
+    return(max_words)
+  }
+
   # Get stems for the input tokens using the Snowball stemmer
   .getStems <- function(x) 
   {
@@ -52,7 +65,7 @@ GetStemNames <- function(tokens, counts)
   stem.identifiers <- vector("character", length = length(unique.stems))
   for (j in 1L:length(unique.stems)) 
   {
-    max.words <- getMostFrequentWords(stem.sets[[j]], tokens, counts)
+    max.words <- .getMostFrequentWords(stem.sets[[j]], tokens, counts)
     stem.identifiers[j] <- max.words[1]
   }
 

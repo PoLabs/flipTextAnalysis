@@ -1,14 +1,4 @@
 
-# Return the words in x which occur most frequently
-# according to counts. Multiple words are returned if
-# they have the same frequency.
-getMostFrequentWords = function(x, words, counts) {
-  cc = counts[words%in%x]
-  ww = words[words%in%x]
-  max_count = max(cc)
-  max_words = ww[which(cc==max_count)]
-  return(max_words)
-}
 
 # Tokenizer for ftaTextAnalysis. Remove all characters which are not alphanumeric, 
 # or a plus-sign (which is used internally to denote joined words / phases).
@@ -145,3 +135,4 @@ makeWordBagTextReadable = function(text)
 {
   return(gsub("[+]", " ", text))
 }
+

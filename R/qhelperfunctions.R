@@ -61,7 +61,7 @@ getTextAnalysisOptions <- function(phrases, extra.stopwords.text, replacements.t
      
     if (nchar(replacements.text) > 2 && regexpr(":", replacements.text) > 1) 
     {
-        ieplacement.matrix <- InterpretMergeWordsString(replacements.text)
+        replacement.matrix <- interpretMergeWordsString(replacements.text)
     } else {
         replacement.matrix <- NULL
     }
