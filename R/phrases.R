@@ -63,7 +63,17 @@ GetMostFrequentPhrases <- function(text, num.words = c(2,3), min.frequency = 3)
   counts <- sort(counts, decreasing = TRUE)
   tokens <- tokens[counts > min.frequency]
   counts <- counts[counts > min.frequency]
-  return(data.frame(phrases = tokens, counts = counts))
+  phrases <- data.frame("Phrases" = tokens, "Frequencies" = counts)
+  class(phrases) <- c("phraseList", "data.frame")
+  return(phrases)
+}
+
+#' @export
+print.phraseList <- function(x, ...) 
+{
+  dd <- as.data.frame(x)
+  my.dt <- dataTableWithRItemFormat(dd)
+  print(my.dt)
 }
 
 # This function adds a delimiter to any phrases found in the text.

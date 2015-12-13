@@ -294,30 +294,7 @@ print.wordBag <- function(x, ...)
 
   # Build the datatable and print
 
-  # Specify the header style information that will be used by datatables to draw the output.
-  # For some reason this is handled separately to the style of the cell contents
-  header.style <- "font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 15.px; text-align: left;"
-
-  num.col <- ncol(dd)
-  col.names <- colnames(dd)
-  col.names <- gsub("\\.", " ", col.names)
-  my.container <-  htmltools::withTags(table(
-    thead(
-      tr(
-          lapply(col.names, th, style = header.style)
-      )
-    )
-  ))
-  
-  mydt <- DT::datatable(dd, 
-                        rownames = FALSE, 
-                        class = 'row-border compact hover stripe',
-                        container = my.container
-                        )
-
-  print(formatStyle(mydt, 
-                    columns = 0:(num.col - 1), 
-                    fontFamily = "Segoe UI",
-                    textAlign = "left"
-                    )) 
+  my.dt <- dataTableWithRItemFormat(dd)
+  print(my.dt)
 }
+
