@@ -196,12 +196,12 @@ dataTableWithRItemFormat <- function(dd)
     style(type = "text/css", header.style),
     thead(
       tr(
-          lapply(header.names, th, style = "text-align: center; border-right-width: 1px; border-right-style: solid; border-right-color: white; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: white;")
+          lapply(header.names, th, style = "text-align: center; border-right-width: 1px; border-right-style: solid; border-right-color: white; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: white")
       )
     )
   ))
 
-  my.options <- list(autoWidth = TRUE,
+  my.options <- list(autoWidth = FALSE,
                      columnDefs = list(list(targets = "_all", orderable = FALSE),
                                        list(targets = column.to.remove, visible = FALSE),
                                        list(targets = " ", className = 'dt-center'),
