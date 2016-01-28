@@ -1,12 +1,12 @@
 
 
-# Tokenizer for ftaTextAnalysis. Remove all characters which are not alphanumeric, 
+# Tokenizer for ftaTextAnalysis. Remove all characters which are not alphanumeric,
 # or a plus-sign (which is used internally to denote joined words / phases).
 # Convert to lower case.
 # Split by whitespace.
 ftaTokenize <- function(text) {
   #text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
-  
+
   # Remove all non-aplhanumeric characters, except + which is being used to
   # denote tokens joined as phrases
   text <- lapply(text, gsub, pattern = "[^[:alnum:][:space:]\\+]", replacement = "")
@@ -46,17 +46,17 @@ findStopWords <- function(x, stoplist = ftaStopList) {
 
 # Given a list of tokenized text (vectors of words created by ftaTokenize) map the
 # tokens according to the word lists before and after.
-mapTokenizedText <- function(tokenized, before, after) 
+mapTokenizedText <- function(tokenized, before, after)
 {
   new_tokenized <- vector("list", length = length(tokenized))
-  for (j in 1L:length(tokenized)) 
+  for (j in 1L:length(tokenized))
   {
     cur_tokes <- tokenized[[j]]
     cur_tokes <- cur_tokes[cur_tokes != ""] #Exclude blank/empty strings and NA entries
     cur_tokes <- cur_tokes[cur_tokes != " "]
     cur_tokes <- cur_tokes[!is.na(cur_tokes)]
     new_cur_tokes <- vector('character', length = length(cur_tokes))
-    for (k in seq(cur_tokes)) 
+    for (k in seq(cur_tokes))
     {
       new_cur_tokes[k] <- after[which(before == cur_tokes[k])]
     }
@@ -66,29 +66,29 @@ mapTokenizedText <- function(tokenized, before, after)
   return(new_tokenized)
 }
 
-getUpdatedCounts <- function(initial.tokens, initial.counts, mapped.tokens) 
+getUpdatedCounts <- function(initial.tokens, initial.counts, mapped.tokens)
 {
-  if (class(initial.tokens) != "character") 
+  if (class(initial.tokens) != "character")
   {
     stop("getUpdatedCounts: expected 'initial.tokens' to be a character vector.")
   }
-  if (class(mapped.tokens) != "character") 
+  if (class(mapped.tokens) != "character")
   {
     stop("getUpdatedCounts: expected 'mapped.tokens' to be a character vector.")
   }
-  if (class(initial.counts) != "numeric") 
+  if (class(initial.counts) != "numeric")
   {
     stop("getUpdatedCounts: expected 'initial.counts' to be a numeric vector.")
   }
-  if (length(initial.tokens) != length(mapped.tokens) || length(initial.counts) != length(mapped.tokens)) 
+  if (length(initial.tokens) != length(mapped.tokens) || length(initial.counts) != length(mapped.tokens))
   {
     stop("getUpdatedCounts: expected all inputs to be the same length")
   }
 
   mapped.counts <- initial.counts
-  for (j in 1L:length(initial.tokens)) 
+  for (j in 1L:length(initial.tokens))
   {
-    if (initial.tokens[j] != mapped.tokens[j]) 
+    if (initial.tokens[j] != mapped.tokens[j])
     {
       mapped.counts[which(initial.tokens == mapped.tokens[j])] = mapped.counts[j] + mapped.counts[which(initial.tokens == mapped.tokens[j])]
       mapped.counts[j] = 0
@@ -103,23 +103,23 @@ countUniqueTokens <- function(tokenized) {
   counts <- vector("integer", length = 1000)
   word_counter <- 1
    # Collect and count unique tokens
-  for (j in 1L:length(tokenized)) 
+  for (j in 1L:length(tokenized))
   {
     curtokes <- tokenized[[j]]
-    if (length(curtokes) > 0) 
+    if (length(curtokes) > 0)
     {
-      for (k in 1L:length(curtokes)) 
+      for (k in 1L:length(curtokes))
       {
         cur.word <- curtokes[k]
-        if (nchar(cur.word) > 0 & !is.na(cur.word)) 
+        if (nchar(cur.word) > 0 & !is.na(cur.word))
         {
           ind <- which(tokens == cur.word)
-          if (length(ind) == 0) 
+          if (length(ind) == 0)
           {
             tokens[word_counter] <- cur.word
             counts[word_counter] <- 1
             word_counter <- word_counter + 1
-            if (word_counter >= length(tokens)) 
+            if (word_counter >= length(tokens))
             {
               tokens <- c(tokens, vector("character", length = 1000))
               counts <- c(counts, vector("integer", length = 1000))
@@ -131,7 +131,7 @@ countUniqueTokens <- function(tokenized) {
       }
     }
   }
-  
+
   # Trim the vectors and sort alphabetically
   tokens <- tokens[1:(word_counter - 1)]
   counts <- counts[1:(word_counter - 1)]
@@ -141,7 +141,7 @@ countUniqueTokens <- function(tokenized) {
 }
 
 #' @export
-print.tidyText <- function(x, ...) 
+print.tidyText <- function(x, ...)
 {
   dd <- data.frame("Original Text" = names(x), "Transformed Text" = as.character(x))
   my.dt <- dataTableWithRItemFormat(dd)
@@ -150,14 +150,14 @@ print.tidyText <- function(x, ...)
 
 # Phrases are represented with '+' joining the words,
 # but we don't want to print these out for the user.
-makeWordBagTextReadable = function(text) 
+makeWordBagTextReadable = function(text)
 {
   return(gsub("[+]", " ", text))
 }
 
 
 # Build the datatable and print
-dataTableWithRItemFormat <- function(dd) 
+dataTableWithRItemFormat <- function(dd)
 {
   show.row.names = TRUE
   # Specify the header style information that will be used by datatables to draw the output.
@@ -168,7 +168,7 @@ dataTableWithRItemFormat <- function(dd)
   dd$oddoreven <- 1:nrow(dd) %% 2 # Extra dummy column to help us format the table. Will be made invisible later
   col.names <- colnames(dd)
   col.names <- gsub("\\.", " ", col.names)
-  
+
   column.classes <- unlist(lapply(dd, class))
   right.align.columns <- which(column.classes %in% c("numeric", "integer", "logical"))
   left.align.columns <- which(!column.classes %in% c("numeric", "integer", "logical"))
@@ -188,7 +188,7 @@ dataTableWithRItemFormat <- function(dd)
   }
   #cat(header.names)
 
-  
+
 
   # The container parameter allows us to design the header of the table
   # using CSS
@@ -208,15 +208,15 @@ dataTableWithRItemFormat <- function(dd)
                                        list(targets = left.align.columns, className = 'dt-left'),
                                        list(targets = right.align.columns, className = 'dt-right'))
                     )
-  
-  mydt <- DT::datatable(dd, 
-                        rownames = show.row.names, 
-                        class = 'hover', # Built-in class with least amount of existing formatting. Have to choose a class 
+
+  mydt <- DT::datatable(dd,
+                        rownames = show.row.names,
+                        class = 'hover', # Built-in class with least amount of existing formatting. Have to choose a class
                         container = my.container,
                         options = my.options
                         )
 
-    mydt <- DT::formatStyle(mydt, 
+    mydt <- DT::formatStyle(mydt,
                       columns = 1:num.col,
                       valueColumns = column.to.color.by,
                       fontFamily = "Segoe UI",
@@ -238,11 +238,10 @@ dataTableWithRItemFormat <- function(dd)
                       paddingRight = "13px",
                       paddingTop = "0px",
                       verticalAlign = "middle",
-                      whiteSpace = "nowrap",
                       wordWrap = "break-word",
                       backgroundColor = DT::styleEqual(c(1,0), c('rgb(234, 243, 250)', 'rgb(207, 226, 243)'))
     )
-  
+
   # Row names in blue
   if (show.row.names) {
     mydt <- DT::formatStyle(mydt,
@@ -268,7 +267,7 @@ dataTableWithRItemFormat <- function(dd)
                             paddingTop = "2.6px",
                             textAlign = "left",
                             verticalAlign = "middle"
-    ) 
+    )
   }
 
   return(mydt)
