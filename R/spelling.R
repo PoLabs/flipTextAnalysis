@@ -65,29 +65,50 @@ FindSpellingErrors <- function(x, dictionary = ftaDictionary)
       if(sperr == 1 & substr(word, word.length, word.length) == "s") 
       {
         reducedword <- substr(word, 1, (word.length-1))
-        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0
+        if(.dictBinSearch(reducedword, dict) > -1) 
+        {
+          sperr <- 0
+        }
       }
       
       if(sperr == 1 & substr(word, word.length-1, word.length) == "es") 
       {
         reducedword <- substr(word, 1, (word.length-2))
-        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0
+        if(.dictBinSearch(reducedword, dict) > -1) 
+        {
+          sperr <- 0
+        }
       }
       
       if(sperr == 1 & substr(word, word.length-1, word.length) == "ed") 
       {
         reducedword <- substr(word, 1, (word.length-2))
-        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0  
+        if(.dictBinSearch(reducedword, dict) > -1) 
+        {
+          sperr <- 0  
+        }
       }
-      if(sperr == 1 & substr(word, word.length, word.length) == "d") {
+      if(sperr == 1 & substr(word, word.length, word.length) == "d") 
+      {
         reducedword <- substr(word, 1, (word.length-1))
-        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0
+        if(.dictBinSearch(reducedword, dict) > -1) {
+          sperr <- 0
+        }
         
       }
       if(sperr == 1 & regexpr("ise", word) > -1) {
         reducedword <- sub("ise", "ize", word)
-        if(.dictBinSearch(reducedword, dict) > -1) sperr <- 0
-        
+        if(.dictBinSearch(reducedword, dict) > -1) 
+        {
+          sperr <- 0
+        }
+      }
+      if (sperr == 1 & substr(word, word.length - 2, word.length) == "ing")
+      {
+        reducedword <- substr(word, 1, word.length-3)
+        if(.dictBinSearch(reducedword, dict) > -1) {
+          sperr <- 0
+        }
       }
     }
     return(sperr)

@@ -277,3 +277,23 @@ dataTableWithRItemFormat <- function(dd)
 
   return(mydt)
 }
+
+
+# Printing for a predictive tree based on a text analysis.
+# This will print eiher the tree itself, or will show a
+# table including the outcome variable, the original text
+# and the cleaned text
+print.textPredictiveTree <- function(x, ...)
+{
+    if (x$print.tree)
+    {
+        tree.list <- flipMultivariates:::treeFrameToList(CART.object)
+        plt = sankeytreeR::sankeytree(tree.list, value = "n", maxLabelLength = 10,
+                                          nodeHeight = 70, tooltip = c("n", "Description"))
+        print(plt)
+    } else {
+        dd = data.frame("OutcomeVariable" = HowlikelyisitthatyouwouldrecommendQtoafriendorcolleague, "Original Text" = text.analysis.setup$original.text, "Transformed Text" = text.analysis.setup$transformed.text)
+        dd = flipTextAnalysis:::dataTableWithRItemFormat(dd)
+        print(dd)
+    }
+}
