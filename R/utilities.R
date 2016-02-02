@@ -169,9 +169,14 @@ dataTableWithRItemFormat <- function(dd)
   col.names <- colnames(dd)
   col.names <- gsub("\\.", " ", col.names)
 
-  column.classes <- unlist(lapply(dd, class))
-  right.align.columns <- which(column.classes %in% c("numeric", "integer", "logical"))
-  left.align.columns <- which(!column.classes %in% c("numeric", "integer", "logical"))
+  # Inspect the classes of the columns to determine whether each is to be left or right aligned.
+  column.classes <- lapply(dd, class)
+  .isNumericClass <- function (c) {
+      return(any(c %in% c("numeric", "integer", "logical")) )
+  }
+  column.is.numeric <- unlist(lapply(column.classes, .isNumericClass))
+  right.align.columns <- unname(which(column.is.numeric))
+  left.align.columns <- unname(which(!column.is.numeric))
 
   column.to.color.by <- num.col + 1
   if (show.row.names)
