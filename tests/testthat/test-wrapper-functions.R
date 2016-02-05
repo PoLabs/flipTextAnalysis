@@ -8,6 +8,8 @@ test.replacements = matrix(reps, ncol = 2, byrow = TRUE)
 test.tm = AsTermMatrix(ftaFavoriteThings, operations = c("spelling", "replacement", "stemming"), min.frequency = 2, manual.replacements = test.replacements)
 testthat::expect_equal_to_reference(test.tm, "term-matrix-fav.rds")
 
+test.tm.from.text <- termMatrixFromText(ftaFavoriteThings)
+testthat::expect_equal_to_reference(test.tm.from.text, "term-matrix-from-text-fav.rds")
 
 # Sentiment Scores
 test.sentiment.matrix = AsSentimentMatrix(ftaFavoriteThings)

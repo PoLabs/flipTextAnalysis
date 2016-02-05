@@ -216,8 +216,10 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
     }
 
     # Remove words which are less frequent that the minimum specified
+    # Words with a count of 0 have already been replaced by another word and so
+    # should not be blanked out.
     if (min.frequency > 1) {
-      replace.tokens[which(current.counts < min.frequency)] <- ""
+      replace.tokens[which(current.counts < min.frequency & current.counts > 0 )] <- ""
     }
     transformed.tokenized <- mapTokenizedText(tokenized, before = tokens, after = replace.tokens)
     transformed.text <- sapply(transformed.tokenized, paste, collapse = " ")

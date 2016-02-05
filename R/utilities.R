@@ -7,9 +7,11 @@
 ftaTokenize <- function(text) {
   #text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
 
+  # Remove apostrophes
+  text <- lapply(text, gsub, pattern = "'", replacement = "")
   # Remove all non-aplhanumeric characters, except + which is being used to
   # denote tokens joined as phrases
-  text <- lapply(text, gsub, pattern = "[^[:alnum:][:space:]\\+]", replacement = "")
+  text <- lapply(text, gsub, pattern = "[^[:alnum:][:space:]\\+]", replacement = " ")
 
   text <- lapply(text, tolower) # Lower case
   tokenized <- sapply(text, strsplit, split = " ") # Split text by white space

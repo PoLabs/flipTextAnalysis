@@ -28,8 +28,8 @@ This function attempts to handle some negation of sentiment by looking at the
          \code{"wasnt"}, etc.
 }
 \examples{
-my.tokens = c("im", "not", "very", "happy")
-my.tags = TagSentiment(my.tokens)
+my.tokens <- c("im", "not", "very", "happy")
+my.tags <- TagSentiment(my.tokens)
 ScoreSentimentForString("im not very happy",
                          tokens = my.tokens,
                          sentiment.tags = my.tags)
