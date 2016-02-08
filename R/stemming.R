@@ -16,6 +16,10 @@
 #'
 #' @return A character vector with the same length as \code{tokens} that contains the
 #'         new mapped tokens.
+#'
+#' @examples
+#' GetStemNames(c("string", "strings", "stringing", "hello"), c(10, 2, 2, 10))
+#'
 #' @export
 GetStemNames <- function(tokens, counts) 
 {
