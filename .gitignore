@@ -10,3 +10,6 @@ dislikes.csv
 features.csv
 Wiki Code
 WikiCode
+
+# testthat artifact
+tests/testthat/Rplots.pdf
