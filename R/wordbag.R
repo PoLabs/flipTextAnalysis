@@ -17,35 +17,35 @@
 #' @export
 InitializeWordBag = function(text, operations = c("spelling", "stemming"), remove.stopwords = TRUE,
   stoplist = ftaStopList, spelling.dictionary = ftaDictionary,
-  manual.replacements = NULL, phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE, print.type = "frequencies") 
+  manual.replacements = NULL, phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE, print.type = "frequencies")
 {
 
 # Function to check that the inputs to the wordBag creation make sense
-  .checkWordBagOperations <- function(operations, remove.stopwords, stoplist, spelling.dictionary, manual.replacements) 
+  .checkWordBagOperations <- function(operations, remove.stopwords, stoplist, spelling.dictionary, manual.replacements)
   {
-    
+
     valid.operations <- c("spelling", "replacement", "stemming", "")
 
     # Check that the user has entered operations that we support
     invalid.operations <- operations[which(! operations %in% valid.operations)]
-    if (length(invalid.operations) > 0) 
+    if (length(invalid.operations) > 0)
     {
       stop(paste(invalid.operations[1], " is not a valid operation. Valid operations are: ", valid.operations, sep = ""))
     }
 
     # If the user wants to do manual replacements they should
     # specify at least one replacement to make.
-    if ("replacement" %in% operations) 
+    if ("replacement" %in% operations)
     {
-      if (is.null(manual.replacements)) 
+      if (is.null(manual.replacements))
       {
         stop("A manual replacement step has been included in the wordbag operations, but no replacements have been specified.")
       }
 
       # Check dimensions and properties of replacements matrix
-      if (class(manual.replacements) != "matrix" 
-        || class(manual.replacements[1, ]) != "character" 
-        || ncol(manual.replacements) != 2) 
+      if (class(manual.replacements) != "matrix"
+        || class(manual.replacements[1, ]) != "character"
+        || ncol(manual.replacements) != 2)
       {
         stop("Manual replacements should be specified as a two-column matrix with entries that are characters (words).")
       }
@@ -53,37 +53,37 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
       # The first column of the replacements can't have duplicates.
       # Which of the duplicates should be mapped?
       duplicates = manual.replacements[duplicated(manual.replacements[, 1]), 1]
-      if (length(duplicates) > 0) 
+      if (length(duplicates) > 0)
       {
         stop(paste("manual.replacements contains duplicates in the first column, for example: ", duplicates[1], sep = ""))
       }
     }
 
-    if (remove.stopwords) 
+    if (remove.stopwords)
     {
-      if (is.null(stoplist)) 
+      if (is.null(stoplist))
       {
         stop("Stopword removal has been used, but no list of stopwords has been provided.")
       }
-      if (class(stoplist) != "character") 
+      if (class(stoplist) != "character")
       {
         stop("'stoplist' should be a character vector.")
       }
     }
 
-    if ("spelling" %in% operations) 
+    if ("spelling" %in% operations)
     {
-      if (is.null(spelling.dictionary)) 
+      if (is.null(spelling.dictionary))
       {
         stop("A spelling correction step has been included in the opearations, but no dictionary has been provided.")
       }
-      if (class(spelling.dictionary) != "character") 
+      if (class(spelling.dictionary) != "character")
       {
         stop("'spelling.dictionary' should be a vector of characters.")
       }
     }
 
-    if (!is.null(manual.replacements) && ! "replacement" %in% operations) 
+    if (!is.null(manual.replacements) && ! "replacement" %in% operations)
     {
       stop("Replacements have been specified, but the list of operations does not contain a 'replacement' step.")
     }
@@ -93,10 +93,10 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
 
 
   # Check that the options supplied make sense
-  .checkWordBagOperations(operations = operations, 
-                         remove.stopwords = remove.stopwords, 
-                         stoplist = stoplist, 
-                         spelling.dictionary = spelling.dictionary, 
+  .checkWordBagOperations(operations = operations,
+                         remove.stopwords = remove.stopwords,
+                         stoplist = stoplist,
+                         spelling.dictionary = spelling.dictionary,
                          manual.replacements = manual.replacements)
 
 
@@ -106,13 +106,13 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
   # Convert all the text to lowercase first
   # Makes all other steps easier
   text <- tolower(text)
-  
+
 
   # Catch any phrases specified by the user now
   # so that they get treated as a unit.
   # Phrases are two or more words, where each
   # word is joined by a +. Never print the +
-  if (!is.null(phrases)) 
+  if (!is.null(phrases))
   {
     phrases <- tolower(phrases)
     text <- replacePhrasesInText(text, phrases)
@@ -135,7 +135,7 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
     # and initialize the count to zero
     extra.tokens <- as.vector(manual.replacements)
     extra.tokens <- unique(extra.tokens)
-    
+
     for (j in 1L:length(extra.tokens)) {
       if (! extra.tokens[j] %in% tokens) {
         current.length <- length(tokens)
@@ -206,7 +206,7 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
   word.bag$replace.counts <- current.counts
 
   # Transform the original text, and re-tokenize
-  if (remove.stopwords || length(operations) > 0 || min.frequency > 1 || !is.null(phrases)) 
+  if (remove.stopwords || length(operations) > 0 || min.frequency > 1 || !is.null(phrases))
   {
 
     replace.tokens <- current.tokens
@@ -250,7 +250,7 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
 }
 
 
-  
+
 
 
 # Use the package DT to generate nice-looking tables. There are two modes,
@@ -261,20 +261,20 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
 print.wordBag <- function(x, ...)
 {
 
-  if (x$print.type != "transformations") 
+  if (x$print.type != "transformations")
   {
     # Print word frequencies
     if (x$print.type != "frequencies")
     {
       warning(paste("Don't recognise the print type", x$print.type))
     }
-    
+
     tokens <- x$final.tokens
     counts <- x$final.counts
-    
+
     # Sort tokens and counts according to alphabetical
     # order or frequency
-    if (x$alphabetical.sort) 
+    if (x$alphabetical.sort)
     {
       counts <- counts[order(tokens)]
       tokens <- sort(tokens)
@@ -285,7 +285,7 @@ print.wordBag <- function(x, ...)
 
     # Remove words below the frequency threshhold
     tokens <- tokens[counts >= x$min.frequency]
-    counts <- counts[counts >= x$min.frequency] 
+    counts <- counts[counts >= x$min.frequency]
 
     dd <- data.frame("Words" = tokens, "Frequencies" = counts)
 
@@ -296,7 +296,7 @@ print.wordBag <- function(x, ...)
 
   # Build the datatable and print
 
-  my.dt <- dataTableWithRItemFormat(dd)
+  my.dt <- flipU::DataTableWithRItemFormat(dd)
   print(my.dt)
 }
 

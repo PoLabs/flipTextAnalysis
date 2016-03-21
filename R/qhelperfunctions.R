@@ -1,9 +1,10 @@
 # Functions to help interpret input strings from the R Inputs Form in Displayr
 
 # Split up a user-input string by commas
-convertCommaSeparatedStringToVector <- function(string) 
+convertCommaSeparatedStringToVector <- function(string)
 {
-  return(unlist(lapply(strsplit(string, ","), stringr::str_trim)))
+    string <- stringr::str_trim(string)
+    return(unlist(lapply(strsplit(string, ","), stringr::str_trim)))
 }
 
 # Helper function to interpret replacements specified by the user in Q
@@ -14,7 +15,7 @@ convertCommaSeparatedStringToVector <- function(string)
 # A B
 # C D
 # E F
-interpretMergeWordsString <- function(string) 
+interpretMergeWordsString <- function(string)
 {
   split.elements <- sapply(strsplit(string, "[:,]"), stringr::str_trim)[, 1]
   replacement.matrix <- matrix(split.elements, ncol = 2, byrow = TRUE)
@@ -23,11 +24,11 @@ interpretMergeWordsString <- function(string)
 
 # Generate a simple sequence of word bag operations based on whether or not
 # spelling, stemming, and replacements are specified.
-generateOperations <- function(do.spell, do.stem, replacement.matrix) 
+generateOperations <- function(do.spell, do.stem, replacement.matrix)
 {
 	counter <- 1;
 	operations <- vector("character", 1)
-	if (do.spell) 
+	if (do.spell)
 	{
 	    operations[counter] <- "spelling"
 	    counter = counter + 1
@@ -43,23 +44,27 @@ generateOperations <- function(do.spell, do.stem, replacement.matrix)
 }
 
 # Convert the set of user inputs into options for the word bag creation.
-getTextAnalysisOptions <- function(phrases, extra.stopwords.text, replacements.text, do.stem, do.spell) 
+getTextAnalysisOptions <- function(phrases, extra.stopwords.text, replacements.text, do.stem, do.spell)
 {
     replacements.text <- tolower(replacements.text)
     if (nchar(phrases) > 0 && regexpr(",", phrases) > 1)
     {
-        phrases <- convertCommaSeparatedStringToVector(phrases)   
+        phrases <- convertCommaSeparatedStringToVector(phrases)
+        if (length(phrases) == 0)
+        {
+            phrases <- NULL
+        }
     }
-     
-    if (nchar(extra.stopwords.text) > 0) 
+
+    if (nchar(extra.stopwords.text) > 0)
     {
         extra.stopwords.text <- tolower(extra.stopwords.text)
         stopwords <- c(ftaStopList, convertCommaSeparatedStringToVector(extra.stopwords.text))
     } else {
         stopwords <- ftaStopList
     }
-     
-    if (nchar(replacements.text) > 2 && regexpr(":", replacements.text) > 1) 
+
+    if (nchar(replacements.text) > 2 && regexpr(":", replacements.text) > 1)
     {
         replacement.matrix <- interpretMergeWordsString(replacements.text)
     } else {

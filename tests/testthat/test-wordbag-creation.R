@@ -1,4 +1,5 @@
 #library(flipTextAnalysis)
+library(testthat)
 context("Word bag creation")
 
 
@@ -24,3 +25,6 @@ transforms.spell.stem.manual = cbind(wb.spell.stem.manual$tokens, wb.spell.stem.
 counts.spell.stem.manual = cbind(wb.spell.stem.manual$counts, wb.spell.stem.manual$replace.counts)
 testthat::expect_equal_to_reference(transforms.spell.stem.manual, "transforms-fav-wb-spell-stem-manual.rds")
 testthat::expect_equal_to_reference(counts.spell.stem.manual, "counts-fav-wb-spell-stem-manual.rds")
+
+# Printing
+expect_that(print.wordBag(wb.spell), not(throws_error()))

@@ -1,6 +1,7 @@
 # Unit tests for all functions
 library(flipTextAnalysis)
 library(testthat)
+library(flipU)
 context("Unit Tests")
 
 # Phrase input and replacement
@@ -70,4 +71,4 @@ expect_equal_to_reference(test.options, "test-options.rds")
 expect_equal(makeWordBagTextReadable("1+1 is 2. This+is+a+phrase."), "1 1 is 2. This is a phrase.")
 
 test.table.for.formatting <- as.data.frame(cbind(tokens.counts$tokens, tokens.counts$counts, test.mapped.tokens, updated.tokens.counts))
-expect_that(dataTableWithRItemFormat(test.table.for.formatting), not(throws_error()))
+
