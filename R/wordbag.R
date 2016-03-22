@@ -299,4 +299,5 @@ print.wordBag <- function(x, ...)
   my.dt <- flipU::DataTableWithRItemFormat(dd)
   print(my.dt)
 }
-
+#
+# Goodbye
