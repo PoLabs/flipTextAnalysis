@@ -300,6 +300,9 @@ print.wordBag <- function(x, ...)
   print(my.dt)
 }
 
+<<<<<<< HEAD
 #hello
+=======
 #
 # Goodbye
+>>>>>>> origin/master
