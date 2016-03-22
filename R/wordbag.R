@@ -301,3 +301,5 @@ print.wordBag <- function(x, ...)
 }
 
 #hello
+#
+# Goodbye
