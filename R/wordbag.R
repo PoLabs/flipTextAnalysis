@@ -300,6 +300,5 @@ print.wordBag <- function(x, ...)
   print(my.dt)
 }
 
-#hello
 #
 # Goodbye
