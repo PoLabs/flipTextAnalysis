@@ -299,10 +299,3 @@ print.wordBag <- function(x, ...)
   my.dt <- flipU::DataTableWithRItemFormat(dd)
   print(my.dt)
 }
-
-<<<<<<< HEAD
-#hello
-=======
-#
-# Goodbye
->>>>>>> origin/master
