@@ -174,7 +174,7 @@ print.textPredictiveTree <- function(x, ...)
         print(plt)
     } else {
         dd = data.frame("OutcomeVariable" = HowlikelyisitthatyouwouldrecommendQtoafriendorcolleague, "Original Text" = text.analysis.setup$original.text, "Transformed Text" = text.analysis.setup$transformed.text)
-        dd = flipTextAnalysis:::dataTableWithRItemFormat(dd)
+        dd = flipU::DataTableWithRItemFormat(dd)
         print(dd)
     }
 }

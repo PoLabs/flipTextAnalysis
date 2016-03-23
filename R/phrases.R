@@ -1,14 +1,14 @@
 # Return all sequences of n tokens from each element of the tokenized text
-nGramTokenize <- function(tokenized, n) 
+nGramTokenize <- function(tokenized, n)
 {
-  .getnGrams <- function(x,n) 
+  .getnGrams <- function(x,n)
   {
     x <- x[which(x != " ")] #remove any blank tokens that have crept in
     x <- x[which(x != "")]
     if(length(x) > (n-1))
     {
       y <- vector("character",length = length(x) - n + 1)
-      for (j in 1L:length(y)) 
+      for (j in 1L:length(y))
       {
         y[j] <- paste(x[j:(j+n-1)],collapse = ' ')
       }
@@ -19,7 +19,7 @@ nGramTokenize <- function(tokenized, n)
   }
 
   ngram_tokenized <- vector("list",length=length(tokenized))
-  for (j in 1L:length(tokenized)) 
+  for (j in 1L:length(tokenized))
   {
     ngram_tokenized[[j]] <- .getnGrams(tokenized[[j]],n)
   }
@@ -33,7 +33,7 @@ nGramTokenize <- function(tokenized, n)
 #'
 #' @param text A character vector containg the text responses.
 #' @param num.words A vector of integers specifying the lengths of phrases to be
-#'                  considered. For example, \code{c(2,3)} indicates that we want to 
+#'                  considered. For example, \code{c(2,3)} indicates that we want to
 #'                  look at phrases with two or three words.
 #' @param min.frequency Don't show phrases that appear less often than this value.
 #'
@@ -42,9 +42,9 @@ nGramTokenize <- function(tokenized, n)
 #'
 #' @examples
 #' GetMostFrequentPhrases(ftaFavoriteThings)
-#'  
+#'
 #' @export
-GetMostFrequentPhrases <- function(text, num.words = c(2,3), min.frequency = 3) 
+GetMostFrequentPhrases <- function(text, num.words = c(2,3), min.frequency = 3)
 {
   tokenized <- ftaTokenize(text)
   tokens <- vector("character")
@@ -69,10 +69,10 @@ GetMostFrequentPhrases <- function(text, num.words = c(2,3), min.frequency = 3)
 }
 
 #' @export
-print.phraseList <- function(x, ...) 
+print.phraseList <- function(x, ...)
 {
   dd <- as.data.frame(x)
-  my.dt <- dataTableWithRItemFormat(dd)
+  my.dt <- flipU::DataTableWithRItemFormat(dd)
   print(my.dt)
 }
 
@@ -84,7 +84,7 @@ print.phraseList <- function(x, ...)
 # of text and adds the delimiter.
 replacePhrasesInText <- function(text, phrases)
 {
-  .convertPhrasesToTagged <- function(phrases) 
+  .convertPhrasesToTagged <- function(phrases)
   {
       split.phrases <- ftaTokenize(phrases)
       tagged.phrases <- sapply(split.phrases, paste, collapse = "+")
@@ -96,7 +96,6 @@ replacePhrasesInText <- function(text, phrases)
   {
     text <- gsub(phrases[j], tagged.phrases[j], text)
   }
-  return(text)  
+  return(text)
 }
 
-  
