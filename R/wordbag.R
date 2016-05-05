@@ -287,6 +287,8 @@ print.wordBag <- function(x, ...)
     tokens <- tokens[counts >= x$min.frequency]
     counts <- counts[counts >= x$min.frequency]
 
+    tokens <- makeWordBagTextReadable(tokens)
+
     dd <- data.frame("Words" = tokens, "Frequencies" = counts)
 
   } else {
