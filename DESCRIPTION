@@ -4,7 +4,8 @@ Title: Functions for Simple Text Analytics
 Version: 0.0.1.9000
 Date: 2015-10-13
 Authors@R: person("Chris", "Facer", email = "chris.facer@numbers.net.au", role = c("aut", "cre"))
-Description: Functions to make a bag-of-words and term-document-matrix using spelling correction and stemming.
+Description: Functions to make a bag-of-words and term-document-matrix using
+    spelling correction and stemming.
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
@@ -15,5 +16,8 @@ Imports:
     DT,
     htmltools,
     flipU
-Depends: R (>= 3.2.2)
-Suggests: testthat
+Depends:
+    R (>= 3.2.2)
+Suggests:
+    testthat
+RoxygenNote: 5.0.1

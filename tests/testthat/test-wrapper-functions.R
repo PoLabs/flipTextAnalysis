@@ -11,6 +11,9 @@ testthat::expect_equal_to_reference(test.tm, "term-matrix-fav.rds")
 test.tm.from.text <- termMatrixFromText(ftaFavoriteThings)
 testthat::expect_equal_to_reference(test.tm.from.text, "term-matrix-from-text-fav.rds")
 
+test.tm.phrases <- AsTermMatrix(InitializeWordBag(ftaFavoriteThings, phrases = "favorite things"))
+testthat::expect_equal_to_reference(test.tm.phrases, "term-matrix-with-phrases-fav.rds")
+
 # Sentiment Scores
 test.sentiment.matrix = AsSentimentMatrix(ftaFavoriteThings)
 testthat::expect_equal_to_reference(test.sentiment.matrix, "sent-matrix-fav.rds")
