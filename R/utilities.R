@@ -4,7 +4,8 @@
 # or a plus-sign (which is used internally to denote joined words / phases).
 # Convert to lower case.
 # Split by whitespace.
-ftaTokenize <- function(text) {
+ftaTokenize <- function(text)
+{
   #text = lapply(text, gsub, pattern = "[^[:print:]]", replacement = "")
 
   # Remove apostrophes
@@ -14,13 +15,22 @@ ftaTokenize <- function(text) {
   text <- lapply(text, gsub, pattern = "[^[:alnum:][:space:]\\+]", replacement = " ")
 
   text <- lapply(text, tolower) # Lower case
-  tokenized <- sapply(text, strsplit, split = " ") # Split text by white space
+  tokenized <- sapply(text, strsplit, split = "[[:space:]]") # Split text by white space
+  tokenized <- lapply(tokenized, removeBlankTokens)
   return(tokenized)
 }
 
+# Given a vector of strings, return those which are not empty
+removeBlankTokens <- function(tokens)
+{
+    return(tokens[which(nchar(tokens) > 0)])
+}
+
 # Find token in source.tokens and return corresponding token in target
-mapToken <- function(token, source.tokens, target.tokens) {
-  if (length(source.tokens) != length(target.tokens)) {
+mapToken <- function(token, source.tokens, target.tokens)
+{
+  if (length(source.tokens) != length(target.tokens))
+{
     stop("mapToken: expected source.tokens and target.tokens to be the same length.")
   }
   if (length(unique(source.tokens)) != length(source.tokens)) {

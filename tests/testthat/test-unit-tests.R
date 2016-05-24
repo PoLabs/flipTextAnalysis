@@ -33,6 +33,11 @@ mapped.tokenized <- mapTokenizedText(tokenized, tokens, test.mapped.tokens)
 test.token.list = list(tokenized, trigram.tokenized, tokens.counts, updated.tokens.counts, mapped.tokenized)
 expect_equal_to_reference(test.token.list, "tokenization-test.rds")
 
+# Handle newlines in tokenization
+test.newline.string <- "The look and layout.\r\nThat it uses an SPSS data file.\r\nThat statistics a easily accessible.\r\nQ reader"
+expect_equal(ftaTokenize(test.newline.string), list(c("the", "look", "and", "layout", "that", "it", "uses",
+                                                      "an", "spss", "data", "file", "that", "statistics", "a", "easily",
+                                                      "accessible", "q", "reader")))
 
 # Stopwords
 test.stop.words <- findStopWords(tokens)
