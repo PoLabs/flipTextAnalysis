@@ -152,11 +152,12 @@ countUniqueTokens <- function(tokenized) {
   return(list(tokens = tokens, counts = counts))
 }
 
+#' @importFrom flipFormat DataTableWithRItemFormat
 #' @export
 print.tidyText <- function(x, ...)
 {
   dd <- data.frame("Original Text" = names(x), "Transformed Text" = as.character(x))
-  my.dt <- dataTableWithRItemFormat(dd)
+  my.dt <- DataTableWithRItemFormat(dd)
   print(my.dt)
 }
 
@@ -174,6 +175,7 @@ makeWordBagTextReadable = function(text)
 # This will print eiher the tree itself, or will show a
 # table including the outcome variable, the original text
 # and the cleaned text
+#' @importFrom flipFormat DataTableWithRItemFormat
 print.textPredictiveTree <- function(x, ...)
 {
     if (x$print.tree)
@@ -184,7 +186,7 @@ print.textPredictiveTree <- function(x, ...)
         print(plt)
     } else {
         dd = data.frame("OutcomeVariable" = HowlikelyisitthatyouwouldrecommendQtoafriendorcolleague, "Original Text" = text.analysis.setup$original.text, "Transformed Text" = text.analysis.setup$transformed.text)
-        dd = flipU::DataTableWithRItemFormat(dd)
+        dd = DataTableWithRItemFormat(dd)
         print(dd)
     }
 }

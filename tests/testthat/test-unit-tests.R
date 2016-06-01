@@ -77,3 +77,4 @@ expect_equal(makeWordBagTextReadable("1+1 is 2. This+is+a+phrase."), "1 1 is 2. 
 
 test.table.for.formatting <- as.data.frame(cbind(tokens.counts$tokens, tokens.counts$counts, test.mapped.tokens, updated.tokens.counts))
 
+

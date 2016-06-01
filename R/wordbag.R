@@ -257,6 +257,7 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
 # which are specified in the word bag creation. "frequencies" creates a table
 # of the words and their frequencies. "transformations" creates a table
 # showing the before and after text.
+#' @importFrom flipFormat DataTableWithRItemFormat
 #' @export
 print.wordBag <- function(x, ...)
 {
@@ -298,6 +299,6 @@ print.wordBag <- function(x, ...)
 
   # Build the datatable and print
 
-  my.dt <- flipU::DataTableWithRItemFormat(dd)
+  my.dt <- DataTableWithRItemFormat(dd)
   print(my.dt)
 }

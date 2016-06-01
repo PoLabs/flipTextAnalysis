@@ -13,9 +13,7 @@ Imports:
     SnowballC,
     cba,
     tm,
-    DT,
-    htmltools,
-    flipU
+    flipFormat
 Depends:
     R (>= 3.2.2)
 Suggests:

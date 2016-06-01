@@ -68,11 +68,12 @@ GetMostFrequentPhrases <- function(text, num.words = c(2,3), min.frequency = 3)
   return(phrases)
 }
 
+#' @importFrom flipFormat DataTableWithRItemFormat
 #' @export
 print.phraseList <- function(x, ...)
 {
   dd <- as.data.frame(x)
-  my.dt <- flipU::DataTableWithRItemFormat(dd)
+  my.dt <- DataTableWithRItemFormat(dd)
   print(my.dt)
 }
 
