@@ -299,6 +299,6 @@ print.wordBag <- function(x, ...)
 
   # Build the datatable and print
 
-  my.dt <- DataTableWithRItemFormat(dd)
+  my.dt <- DataTableWithRItemFormat(dd, allow.length.change = FALSE)
   print(my.dt)
 }
