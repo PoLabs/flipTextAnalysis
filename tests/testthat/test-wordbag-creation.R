@@ -7,6 +7,7 @@ test_that("Creating word bags with different operations", {
     counts.spell = cbind(wb.spell$counts, wb.spell$replace.counts)
     expect_equal_to_reference(transforms.spell, "transforms-fav-wb-spell.rds")
     expect_equal_to_reference(counts.spell, "counts-fav-wb-spell.rds")
+    expect_true(min(wb.spell$final.counts) >= wb.spell$min.frequency)
 
     # Do both spelling and stemming
     wb.spell.stem = InitializeWordBag(ftaFavoriteThings)
@@ -14,6 +15,7 @@ test_that("Creating word bags with different operations", {
     counts.spell.stem = cbind(wb.spell.stem$counts, wb.spell.stem$replace.counts)
     expect_equal_to_reference(transforms.spell.stem, "transforms-fav-wb-spell-stem.rds")
     expect_equal_to_reference(counts.spell.stem, "counts-fav-wb-spell-stem.rds")
+    expect_true(min(wb.spell.stem$final.counts) >= wb.spell.stem$min.frequency)
 
     # Add some manual replacements
     reps = c("sprang", "spring", "kattens", "kittens", "mattens", "mittens")
@@ -23,6 +25,11 @@ test_that("Creating word bags with different operations", {
     counts.spell.stem.manual = cbind(wb.spell.stem.manual$counts, wb.spell.stem.manual$replace.counts)
     expect_equal_to_reference(transforms.spell.stem.manual, "transforms-fav-wb-spell-stem-manual.rds")
     expect_equal_to_reference(counts.spell.stem.manual, "counts-fav-wb-spell-stem-manual.rds")
+    expect_true(min(wb.spell.stem.manual$final.counts) >= wb.spell.stem.manual$min.frequency)
+
+    # Spelling, higher min frequency
+    wb.spell.min = InitializeWordBag(ftaFavoriteThings, operations = c("spelling"), min.frequency = 3)
+    expect_true(min(wb.spell.min$final.counts) >= wb.spell.min$min.frequency)
 
     # Printing
     expect_error(print.wordBag(wb.spell), NA)

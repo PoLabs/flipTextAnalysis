@@ -63,6 +63,7 @@ mapTokenizedText <- function(tokenized, before, after)
   new_tokenized <- vector("list", length = length(tokenized))
   for (j in 1L:length(tokenized))
   {
+
     cur_tokes <- tokenized[[j]]
     cur_tokes <- cur_tokes[cur_tokes != ""] #Exclude blank/empty strings and NA entries
     cur_tokes <- cur_tokes[cur_tokes != " "]
@@ -74,6 +75,7 @@ mapTokenizedText <- function(tokenized, before, after)
     }
     new_cur_tokes <- new_cur_tokes[new_cur_tokes != ""]
     new_tokenized[[j]] <- new_cur_tokes
+
   }
   return(new_tokenized)
 }

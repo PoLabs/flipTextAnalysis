@@ -204,6 +204,7 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
   # Store the tokens that are replacing the original tokens
   word.bag$replace.tokens <- current.tokens
   word.bag$replace.counts <- current.counts
+  #print(cbind(current.tokens, current.counts))
 
   # Transform the original text, and re-tokenize
   if (remove.stopwords || length(operations) > 0 || min.frequency > 1 || !is.null(phrases))
@@ -212,16 +213,36 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
     replace.tokens <- current.tokens
     if (remove.stopwords) {
       # transformed.tokenized = lapply(tokenized, setdiff, y = tokens[word.bag$stopwords == 1])
-      replace.tokens[which(word.bag$stopwords == 1)] <- ""
+        word.bag$stopwords <- findStopWords(current.tokens, stoplist)
+        replace.tokens[which(word.bag$stopwords == 1)] <- ""
     }
 
-    # Remove words which are less frequent that the minimum specified
-    # Words with a count of 0 have already been replaced by another word and so
-    # should not be blanked out.
-    if (min.frequency > 1) {
-      replace.tokens[which(current.counts < min.frequency & current.counts > 0 )] <- ""
+    # Remove words which are less frequent that the minimum specified threshold
+
+    # When deciding which tokens are below the frequency threshold we should
+    # check the count of the tokens that they are mapped to rather than
+    # the current count of the token.
+    .get.mapped.count <- function(token, tokens, current.tokens, current.counts)
+    {
+        original.token.index <- match(token, tokens)
+        mapped.token <- current.tokens[original.token.index]
+        mapped.index <- match(mapped.token, tokens)
+        current.counts[mapped.index]
     }
+
+    temp.counts <- current.counts
+    temp.counts[temp.counts == 0] <- sapply(current.tokens[temp.counts == 0],
+                                            .get.mapped.count,
+                                            tokens = tokens,
+                                            current.tokens = current.tokens,
+                                            current.counts = current.counts)
+
+    if (min.frequency > 1) {
+      replace.tokens[which(temp.counts < min.frequency)] <- ""
+    }
+
     transformed.tokenized <- mapTokenizedText(tokenized, before = tokens, after = replace.tokens)
+
     transformed.text <- sapply(transformed.tokenized, paste, collapse = " ")
 
     # Do a final phrase replacement and get final tokens
