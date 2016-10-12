@@ -231,7 +231,9 @@ InitializeWordBag = function(text, operations = c("spelling", "stemming"), remov
     }
 
     temp.counts <- current.counts
-    temp.counts[temp.counts == 0] <- sapply(current.tokens[temp.counts == 0],
+    #print(data.frame(tokens, current.tokens, current.counts)[400:500,])
+    #print(current.tokens[temp.counts == 0])
+    temp.counts[tokens != current.tokens] <- sapply(current.tokens[tokens != current.tokens],
                                             .get.mapped.count,
                                             tokens = tokens,
                                             current.tokens = current.tokens,

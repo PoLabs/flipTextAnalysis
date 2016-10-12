@@ -65,6 +65,16 @@ mapTokenizedText <- function(tokenized, before, after)
   {
 
     cur_tokes <- tokenized[[j]]
+
+#     do.print = FALSE
+#     if (any(cur_tokes == "clinton"))
+#     {
+#         do.print = TRUE
+#         print(after[match("hillary", before)])
+#         print(cur_tokes)
+#         cat("\n")
+#     }
+
     cur_tokes <- cur_tokes[cur_tokes != ""] #Exclude blank/empty strings and NA entries
     cur_tokes <- cur_tokes[cur_tokes != " "]
     cur_tokes <- cur_tokes[!is.na(cur_tokes)]
@@ -74,6 +84,11 @@ mapTokenizedText <- function(tokenized, before, after)
       new_cur_tokes[k] <- after[which(before == cur_tokes[k])]
     }
     new_cur_tokes <- new_cur_tokes[new_cur_tokes != ""]
+#     if (do.print)
+#     {
+#         print(new_cur_tokes)
+#         cat("\n")
+#     }
     new_tokenized[[j]] <- new_cur_tokes
 
   }
