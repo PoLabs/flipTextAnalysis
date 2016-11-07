@@ -1,6 +1,6 @@
 # Wrapper function for package tm's Term Matrix Construction
 # Returns a matrix with documents in rows, and terms in columns.
-termMatrixFromText = function(text, min.frequency = 5) {
+termMatrixFromText = function(text, min.frequency = 5, sparse = FALSE) {
   source = tm::VectorSource(text)
   corpus = tm::VCorpus(source)
   my.tdm = tm::DocumentTermMatrix(corpus)
@@ -10,7 +10,9 @@ termMatrixFromText = function(text, min.frequency = 5) {
   my.dictionary = tm::findFreqTerms(my.tdm, lowfreq = min.frequency)
   my.tdm = tm::DocumentTermMatrix(corpus, list(dictionary = my.dictionary))
   my.tdm = tm::weightBin(my.tdm)
-  return(invisible(as.matrix(my.tdm)))
+  if (!sparse)
+      my.tdm <- as.matrix(my.tdm)
+  return(invisible(my.tdm))
 }
 
 
@@ -21,6 +23,7 @@ termMatrixFromText = function(text, min.frequency = 5) {
 #' @param x Either a character vector or a WordBag object, created for example by the function InitializeWordBag.
 #'          If \code{x} is a character vector then additional parameters can be supplied for processing the
 #'          text before scoring sentiment. For a description of the options see \code{\link{InitializeWordBag}}.
+#' @param sparse Whether to return the term matrix as a sparse matrix.
 #' @inheritParams InitializeWordBag
 #'
 #' @return  A \code{matrix} with one row for each text response (referred to as a \code{document}) and once column for
@@ -32,16 +35,16 @@ termMatrixFromText = function(text, min.frequency = 5) {
 #' @export
 AsTermMatrix = function(x, min.frequency = 5, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
-  manual.replacements = NULL)
+  manual.replacements = NULL, sparse = FALSE)
 {
   if (class(x) == "wordBag") {
-    tdm <- termMatrixFromText(x$transformed.text, min.frequency = min.frequency)
+    tdm <- termMatrixFromText(x$transformed.text, min.frequency = min.frequency, sparse = sparse)
   } else if (class(x) == "character") {
     word.bag <- InitializeWordBag(x, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations,
                                 spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
-    tdm <- termMatrixFromText(word.bag$transformed.text, min.frequency = min.frequency)
+    tdm <- termMatrixFromText(word.bag$transformed.text, min.frequency = min.frequency, sparse = sparse)
   } else if (class(x) == "tidyText") {
-    tdm <- termMatrixFromText(x, min.frequency = min.frequency)
+    tdm <- termMatrixFromText(x, min.frequency = min.frequency, sparse = sparse)
   }
   colnames(tdm) <- gsub("\\+", ".", colnames(tdm))
   return(tdm)

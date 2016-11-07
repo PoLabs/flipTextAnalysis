@@ -6,7 +6,8 @@
 \usage{
 AsTermMatrix(x, min.frequency = 5, remove.stopwords = TRUE,
   stoplist = ftaStopList, operations = c("spelling", "stemming"),
-  spelling.dictionary = ftaDictionary, manual.replacements = NULL)
+  spelling.dictionary = ftaDictionary, manual.replacements = NULL,
+  sparse = FALSE)
 }
 \arguments{
 \item{x}{Either a character vector or a WordBag object, created for example by the function InitializeWordBag.
@@ -25,6 +26,8 @@ text before scoring sentiment. For a description of the options see \code{\link{
 \item{spelling.dictionary}{A character vector containing the dictionary to use to check each word for mis-spellings. The default value is this package's built-in english dictionary, ftaDictionary.}
 
 \item{manual.replacements}{A matrix of characters with two columms. The first column specifies the words to replace, and the second column specifies the corresponding replacements.}
+
+\item{sparse}{Whether to return the term matrix as a sparse matrix.}
 }
 \value{
 A \code{matrix} with one row for each text response (referred to as a \code{document}) and once column for
