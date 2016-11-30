@@ -23,7 +23,7 @@ A character vector with the same length as \code{tokens} which has entries
 Identify words as positive, negative, or neutral.
 }
 \details{
-This function does not handle negation, but only looks for each token with 
+This function does not handle negation, but only looks for each token with
 the two dictionaries. Negation can be handled later by looking at the context of each
 token in the original text, as done by \code{\link{ScoreSentimentForString}}.
 }

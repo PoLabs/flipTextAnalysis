@@ -21,7 +21,7 @@
 #' GetStemNames(c("string", "strings", "stringing", "hello"), c(10, 2, 2, 10))
 #'
 #' @export
-GetStemNames <- function(tokens, counts) 
+GetStemNames <- function(tokens, counts)
 {
 
 
@@ -37,17 +37,17 @@ GetStemNames <- function(tokens, counts)
   }
 
   # Get stems for the input tokens using the Snowball stemmer
-  .getStems <- function(x) 
+  .getStems <- function(x)
   {
     stems = vector("character", length = length(x))
-    for (j in 1L:length(x)) 
+    for (j in 1L:length(x))
     {
       stems[j] = SnowballC::wordStem(x[j])
     }
     return(stems)
   }
-  
-  if (length(counts) != length(tokens)) 
+
+  if (length(counts) != length(tokens))
   {
     stop("Expected tokens and counts to be the same length")
   }
@@ -58,23 +58,23 @@ GetStemNames <- function(tokens, counts)
 
   # For each unique stem, collect all of the tokens which map to that stem
   stem.sets <- vector("list", length = length(unique.stems))
-  for (j in 1L:length(stem.sets)) 
+  for (j in 1L:length(stem.sets))
   {
     stem.sets[[j]] = tokens[which(cur.stems == unique.stems[j])]
   }
-  
+
   # For each unique stem, determine which of the tokens it matches is most
   # frequent. If multiple words are equal first in frequency, pick the
   # first one in the list.
   stem.identifiers <- vector("character", length = length(unique.stems))
-  for (j in 1L:length(unique.stems)) 
+  for (j in 1L:length(unique.stems))
   {
     max.words <- .getMostFrequentWords(stem.sets[[j]], tokens, counts)
     stem.identifiers[j] <- max.words[1]
   }
 
   stem.names <- vector("character",length = length(tokens))
-  for (j in 1L:length(tokens)) 
+  for (j in 1L:length(tokens))
   {
     stem.names[j] <- stem.identifiers[which(unique.stems == cur.stems[j])]
   }

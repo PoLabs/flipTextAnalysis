@@ -46,6 +46,28 @@ generateOperations <- function(do.spell, do.stem, replacement.matrix)
 # Convert the set of user inputs into options for the word bag creation.
 getTextAnalysisOptions <- function(phrases, extra.stopwords.text, replacements.text, do.stem, do.spell)
 {
+    GetTextAnalysisOptions(phrases, extra.stopwords.text, replacements.text, do.stem, do.spell)
+}
+
+#' \code{GetTextAnalysisOptions}
+#' @description This function takes a set of options specified by the user, combines them with the
+#' standard options for text-cleaning, and generates a simple sequence of operations for the creation
+#' of a word bag. Word bag creation can take an arbitrary sequence, and this function interprets
+#' the user's inputs and converts it into a sensible, simple sequence.
+#' @param phrases A string which contains pairs of words, separated by commas, to be treated as phrases
+#' rather than as separate words. For example: "hello world, very happy" would instruct the options
+#' to treat appearances of "hello world" and "very happy" as single units, rather than as the individual
+#' words "hello", "world", "very", and "happy".
+#' @param extra.stopwords.text A string containing additional words to be removed from the analysis. The
+#' words should be separated by commas.
+#' @param replacements.text A string containing instructions on how to replace particular words. The
+#' string should be in the form \code{"<word to replace 1>:<replacement word 1>, <word to replace 2>:<replacement word 2>"}.
+#' So to replace "good" with "great", and "like" with "love", the string should be \code{"good:great,like:love"}.
+#' @param do.stem A boolean value indicating whether words should be stemmed.
+#' @param do.spell A boolean value indicating whether words should be spell-checked and corrected.
+#' @export
+GetTextAnalysisOptions <- function(phrases = "", extra.stopwords.text = "", replacements.text = "", do.stem = FALSE, do.spell = FALSE)
+{
     replacements.text <- tolower(replacements.text)
     if (nchar(phrases) > 0 && regexpr(",", phrases) > 1)
     {
@@ -75,5 +97,5 @@ getTextAnalysisOptions <- function(phrases, extra.stopwords.text, replacements.t
                 stopwords = stopwords,
                 replacement.matrix = replacement.matrix,
                 operations = operations
-          ))
+    ))
 }

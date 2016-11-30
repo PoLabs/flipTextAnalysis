@@ -24,13 +24,13 @@ Generate scores of positive and negative sentiment for a string.
 }
 \details{
 This function attempts to handle some negation of sentiment by looking at the
-         words preceding a sentiment word and check for things like \code{"not"}, 
+         words preceding a sentiment word and check for things like \code{"not"},
          \code{"wasnt"}, etc.
 }
 \examples{
 my.tokens <- c("im", "not", "very", "happy")
 my.tags <- TagSentiment(my.tokens)
-ScoreSentimentForString("im not very happy", 
+ScoreSentimentForString("im not very happy",
                          tokens = my.tokens,
                          sentiment.tags = my.tags)
 

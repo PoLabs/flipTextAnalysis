@@ -26,7 +26,7 @@ removeBlankTokens <- function(tokens)
     return(tokens[which(nchar(tokens) > 0)])
 }
 
-# Find token in source.tokens and return corresponding token in target
+# Find token in source.tokens and return corresponding token in target.tokens
 mapToken <- function(token, source.tokens, target.tokens)
 {
   if (length(source.tokens) != length(target.tokens))
@@ -38,7 +38,7 @@ mapToken <- function(token, source.tokens, target.tokens)
   }
   index <- match(token, source.tokens)
   if (is.na(index)) {
-    warning(paste("mapToken: token '", token, "' not found in source.tokens", sep = ""))
+    #warning(paste("mapToken: token '", token, "' not found in source.tokens", sep = ""))
     return(token)
   }
   return(target.tokens[index])
@@ -61,36 +61,33 @@ findStopWords <- function(x, stoplist = ftaStopList) {
 mapTokenizedText <- function(tokenized, before, after)
 {
   new_tokenized <- vector("list", length = length(tokenized))
+  
+  # Loop over the tokenized versions of the text documents
   for (j in 1L:length(tokenized))
   {
 
+    # Get all of the non-blank elements of the current tokenized text.
     cur_tokes <- tokenized[[j]]
-
-#     do.print = FALSE
-#     if (any(cur_tokes == "clinton"))
-#     {
-#         do.print = TRUE
-#         print(after[match("hillary", before)])
-#         print(cur_tokes)
-#         cat("\n")
-#     }
-
     cur_tokes <- cur_tokes[cur_tokes != ""] #Exclude blank/empty strings and NA entries
     cur_tokes <- cur_tokes[cur_tokes != " "]
     cur_tokes <- cur_tokes[!is.na(cur_tokes)]
+    
+    # For each token in the current tokenized text, look up it's position in "before"
+    # and replace it with the corresponding word in "after". If the word does not
+    # exist in "before" then leave the word unchanged.
     new_cur_tokes <- vector('character', length = length(cur_tokes))
     for (k in seq(cur_tokes))
     {
-      new_cur_tokes[k] <- after[which(before == cur_tokes[k])]
+      token.match.index <- which(before == cur_tokes[k])
+      if (length(token.match.index) > 0)
+      {
+        new_cur_tokes[k] <- after[token.match.index]
+      } else {
+        new_cur_tokes[k] = cur_tokes[k]
+      }
     }
     new_cur_tokes <- new_cur_tokes[new_cur_tokes != ""]
-#     if (do.print)
-#     {
-#         print(new_cur_tokes)
-#         cat("\n")
-#     }
     new_tokenized[[j]] <- new_cur_tokes
-
   }
   return(new_tokenized)
 }

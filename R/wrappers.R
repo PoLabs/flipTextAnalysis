@@ -81,8 +81,8 @@ AsSentimentMatrix <- function(x, remove.stopwords = TRUE, stoplist = ftaStopList
 
   .sentimentScoresFromWordBag <- function(word.bag, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords)
   {
-      tagged.text <- TagSentiment(word.bag$tokens, pos.words, neg.words)
-      sentiment.scores <- lapply(word.bag$transformed.text, ScoreSentimentForString, tokens = word.bag$tokens, sentiment.tags = tagged.text)
+      tagged.text <- TagSentiment(word.bag$final.tokens, pos.words, neg.words)
+      sentiment.scores <- lapply(word.bag$transformed.text, ScoreSentimentForString, tokens = word.bag$final.tokens, sentiment.tags = tagged.text)
       sentiment.matrix <- matrix(unlist(sentiment.scores), nrow = length(sentiment.scores), byrow = TRUE)
       sentiment.matrix <- cbind(sentiment.matrix, sentiment.matrix[, 1] - sentiment.matrix[, 2])
       colnames(sentiment.matrix) <- c("Positive words", "Negative words", "Sentiment score")
@@ -100,6 +100,45 @@ AsSentimentMatrix <- function(x, remove.stopwords = TRUE, stoplist = ftaStopList
     stop(paste("AsSentimentMatrix: Cannot create sentiment matrix from objects of class ", class(x), ". Input must be a wordBag or character vector.", sep = ""))
   }
   sentiment.matrix <- .sentimentScoresFromWordBag(word.bag, pos.words = pos.words, neg.words = neg.words)
+}
+
+
+#' \code{SaveNetSentimentScores}
+#' @description Return the difference between the number of positive and negative words for
+#'              a character vector or wordBag object.
+#' @param input Either a character vector or object of class \code{wordBag}.
+#' @details If the input is a character vector then the text will be tokenized to compute the
+#'          sentiment, but no additional cleaning is done on the text. If the input is a \code{wordBag}
+#'          then the sentiment will be computed based on the transformed text (i.e. using the
+#'          results of the cleaning that has been done by the wordBag).
+#' @return A vector of integers showing the number of positive words minus the number of negative
+#'         words for each text entry.
+#' @export
+SaveNetSentimentScores <- function(input)
+{
+    if (class(input) == 'wordBag')
+    {
+        sentiment.matrix <- AsSentimentMatrix(input)
+    } else if (class(input) == 'character') {
+        sentiment.matrix <- AsSentimentMatrix(input,
+                                             remove.stopwords = FALSE,
+                                             operations = '')
+    } else {
+        stop('The input should be created by selecting Insert > Advanced > Text Analysis > Setup.')
+    }
+    sentiment.scores = sentiment.matrix[,3]
+}
+
+
+#' \code{SaveTidiedText}
+#' @description Return the tidied text from a wordBag. This text is the result of the processing
+#' done by the wordBag.
+#' @param word.bag An object of class \code{wordBag} (created by \code{\link{InitializeWordBag}}.
+#' @return A character vector containing the tidied text.
+#' @export
+SaveTidiedText <- function(word.bag)
+{
+    tidied.text <- makeWordBagTextReadable(word.bag$transformed.text)
 }
 
 
