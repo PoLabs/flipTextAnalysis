@@ -39,7 +39,7 @@ test_that("Calculate NET Sentiment Scores", {
     test.wb <- InitializeWordBag(ftaFavoriteThings, operations = c("spelling"), subset = my.test.subset)
     expect_equal(unname(SaveNetSentimentScores(test.wb)), c(0, 2, 0, 1, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, -1, 1, -1, 0, 2,
                               0, 1, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, -1, 1, -1, 0, 2, 0, 1, 0,
-                              0, -1, 1, 0, 0, 0, 1, 0, 0, -1, 1, -1))
+                              0, -1, 1, 0, 0, 0, 1, 0, -1, -1, 1, -1))
     expect_equal(unname(SaveNetSentimentScores(ftaFavoriteThings)), c(0, 2, 0, 1, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, -1, 1, -1, 0, 2,
                                                              0, 1, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, -1, 1, -1, 0, 2, 0, 1, 0,
                                                              0, -1, 1, 0, 0, 0, 1, 0, -1, -1, 1, -1))
@@ -50,22 +50,24 @@ test_that("Save Tidied Text", {
     test.wb <- InitializeWordBag(ftaFavoriteThings, operations = c("spelling"), subset = my.test.subset)
     test.tidy.text = SaveTidiedText(test.wb)
     expect_equal(test.tidy.text, c("raindrops roses whiskers kittens", "bright copper kettles warm woolen mittens",
-                                   "brown paper packages tied strings", "few favorite", "cream colored ponies crisp apple streudels",
-                                   "doorbells sleigh bells schnitzel noodles", "wild geese fly moon wings",
-                                   "few favorite", "girls white dresses blue satin sashes", "snowflakes stay nose eyelashes",
-                                   "silver white winters melt springs", "few favorite", "dog bites",
-                                   "bee stings", "feeling sad", "simply remember favorite", "dont feel bad",
-                                   "raindrops roses whiskers kittens", "bright copper kettles warm woolen mittens",
-                                   "brown paper packages tied strings", "few favorite", "cream colored ponies crisp apple streudels",
-                                   "doorbells sleigh bells schnitzel noodles", "wild geese fly moon wings",
-                                   "few favorite", "girls white dresses blue satin sashes", "snowflakes stay nose eyelashes",
-                                   "silver white winters melt springs", "few favorite", "dog bites",
-                                   "bee stings", "feeling sad", "simply remember favorite", "dont feel bad",
-                                   "raindraps noses whiskers kattens", "bright cawpper kattles warm wolen mattens",
-                                   "brun paper packages tied string", "few favourite", "creem coloured ponees krisp apple streudels",
+                                   "brown paper packages tied up with strings", "few favorite",
+                                   "cream colored ponies crisp apple streudels", "doorbells and sleigh bells and schnitzel with noodles",
+                                   "wild geese fly moon wings", "few favorite", "girls in white dresses with blue satin sashes",
+                                   "snowflakes stay nose eyelashes", "silver white winters melt springs",
+                                   "these are a few of my favorite things", "dog bites", "bee stings",
+                                   "when i'm feeling sad", "simply remember favorite", "dont feel bad",
+                                   "raindrops on roses and whiskers on kittens", "bright copper kettles warm woolen mittens",
+                                   "brown paper packages tied strings", "these are a few of my favorite things",
+                                   "cream colored ponies crisp apple streudels", "doorbells sleigh bells schnitzel noodles",
+                                   "wild geese that fly with the moon on their wings", "few favorite",
+                                   "girls white dresses blue satin sashes", "snowflakes that stay on my nose and eyelashes",
+                                   "silver white winters melt springs", "few favorite", "when the dog bites",
+                                   "bee stings", "feeling sad", "i simply remember my favorite things",
+                                   "dont feel bad", "raindraps noses whiskers kattens", "bright cawpper kattles and warm wolen mattens",
+                                   "brun paper packages tied string", "few favourite", "creem coloured ponees and krisp apple streudels",
                                    "doorbells sleigh bells schnitzel noodles", "wild geese fly moon wing",
-                                   "few favorite", "girl white dress blue satin sash", "snowflakes stay nose eyelash",
-                                   "silver whit winters melt sprang", "few favorite", "dawg bights",
-                                   "bee sting", "feeling sad", "simply remember favorite", "dont feel bad"
-    ))
+                                   "these are a few of my favorite things", "girl white dress blue satin sash",
+                                   "snowflakes stay nose eyelash", "silver whit winters that melt into sprang",
+                                   "few favorite", "dawg bights", "when the bee sting", "feeling sad",
+                                   "simply remember favorite", "and then i don't feel so bad"))
 })

@@ -138,14 +138,14 @@ InitializeWordBag = function(text,
     word.bag$subset <- subset
 
     # Work out a description of the subset (filter)
-    # where possible.
+    # where possible and if not already present from Q
     subset.description <- attr(subset, "name")
     if (is.null(subset.description) && !is.null(subset))
     {
         attr(subset, "name") <- deparse(substitute(subset))
     }
 
-    # Work out a description of the sample being used in the sna
+    # Count responses in susbet
     if (is.null(subset) || length(subset) == 1)
     {
         n.subset <- length(text)
@@ -154,8 +154,7 @@ InitializeWordBag = function(text,
         n.subset <- length(which(subset))
     }
 
-    # Work out how much of the sample is blank
-
+    # Work out how much of the subset sample is blank
     blanks <- sapply(text[subset], FUN = .isBlank)
     n.non.blank <- length(which(!blanks))
 
@@ -347,6 +346,13 @@ InitializeWordBag = function(text,
 
         word.bag$transformed.tokenized <- transformed.tokenized
         word.bag$transformed.text <- transformed.text
+
+        # Reset text and tokenized text for the responses which are not included in the
+        # subset. Store information about all tokens
+        if (n.subset < length(text)) {
+            word.bag$transformed.text[!subset] <- text[!subset]
+            word.bag$transformed.tokenized[!subset] <- tokenized[!subset]
+        }
 
     } else {
         word.bag$transformed.tokenized <- tokenized

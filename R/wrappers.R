@@ -81,8 +81,10 @@ AsSentimentMatrix <- function(x, remove.stopwords = TRUE, stoplist = ftaStopList
 
   .sentimentScoresFromWordBag <- function(word.bag, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords)
   {
-      tagged.text <- TagSentiment(word.bag$final.tokens, pos.words, neg.words)
-      sentiment.scores <- lapply(word.bag$transformed.text, ScoreSentimentForString, tokens = word.bag$final.tokens, sentiment.tags = tagged.text)
+      input.tokens <- countUniqueTokens(word.bag$transformed.tokenized)$tokens
+
+      tagged.text <- TagSentiment(input.tokens, pos.words, neg.words)
+      sentiment.scores <- lapply(word.bag$transformed.text, ScoreSentimentForString, tokens = input.tokens, sentiment.tags = tagged.text)
       sentiment.matrix <- matrix(unlist(sentiment.scores), nrow = length(sentiment.scores), byrow = TRUE)
       sentiment.matrix <- cbind(sentiment.matrix, sentiment.matrix[, 1] - sentiment.matrix[, 2])
       colnames(sentiment.matrix) <- c("Positive words", "Negative words", "Sentiment score")
