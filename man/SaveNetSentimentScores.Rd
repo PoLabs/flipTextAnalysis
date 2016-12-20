@@ -4,10 +4,26 @@
 \alias{SaveNetSentimentScores}
 \title{\code{SaveNetSentimentScores}}
 \usage{
-SaveNetSentimentScores(input)
+SaveNetSentimentScores(input, check.simple.suffixes = FALSE,
+  simple.suffixes = c("s", "es", "ed", "d", "ing"),
+  pos.words = ftaPositiveWords, neg.words = ftaNegativeWords)
 }
 \arguments{
 \item{input}{Either a character vector or object of class \code{wordBag}.}
+
+\item{check.simple.suffixes}{If true, whevenver a token is not found in
+pos.words AND neg.words, the algorithm will attempt to trim suffixes
+from the word and check the dictionaries again. This is to account for
+cases where the dictionaries do not contain variants of sentiment words
+(plurals, past tenses, etc). The suffixes to check are specified in the
+next argument.}
+
+\item{simple.suffixes}{An array of strings containing suffixes to strip when checking
+for words among the positive and negative word lists.}
+
+\item{pos.words}{A character vector containing the dictionary of positive words.}
+
+\item{neg.words}{A character vector containing the dictionary of negative words.}
 }
 \value{
 A vector of integers showing the number of positive words minus the number of negative

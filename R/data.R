@@ -22,10 +22,16 @@
 #' List of English language stopwords.
 #'
 #' @format A character vector with 128 entries.
-'ftaStopList' 
+'ftaStopList'
 
 
 #' Text from tweets about NASA Announcement - Water on Marse.
 #'
 #' @format A character vector with 3554 entries.
 'nasaTweetText'
+
+#' Twitter Data Set from Donald Trump as used on
+#' http://varianceexplained.org/r/trump-tweets/
+#'
+#' @format A data frame with 1512 rows.
+'trumpTweets'

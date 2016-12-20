@@ -7,7 +7,9 @@
 AsSentimentMatrix(x, remove.stopwords = TRUE, stoplist = ftaStopList,
   operations = c("spelling", "stemming"),
   spelling.dictionary = ftaDictionary, manual.replacements = NULL,
-  pos.words = ftaPositiveWords, neg.words = ftaNegativeWords)
+  pos.words = ftaPositiveWords, neg.words = ftaNegativeWords,
+  check.simple.suffixes = FALSE, simple.suffixes = c("s", "es", "ed", "d",
+  "ing"))
 }
 \arguments{
 \item{x}{Either a character vector or a WordBag object, created for example by the function InitializeWordBag.
@@ -28,6 +30,16 @@ text before scoring sentiment. For a description of the options see \code{\link{
 \item{pos.words}{A character vector containing words that should be scored positively.}
 
 \item{neg.words}{A character vector containing words that should be scored negatively.}
+
+\item{check.simple.suffixes}{If true, whevenver a token is not found in
+pos.words AND neg.words, the algorithm will attempt to trim suffixes
+from the word and check the dictionaries again. This is to account for
+cases where the dictionaries do not contain variants of sentiment words
+(plurals, past tenses, etc). The suffixes to check are specified in the
+next argument.}
+
+\item{simple.suffixes}{An array of strings containing suffixes to strip when checking
+for words among the positive and negative word lists.}
 }
 \value{
 A matrix with three columns, and one row for each of the original text responses in the word bag.

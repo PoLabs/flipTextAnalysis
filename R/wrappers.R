@@ -1,18 +1,18 @@
 # Wrapper function for package tm's Term Matrix Construction
 # Returns a matrix with documents in rows, and terms in columns.
 termMatrixFromText = function(text, min.frequency = 5, sparse = FALSE) {
-  source = tm::VectorSource(text)
-  corpus = tm::VCorpus(source)
-  my.tdm = tm::DocumentTermMatrix(corpus)
-  my.tdm = tm::weightBin(my.tdm)
-  # Get words which appear with certain frequency
-  # and generate term matrix based on those words
-  my.dictionary = tm::findFreqTerms(my.tdm, lowfreq = min.frequency)
-  my.tdm = tm::DocumentTermMatrix(corpus, list(dictionary = my.dictionary))
-  my.tdm = tm::weightBin(my.tdm)
-  if (!sparse)
-      my.tdm <- as.matrix(my.tdm)
-  return(invisible(my.tdm))
+    source <- tm::VectorSource(text)
+    corpus <- tm::VCorpus(source)
+    my.tdm <- tm::DocumentTermMatrix(corpus)
+    my.tdm <- tm::weightBin(my.tdm)
+    # Get words which appear with certain frequency
+    # and generate term matrix based on those words
+    my.dictionary <- tm::findFreqTerms(my.tdm, lowfreq = min.frequency)
+    my.tdm <- tm::DocumentTermMatrix(corpus, list(dictionary = my.dictionary))
+    my.tdm <- tm::weightBin(my.tdm)
+    if (!sparse)
+            my.tdm <- as.matrix(my.tdm)
+    return(invisible(my.tdm))
 }
 
 
@@ -33,21 +33,30 @@ termMatrixFromText = function(text, min.frequency = 5, sparse = FALSE) {
 #' AsTermMatrix(ftaFavoriteThings)
 #'
 #' @export
-AsTermMatrix = function(x, min.frequency = 5, remove.stopwords = TRUE, stoplist = ftaStopList,
-  operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
-  manual.replacements = NULL, sparse = FALSE)
+AsTermMatrix = function(x,
+                        min.frequency = 5,
+                        remove.stopwords = TRUE,
+                        stoplist = ftaStopList,
+                        operations = c("spelling", "stemming"),
+                        spelling.dictionary = ftaDictionary,
+                        manual.replacements = NULL,
+                        sparse = FALSE)
 {
-  if (class(x) == "wordBag") {
-    tdm <- termMatrixFromText(x$transformed.text, min.frequency = min.frequency, sparse = sparse)
-  } else if (class(x) == "character") {
-    word.bag <- InitializeWordBag(x, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations,
-                                spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
-    tdm <- termMatrixFromText(word.bag$transformed.text, min.frequency = min.frequency, sparse = sparse)
-  } else if (class(x) == "tidyText") {
-    tdm <- termMatrixFromText(x, min.frequency = min.frequency, sparse = sparse)
-  }
-  colnames(tdm) <- gsub("\\+", ".", colnames(tdm))
-  return(tdm)
+    if (class(x) == "wordBag") {
+        tdm <- termMatrixFromText(x$transformed.text, min.frequency = min.frequency, sparse = sparse)
+    } else if (class(x) == "character") {
+        word.bag <- InitializeWordBag(x,
+                                      remove.stopwords = remove.stopwords,
+                                      stoplist = stoplist,
+                                      operations = operations,
+                                      spelling.dictionary = spelling.dictionary,
+                                      manual.replacements = manual.replacements)
+        tdm <- termMatrixFromText(word.bag$transformed.text, min.frequency = min.frequency, sparse = sparse)
+    } else if (class(x) == "tidyText") {
+        tdm <- termMatrixFromText(x, min.frequency = min.frequency, sparse = sparse)
+    }
+    colnames(tdm) <- gsub("\\+", ".", colnames(tdm))
+    return(tdm)
 }
 
 
@@ -60,6 +69,7 @@ AsTermMatrix = function(x, min.frequency = 5, remove.stopwords = TRUE, stoplist 
 #' @param pos.words A character vector containing words that should be scored positively.
 #' @param neg.words A character vector containing words that should be scored negatively.
 #' @inheritParams InitializeWordBag
+#' @inheritParams TagSentiment
 #'
 #' @return A matrix with three columns, and one row for each of the original text responses in the word bag.
 #'         The first column provides a count of the positive words that have been identified in each
@@ -73,35 +83,45 @@ AsTermMatrix = function(x, min.frequency = 5, remove.stopwords = TRUE, stoplist 
 #' @examples
 #' AsSentimentMatrix(ftaFavoriteThings)
 #' @export
-AsSentimentMatrix <- function(x, remove.stopwords = TRUE, stoplist = ftaStopList,
-  operations = c("spelling", "stemming"), spelling.dictionary = ftaDictionary,
-  manual.replacements = NULL, pos.words = ftaPositiveWords,
-  neg.words = ftaNegativeWords)
+AsSentimentMatrix <- function(x,
+                              remove.stopwords = TRUE,
+                              stoplist = ftaStopList,
+                              operations = c("spelling", "stemming"),
+                              spelling.dictionary = ftaDictionary,
+                              manual.replacements = NULL,
+                              pos.words = ftaPositiveWords,
+                              neg.words = ftaNegativeWords,
+                              check.simple.suffixes = FALSE,
+                              simple.suffixes = c("s", "es", "ed", "d", "ing"))
 {
 
-  .sentimentScoresFromWordBag <- function(word.bag, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords)
-  {
-      input.tokens <- countUniqueTokens(word.bag$transformed.tokenized)$tokens
+    .sentimentScoresFromWordBag <- function(word.bag, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords)
+    {
+        input.tokens <- countUniqueTokens(word.bag$transformed.tokenized)$tokens
 
-      tagged.text <- TagSentiment(input.tokens, pos.words, neg.words)
-      sentiment.scores <- lapply(word.bag$transformed.text, ScoreSentimentForString, tokens = input.tokens, sentiment.tags = tagged.text)
-      sentiment.matrix <- matrix(unlist(sentiment.scores), nrow = length(sentiment.scores), byrow = TRUE)
-      sentiment.matrix <- cbind(sentiment.matrix, sentiment.matrix[, 1] - sentiment.matrix[, 2])
-      colnames(sentiment.matrix) <- c("Positive words", "Negative words", "Sentiment score")
-      rownames(sentiment.matrix) <- word.bag$original.text
-      return(sentiment.matrix)
-  }
+        tagged.text <- TagSentiment(input.tokens,
+                                    pos.words,
+                                    neg.words,
+                                    check.simple.suffixes = check.simple.suffixes,
+                                    simple.suffixes = simple.suffixes)
+        sentiment.scores <- lapply(word.bag$transformed.text, ScoreSentimentForString, tokens = input.tokens, sentiment.tags = tagged.text)
+        sentiment.matrix <- matrix(unlist(sentiment.scores), nrow = length(sentiment.scores), byrow = TRUE)
+        sentiment.matrix <- cbind(sentiment.matrix, sentiment.matrix[, 1] - sentiment.matrix[, 2])
+        colnames(sentiment.matrix) <- c("Positive words", "Negative words", "Sentiment score")
+        rownames(sentiment.matrix) <- word.bag$original.text
+        return(sentiment.matrix)
+    }
 
-  if (class(x) == "wordBag")
-  {
-    word.bag <- x
-  } else if (class(x) == "character") {
-    word.bag <- InitializeWordBag(x, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations,
-                                 spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
-  } else {
-    stop(paste("AsSentimentMatrix: Cannot create sentiment matrix from objects of class ", class(x), ". Input must be a wordBag or character vector.", sep = ""))
-  }
-  sentiment.matrix <- .sentimentScoresFromWordBag(word.bag, pos.words = pos.words, neg.words = neg.words)
+    if (class(x) == "wordBag")
+    {
+        word.bag <- x
+    } else if (class(x) == "character") {
+        word.bag <- InitializeWordBag(x, remove.stopwords = remove.stopwords, stoplist = stoplist, operations = operations,
+                                      spelling.dictionary = spelling.dictionary, manual.replacements = manual.replacements)
+    } else {
+        stop(paste("AsSentimentMatrix: Cannot create sentiment matrix from objects of class ", class(x), ". Input must be a wordBag or character vector.", sep = ""))
+    }
+    sentiment.matrix <- .sentimentScoresFromWordBag(word.bag, pos.words = pos.words, neg.words = neg.words)
 }
 
 
@@ -109,6 +129,7 @@ AsSentimentMatrix <- function(x, remove.stopwords = TRUE, stoplist = ftaStopList
 #' @description Return the difference between the number of positive and negative words for
 #'              a character vector or wordBag object.
 #' @param input Either a character vector or object of class \code{wordBag}.
+#' @inheritParams TagSentiment
 #' @details If the input is a character vector then the text will be tokenized to compute the
 #'          sentiment, but no additional cleaning is done on the text. If the input is a \code{wordBag}
 #'          then the sentiment will be computed based on the transformed text (i.e. using the
@@ -116,19 +137,31 @@ AsSentimentMatrix <- function(x, remove.stopwords = TRUE, stoplist = ftaStopList
 #' @return A vector of integers showing the number of positive words minus the number of negative
 #'         words for each text entry.
 #' @export
-SaveNetSentimentScores <- function(input)
+SaveNetSentimentScores <- function(input,
+                                   check.simple.suffixes = FALSE,
+                                   simple.suffixes = c("s", "es", "ed", "d", "ing"),
+                                   pos.words = ftaPositiveWords,
+                                   neg.words = ftaNegativeWords)
 {
     if (class(input) == 'wordBag')
     {
-        sentiment.matrix <- AsSentimentMatrix(input)
+        sentiment.matrix <- AsSentimentMatrix(input,
+                                              check.simple.suffixes = check.simple.suffixes,
+                                              simple.suffixes = simple.suffixes,
+                                              pos.words = pos.words,
+                                              neg.words = neg.words)
     } else if (class(input) == 'character') {
         sentiment.matrix <- AsSentimentMatrix(input,
-                                             remove.stopwords = FALSE,
-                                             operations = '')
+                                              remove.stopwords = FALSE,
+                                              operations = '',
+                                              check.simple.suffixes = check.simple.suffixes,
+                                              simple.suffixes = simple.suffixes,
+                                              pos.words = pos.words,
+                                              neg.words = neg.words)
     } else {
         stop('The input should be created by selecting Insert > Advanced > Text Analysis > Setup.')
     }
-    sentiment.scores = sentiment.matrix[,3]
+    sentiment.scores <- sentiment.matrix[,3]
 }
 
 
@@ -166,36 +199,36 @@ MostFrequentWords = function(x, min.frequency = 2, alphabetical = NULL)
 {
     if (class(x) == "wordBag")
     {
-        tokens = x$final.tokens
-        counts = x$final.counts
+        tokens <- x$final.tokens
+        counts <- x$final.counts
     } else if (class(x) == "character") {
-        tokenized = ftaTokenize(x)
-        tokens.counts = countUniqueTokens(tokenized)
-        tokens = tokens.counts$tokens
-        counts = tokens.counts$counts
+        tokenized <- ftaTokenize(x)
+        tokens.counts <- countUniqueTokens(tokenized)
+        tokens <- tokens.counts$tokens
+        counts <- tokens.counts$counts
     }
     if (is.null(alphabetical))
     {
         if (class(x) == "wordBag")
         {
-            alphabetical = x$alphabetical.sort
+            alphabetical <- x$alphabetical.sort
         } else {
-            alphabetical = FALSE
+            alphabetical <- FALSE
         }
     }
 
-    tokens = tokens[counts >= min.frequency]
-    counts = counts[counts >= min.frequency]
+    tokens <- tokens[counts >= min.frequency]
+    counts <- counts[counts >= min.frequency]
 
     if (alphabetical)
     {
-        counts = counts[order(tokens)]
-        tokens = sort(tokens)
+        counts <- counts[order(tokens)]
+        tokens <- sort(tokens)
     } else {
-        tokens = tokens[order(counts, decreasing = TRUE)]
-        counts = sort(counts, decreasing = TRUE)
+        tokens <- tokens[order(counts, decreasing = TRUE)]
+        counts <- sort(counts, decreasing = TRUE)
     }
 
-    names(counts) = makeWordBagTextReadable(tokens)
+    names(counts) <- makeWordBagTextReadable(tokens)
     return(counts)
 }

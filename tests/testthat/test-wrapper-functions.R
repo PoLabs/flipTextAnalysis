@@ -1,8 +1,10 @@
 library(flipTextAnalysis)
 context("Wrapper functions")
 
-reps = c("sprang", "spring", "ponees", "ponies", "whiskers", "moustache")
-test.replacements = matrix(reps, ncol = 2, byrow = TRUE)
+reps <- c("sprang", "spring", "ponees", "ponies", "whiskers", "moustache")
+test.replacements <- matrix(reps, ncol = 2, byrow = TRUE)
+
+
 
 test_that("Term Matrix", {
     test.tm = AsTermMatrix(ftaFavoriteThings, operations = c("spelling", "replacement", "stemming"), min.frequency = 2, manual.replacements = test.replacements)
@@ -15,6 +17,11 @@ test_that("Term Matrix", {
     expect_equal_to_reference(test.tm.phrases, "term-matrix-with-phrases-fav.rds")
 })
 
+test_that("Sentiment Tags", {
+    trump.wb <- InitializeWordBag(trumpTweets$text, operations = '', min.frequency = 5)
+    test.sentiment.tags = TagSentiment(trump.wb$final.tokens, check.simple.suffixes = TRUE)
+    expect_equal_to_reference(test.sentiment.tags, "trump-sentiment-tags.rds")
+})
 
 test_that("Sentiment Scores", {
     test.sentiment.matrix = AsSentimentMatrix(ftaFavoriteThings)
@@ -43,6 +50,10 @@ test_that("Calculate NET Sentiment Scores", {
     expect_equal(unname(SaveNetSentimentScores(ftaFavoriteThings)), c(0, 2, 0, 1, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, -1, 1, -1, 0, 2,
                                                              0, 1, 1, 0, -1, 1, 0, 0, 0, 1, 0, 0, -1, 1, -1, 0, 2, 0, 1, 0,
                                                              0, -1, 1, 0, 0, 0, 1, 0, -1, -1, 1, -1))
+    trump.wb <- InitializeWordBag(trumpTweets$text, operations = '', min.frequency = 5)
+    test.trump.sentiment <- SaveNetSentimentScores(trump.wb, check.simple.suffixes = TRUE)
+    expect_equal_to_reference(test.trump.sentiment, "trump-net-sentiment-scores.rds")
+
 })
 
 test_that("Save Tidied Text", {

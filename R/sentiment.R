@@ -5,6 +5,14 @@
 #' @param tokens A character vector containing the tokens to tag.
 #' @param pos.words A character vector containing the dictionary of positive words.
 #' @param neg.words A character vector containing the dictionary of negative words.
+#' @param check.simple.suffixes If true, whevenver a token is not found in
+#'        pos.words AND neg.words, the algorithm will attempt to trim suffixes
+#'        from the word and check the dictionaries again. This is to account for
+#'        cases where the dictionaries do not contain variants of sentiment words
+#'        (plurals, past tenses, etc). The suffixes to check are specified in the
+#'        next argument.
+#' @param simple.suffixes An array of strings containing suffixes to strip when checking
+#'        for words among the positive and negative word lists.
 #'
 #' @return A character vector with the same length as \code{tokens} which has entries
 #'          \code{[pos]} for postive words, \code{[neg]} for negative words, and
@@ -17,17 +25,47 @@
 #' @examples
 #' TagSentiment(c("great","happy","the", "of", "bad", "terrible"))
 #' @export
-TagSentiment = function(tokens, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords) {
-  tagger = function(token) {
-    if (token %in% pos.words) {
-      return("[pos]")
-    } else if (token %in% neg.words) {
-      return("[neg]")
-    } else {
-      return("[neu]")
+TagSentiment = function(tokens,
+                        pos.words = ftaPositiveWords,
+                        neg.words = ftaNegativeWords,
+                        check.simple.suffixes = FALSE,
+                        simple.suffixes = c("s", "es", "ed", "d", "ing")) {
+    tagger = function(token)
+    {
+        if (token %in% pos.words)
+        {
+            return("[pos]")
+        } else if (token %in% neg.words) {
+            return("[neg]")
+        } else {
+            # Consider words formed by removing some basic suffixes,
+            # and check the sentiment dictionaries.
+            if (check.simple.suffixes)
+            {
+                for (suffix in simple.suffixes)
+                {
+                    suffix.regex <- paste0(suffix, "$")
+                    if (grepl(suffix.regex, token))
+                    {
+                        modified.token <- sub(suffix.regex, "", token)
+                        if (modified.token %in% pos.words)
+                        {
+                            return("[pos]")
+                        }
+                        if (modified.token %in% neg.words)
+                        {
+                            return("[neg]")
+                        }
+                    }
+                }
+                return("[neu]")
+            } else {
+                return("[neu]")
+            }
+
+        }
     }
-  }
-  return(sapply(tokens, tagger))
+    return(sapply(tokens, tagger))
 }
 
 #' \code{ScoreSentimentForString}
@@ -112,3 +150,5 @@ ScoreSentimentForString = function(string, tokens, sentiment.tags)
     names(scores) <- c("positive.score", "negative.score")
     return(c(positive.score, negative.score))
 }
+
+
