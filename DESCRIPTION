@@ -18,4 +18,6 @@ Depends:
     R (>= 3.2.2)
 Suggests:
     testthat
+Remotes:
+    NumbersInternational/flipFormat
 RoxygenNote: 5.0.1
