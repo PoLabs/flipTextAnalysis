@@ -9,6 +9,7 @@ Description: Functions to make a bag-of-words and term-document-matrix using
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
+    stringi,
     stringr,
     SnowballC,
     cba,

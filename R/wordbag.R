@@ -15,6 +15,7 @@
 #' @param print.type A string indicating the type of printing that should be performed when the Word Bag is printed. The two options are "frequencies", which will print the unique tokens next to their frequencies, and "transformations", which will print the original text next to the new transformed text. All printing is done using datatable from package D3.
 #' @param subset A logical vector describing the subset of text documents that should be used to count and process the tokens in the text. Documents not in the subset will not have any impact on how the tokens are counted and processed, but their original text and original tokenized text will be kept, and their transformed text will also be generated according to the tokens that are identified within the subset.
 #' @return An object of class \code{wordBag} containing the word bag details.
+#' @importFrom stringi stri_trans_general
 #' @importFrom flipFormat Labels
 #' @export
 InitializeWordBag = function(text,
@@ -127,6 +128,7 @@ InitializeWordBag = function(text,
 
 
     word.bag <- list()
+    text <- stri_trans_general(text, "latin-ascii")
     word.bag$original.text <- text
 
 
