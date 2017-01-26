@@ -128,6 +128,7 @@ InitializeWordBag = function(text,
 
 
     word.bag <- list()
+    Encoding(text) <- "UTF-8"
     text <- stri_trans_general(text, "latin-ascii")
     word.bag$original.text <- text
 
