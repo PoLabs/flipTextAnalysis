@@ -132,7 +132,7 @@ InitializeWordBag = function(text,
     original.text <- text
     Encoding(text) <- "UTF-8"
     text <- stri_trans_general(text, "latin-ascii")
-    CopyAttributes(text, original.text)
+    text <- CopyAttributes(text, original.text)
     word.bag$original.text <- text
 
 
