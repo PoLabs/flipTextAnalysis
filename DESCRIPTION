@@ -14,7 +14,8 @@ Imports:
     SnowballC,
     cba,
     tm,
-    flipFormat
+    flipFormat,
+    flipU
 Depends:
     R (>= 3.2.2)
 Suggests:

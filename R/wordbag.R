@@ -17,6 +17,7 @@
 #' @return An object of class \code{wordBag} containing the word bag details.
 #' @importFrom stringi stri_trans_general
 #' @importFrom flipFormat Labels
+#' @importFrom flipU CopyAttributes
 #' @export
 InitializeWordBag = function(text,
                              operations = c("spelling", "stemming"),
@@ -128,8 +129,10 @@ InitializeWordBag = function(text,
 
 
     word.bag <- list()
+    original.text <- text
     Encoding(text) <- "UTF-8"
     text <- stri_trans_general(text, "latin-ascii")
+    CopyAttributes(text, original.text)
     word.bag$original.text <- text
 
 
