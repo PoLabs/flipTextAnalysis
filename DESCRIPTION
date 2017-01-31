@@ -21,5 +21,6 @@ Depends:
 Suggests:
     testthat
 Remotes:
-    NumbersInternational/flipFormat
+    NumbersInternational/flipFormat,
+    NumbersInternational/flipU
 RoxygenNote: 5.0.1
