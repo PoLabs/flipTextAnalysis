@@ -4,7 +4,7 @@
 \alias{FindSpellingErrors}
 \title{\code{FindSpellingErrors}}
 \usage{
-FindSpellingErrors(x, dictionary = ftaDictionary)
+FindSpellingErrors(x, dictionary = get("ftaDictionary"))
 }
 \arguments{
 \item{x}{A vector of words.}
@@ -13,7 +13,7 @@ FindSpellingErrors(x, dictionary = ftaDictionary)
 language dictionary, \code{ftaDictionary} which comes with this package.}
 }
 \value{
-A binary vector indicating which of the elements of x are misspelled according to the 
+A binary vector indicating which of the elements of x are misspelled according to the
 input dictionary. When a word is not found, the function also looks for other stems of the
 word, including \code{word + "s"}, \code{word + "es"}, \code{word + "ed"}, \code{word + "d"},
 \code{word + "ise"}, and \code{word + "ize"}.

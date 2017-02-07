@@ -5,8 +5,8 @@
 \title{\code{InitializeWordBag}}
 \usage{
 InitializeWordBag(text, operations = c("spelling", "stemming"),
-  remove.stopwords = TRUE, stoplist = ftaStopList,
-  spelling.dictionary = ftaDictionary, manual.replacements = NULL,
+  remove.stopwords = TRUE, stoplist = get("ftaStopList"),
+  spelling.dictionary = get("ftaDictionary"), manual.replacements = NULL,
   phrases = NULL, min.frequency = 1, alphabetical.sort = TRUE,
   print.type = "frequencies", subset = NULL)
 }

@@ -5,8 +5,8 @@
 \title{\code{AsTermMatrix}}
 \usage{
 AsTermMatrix(x, min.frequency = 5, remove.stopwords = TRUE,
-  stoplist = ftaStopList, operations = c("spelling", "stemming"),
-  spelling.dictionary = ftaDictionary, manual.replacements = NULL,
+  stoplist = get("ftaStopList"), operations = c("spelling", "stemming"),
+  spelling.dictionary = get("ftaDictionary"), manual.replacements = NULL,
   sparse = FALSE)
 }
 \arguments{

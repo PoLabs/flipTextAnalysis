@@ -45,7 +45,7 @@ mapToken <- function(token, source.tokens, target.tokens)
 }
 
 # Return a binary vector indicating which elements of x are in the stop word list
-findStopWords <- function(x, stoplist = ftaStopList) {
+findStopWords <- function(x, stoplist = get("ftaStopList")) {
   if (class(stoplist) != "character") {
     stop(paste("findStopWords: Expected stoplist to be a character verctor, instead got a: ", class(stoplist)))
   }
@@ -61,7 +61,7 @@ findStopWords <- function(x, stoplist = ftaStopList) {
 mapTokenizedText <- function(tokenized, before, after)
 {
   new_tokenized <- vector("list", length = length(tokenized))
-  
+
   # Loop over the tokenized versions of the text documents
   for (j in 1L:length(tokenized))
   {
@@ -71,7 +71,7 @@ mapTokenizedText <- function(tokenized, before, after)
     cur_tokes <- cur_tokes[cur_tokes != ""] #Exclude blank/empty strings and NA entries
     cur_tokes <- cur_tokes[cur_tokes != " "]
     cur_tokes <- cur_tokes[!is.na(cur_tokes)]
-    
+
     # For each token in the current tokenized text, look up it's position in "before"
     # and replace it with the corresponding word in "after". If the word does not
     # exist in "before" then leave the word unchanged.

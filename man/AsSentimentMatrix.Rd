@@ -4,10 +4,10 @@
 \alias{AsSentimentMatrix}
 \title{\code{AsSentimentMatrix}}
 \usage{
-AsSentimentMatrix(x, remove.stopwords = TRUE, stoplist = ftaStopList,
+AsSentimentMatrix(x, remove.stopwords = TRUE, stoplist = get("ftaStopList"),
   operations = c("spelling", "stemming"),
-  spelling.dictionary = ftaDictionary, manual.replacements = NULL,
-  pos.words = ftaPositiveWords, neg.words = ftaNegativeWords,
+  spelling.dictionary = get("ftaDictionary"), manual.replacements = NULL,
+  pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"),
   check.simple.suffixes = FALSE, simple.suffixes = c("s", "es", "ed", "d",
   "ing"))
 }

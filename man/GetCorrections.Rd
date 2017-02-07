@@ -10,7 +10,7 @@ GetCorrections(tokens, counts, spelling.errors, do.not.correct)
 \item{tokens}{A character vector containing the set of unique tokens identified
 from a set of text.}
 
-\item{counts}{A numeric vector containing the number of occurrences of each token 
+\item{counts}{A numeric vector containing the number of occurrences of each token
 within the text.}
 
 \item{spelling.errors}{A binary vector indicating which of the tokens have been

@@ -6,7 +6,7 @@
 \usage{
 SaveNetSentimentScores(input, check.simple.suffixes = FALSE,
   simple.suffixes = c("s", "es", "ed", "d", "ing"),
-  pos.words = ftaPositiveWords, neg.words = ftaNegativeWords)
+  pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"))
 }
 \arguments{
 \item{input}{Either a character vector or object of class \code{wordBag}.}

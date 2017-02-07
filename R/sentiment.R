@@ -26,8 +26,8 @@
 #' TagSentiment(c("great","happy","the", "of", "bad", "terrible"))
 #' @export
 TagSentiment = function(tokens,
-                        pos.words = ftaPositiveWords,
-                        neg.words = ftaNegativeWords,
+                        pos.words = get("ftaPositiveWords"),
+                        neg.words = get("ftaNegativeWords"),
                         check.simple.suffixes = FALSE,
                         simple.suffixes = c("s", "es", "ed", "d", "ing")) {
     tagger = function(token)

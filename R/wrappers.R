@@ -36,9 +36,9 @@ termMatrixFromText = function(text, min.frequency = 5, sparse = FALSE) {
 AsTermMatrix = function(x,
                         min.frequency = 5,
                         remove.stopwords = TRUE,
-                        stoplist = ftaStopList,
+                        stoplist = get("ftaStopList"),
                         operations = c("spelling", "stemming"),
-                        spelling.dictionary = ftaDictionary,
+                        spelling.dictionary = get("ftaDictionary"),
                         manual.replacements = NULL,
                         sparse = FALSE)
 {
@@ -85,17 +85,17 @@ AsTermMatrix = function(x,
 #' @export
 AsSentimentMatrix <- function(x,
                               remove.stopwords = TRUE,
-                              stoplist = ftaStopList,
+                              stoplist = get("ftaStopList"),
                               operations = c("spelling", "stemming"),
-                              spelling.dictionary = ftaDictionary,
+                              spelling.dictionary = get("ftaDictionary"),
                               manual.replacements = NULL,
-                              pos.words = ftaPositiveWords,
-                              neg.words = ftaNegativeWords,
+                              pos.words = get("ftaPositiveWords"),
+                              neg.words = get("ftaNegativeWords"),
                               check.simple.suffixes = FALSE,
                               simple.suffixes = c("s", "es", "ed", "d", "ing"))
 {
 
-    .sentimentScoresFromWordBag <- function(word.bag, pos.words = ftaPositiveWords, neg.words = ftaNegativeWords)
+    .sentimentScoresFromWordBag <- function(word.bag, pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"))
     {
         input.tokens <- countUniqueTokens(word.bag$transformed.tokenized)$tokens
 
@@ -140,8 +140,8 @@ AsSentimentMatrix <- function(x,
 SaveNetSentimentScores <- function(input,
                                    check.simple.suffixes = FALSE,
                                    simple.suffixes = c("s", "es", "ed", "d", "ing"),
-                                   pos.words = ftaPositiveWords,
-                                   neg.words = ftaNegativeWords)
+                                   pos.words = get("ftaPositiveWords"),
+                                   neg.words = get("ftaNegativeWords"))
 {
     if (class(input) == 'wordBag')
     {

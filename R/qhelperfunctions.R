@@ -81,9 +81,9 @@ GetTextAnalysisOptions <- function(phrases = "", extra.stopwords.text = "", repl
     if (nchar(extra.stopwords.text) > 0)
     {
         extra.stopwords.text <- tolower(extra.stopwords.text)
-        stopwords <- c(ftaStopList, convertCommaSeparatedStringToVector(extra.stopwords.text))
+        stopwords <- c(get("ftaStopList"), convertCommaSeparatedStringToVector(extra.stopwords.text))
     } else {
-        stopwords <- ftaStopList
+        stopwords <- get("ftaStopList")
     }
 
     if (nchar(replacements.text) > 2 && regexpr(":", replacements.text) > 1)

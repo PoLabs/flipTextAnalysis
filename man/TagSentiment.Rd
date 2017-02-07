@@ -4,8 +4,8 @@
 \alias{TagSentiment}
 \title{\code{TagSentiment}}
 \usage{
-TagSentiment(tokens, pos.words = ftaPositiveWords,
-  neg.words = ftaNegativeWords, check.simple.suffixes = FALSE,
+TagSentiment(tokens, pos.words = get("ftaPositiveWords"),
+  neg.words = get("ftaNegativeWords"), check.simple.suffixes = FALSE,
   simple.suffixes = c("s", "es", "ed", "d", "ing"))
 }
 \arguments{
