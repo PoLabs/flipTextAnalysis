@@ -9,7 +9,7 @@ AsSentimentMatrix(x, remove.stopwords = TRUE, stoplist = get("ftaStopList"),
   spelling.dictionary = get("ftaDictionary"), manual.replacements = NULL,
   pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"),
   check.simple.suffixes = FALSE, simple.suffixes = c("s", "es", "ed", "d",
-  "ing"))
+  "ing"), blanks.as.missing)
 }
 \arguments{
 \item{x}{Either a character vector or a WordBag object, created for example by the function InitializeWordBag.
@@ -40,6 +40,10 @@ next argument.}
 
 \item{simple.suffixes}{An array of strings containing suffixes to strip when checking
 for words among the positive and negative word lists.}
+
+\item{blanks.as.missing}{A boolean value specifying whether blank strings should
+return sentiment scores of NaN. If FALSE, blank strings will return sentiment
+scores of 0.}
 }
 \value{
 A matrix with three columns, and one row for each of the original text responses in the word bag.

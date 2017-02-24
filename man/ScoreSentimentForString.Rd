@@ -4,7 +4,7 @@
 \alias{ScoreSentimentForString}
 \title{\code{ScoreSentimentForString}}
 \usage{
-ScoreSentimentForString(string, tokens, sentiment.tags)
+ScoreSentimentForString(string, tokens, sentiment.tags, blanks.as.missing)
 }
 \arguments{
 \item{string}{The string to evaulate.}
@@ -14,6 +14,10 @@ ScoreSentimentForString(string, tokens, sentiment.tags)
 
 \item{sentiment.tags}{A vector of sentiment tags for the \code{tokens}, obtained
 by \code{\link{TagSentiment}}.}
+
+\item{blanks.as.missing}{A boolean value specifying whether blank strings should
+return sentiment scores of NaN. If FALSE, blank strings will return sentiment
+scores of 0.}
 }
 \value{
 A vector of two integers, where the first indicates the positive sentiment

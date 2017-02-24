@@ -77,6 +77,9 @@ TagSentiment = function(tokens,
 #'               \code{string} has been drawn.
 #' @param sentiment.tags A vector of sentiment tags for the \code{tokens}, obtained
 #'                       by \code{\link{TagSentiment}}.
+#' @param blanks.as.missing A boolean value specifying whether blank strings should
+#'        return sentiment scores of NaN. If FALSE, blank strings will return sentiment
+#'        scores of 0.
 #'
 #' @return A vector of two integers, where the first indicates the positive sentiment
 #'          score, and the second contains the negative sentiment score.
@@ -93,7 +96,7 @@ TagSentiment = function(tokens,
 #'                          sentiment.tags = my.tags)
 #'
 #' @export
-ScoreSentimentForString = function(string, tokens, sentiment.tags)
+ScoreSentimentForString = function(string, tokens, sentiment.tags, blanks.as.missing)
 {
     negation.unigrams <- c("no", "not", "wasnt", "werent", "wouldnt", "couldnt", "didnt", "never", "nobody", "nothing", "dont")
     negation.bigrams <- c("not very")
@@ -104,7 +107,14 @@ ScoreSentimentForString = function(string, tokens, sentiment.tags)
     # nothing left after tokenization
     if (length(current.tokens) == 0)
     {
-        return(c(0,0))
+        if (blanks.as.missing)
+        {
+            return(c(NaN, NaN))
+        } else {
+            return(c(0,0))
+        }
+
+
     }
 
     current.tags <- sapply(current.tokens, mapToken, source.tokens = tokens, target.tokens = sentiment.tags)

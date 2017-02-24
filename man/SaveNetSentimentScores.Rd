@@ -6,7 +6,8 @@
 \usage{
 SaveNetSentimentScores(input, check.simple.suffixes = FALSE,
   simple.suffixes = c("s", "es", "ed", "d", "ing"),
-  pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"))
+  pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"),
+  blanks.as.missing = FALSE)
 }
 \arguments{
 \item{input}{Either a character vector or object of class \code{wordBag}.}
@@ -24,6 +25,10 @@ for words among the positive and negative word lists.}
 \item{pos.words}{A character vector containing the dictionary of positive words.}
 
 \item{neg.words}{A character vector containing the dictionary of negative words.}
+
+\item{blanks.as.missing}{A boolean value specifying whether blank strings should
+return sentiment scores of NaN. If FALSE, blank strings will return sentiment
+scores of 0.}
 }
 \value{
 A vector of integers showing the number of positive words minus the number of negative

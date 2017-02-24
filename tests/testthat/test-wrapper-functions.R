@@ -56,6 +56,12 @@ test_that("Calculate NET Sentiment Scores", {
 
 })
 
+test_that("NET Sentiment Scores with blank strings", {
+    test.strings <- c("love", "", "", "hate")
+    expect_equal(unname(SaveNetSentimentScores(test.strings, blanks.as.missing = TRUE)), c(1, NaN, NaN, -1))
+    expect_equal(unname(SaveNetSentimentScores(test.strings, blanks.as.missing = FALSE)), c(1, 0, 0, -1))
+})
+
 test_that("Save Tidied Text", {
     my.test.subset <- rep(c(TRUE, TRUE, FALSE), 17)
     test.wb <- InitializeWordBag(ftaFavoriteThings, operations = c("spelling"), subset = my.test.subset)

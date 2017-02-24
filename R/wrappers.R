@@ -70,6 +70,7 @@ AsTermMatrix = function(x,
 #' @param neg.words A character vector containing words that should be scored negatively.
 #' @inheritParams InitializeWordBag
 #' @inheritParams TagSentiment
+#' @inheritParams ScoreSentimentForString
 #'
 #' @return A matrix with three columns, and one row for each of the original text responses in the word bag.
 #'         The first column provides a count of the positive words that have been identified in each
@@ -92,10 +93,11 @@ AsSentimentMatrix <- function(x,
                               pos.words = get("ftaPositiveWords"),
                               neg.words = get("ftaNegativeWords"),
                               check.simple.suffixes = FALSE,
-                              simple.suffixes = c("s", "es", "ed", "d", "ing"))
+                              simple.suffixes = c("s", "es", "ed", "d", "ing"),
+                              blanks.as.missing)
 {
 
-    .sentimentScoresFromWordBag <- function(word.bag, pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"))
+    .sentimentScoresFromWordBag <- function(word.bag, pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"), blanks.as.missing)
     {
         input.tokens <- countUniqueTokens(word.bag$transformed.tokenized)$tokens
 
@@ -104,7 +106,7 @@ AsSentimentMatrix <- function(x,
                                     neg.words,
                                     check.simple.suffixes = check.simple.suffixes,
                                     simple.suffixes = simple.suffixes)
-        sentiment.scores <- lapply(word.bag$transformed.text, ScoreSentimentForString, tokens = input.tokens, sentiment.tags = tagged.text)
+        sentiment.scores <- lapply(word.bag$transformed.text, ScoreSentimentForString, tokens = input.tokens, sentiment.tags = tagged.text, blanks.as.missing = blanks.as.missing)
         sentiment.matrix <- matrix(unlist(sentiment.scores), nrow = length(sentiment.scores), byrow = TRUE)
         sentiment.matrix <- cbind(sentiment.matrix, sentiment.matrix[, 1] - sentiment.matrix[, 2])
         colnames(sentiment.matrix) <- c("Positive words", "Negative words", "Sentiment score")
@@ -121,7 +123,7 @@ AsSentimentMatrix <- function(x,
     } else {
         stop(paste("AsSentimentMatrix: Cannot create sentiment matrix from objects of class ", class(x), ". Input must be a wordBag or character vector.", sep = ""))
     }
-    sentiment.matrix <- .sentimentScoresFromWordBag(word.bag, pos.words = pos.words, neg.words = neg.words)
+    sentiment.matrix <- .sentimentScoresFromWordBag(word.bag, pos.words = pos.words, neg.words = neg.words, blanks.as.missing = blanks.as.missing)
 }
 
 
@@ -130,6 +132,7 @@ AsSentimentMatrix <- function(x,
 #'              a character vector or wordBag object.
 #' @param input Either a character vector or object of class \code{wordBag}.
 #' @inheritParams TagSentiment
+#' @inheritParams ScoreSentimentForString
 #' @details If the input is a character vector then the text will be tokenized to compute the
 #'          sentiment, but no additional cleaning is done on the text. If the input is a \code{wordBag}
 #'          then the sentiment will be computed based on the transformed text (i.e. using the
@@ -141,7 +144,8 @@ SaveNetSentimentScores <- function(input,
                                    check.simple.suffixes = FALSE,
                                    simple.suffixes = c("s", "es", "ed", "d", "ing"),
                                    pos.words = get("ftaPositiveWords"),
-                                   neg.words = get("ftaNegativeWords"))
+                                   neg.words = get("ftaNegativeWords"),
+                                   blanks.as.missing = FALSE)
 {
     if (class(input) == 'wordBag')
     {
@@ -149,7 +153,8 @@ SaveNetSentimentScores <- function(input,
                                               check.simple.suffixes = check.simple.suffixes,
                                               simple.suffixes = simple.suffixes,
                                               pos.words = pos.words,
-                                              neg.words = neg.words)
+                                              neg.words = neg.words,
+                                              blanks.as.missing = blanks.as.missing)
     } else if (class(input) == 'character') {
         sentiment.matrix <- AsSentimentMatrix(input,
                                               remove.stopwords = FALSE,
@@ -157,7 +162,8 @@ SaveNetSentimentScores <- function(input,
                                               check.simple.suffixes = check.simple.suffixes,
                                               simple.suffixes = simple.suffixes,
                                               pos.words = pos.words,
-                                              neg.words = neg.words)
+                                              neg.words = neg.words,
+                                              blanks.as.missing = blanks.as.missing)
     } else {
         stop('The input should be created by selecting Insert > Advanced > Text Analysis > Setup.')
     }
