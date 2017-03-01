@@ -160,31 +160,17 @@ InitializeWordBag = function(text,
         n.subset <- length(which(subset))
     }
 
-    # Work out how much of the subset sample is blank
-    blanks <- sapply(text[subset], FUN = .isBlank)
-    n.non.blank <- length(which(!blanks))
-
-    # Generate a description of the cases used
-    description <- paste0("n = ", n.non.blank, " cases used to process the text")
-    if (n.non.blank < n.subset)
-    {
-        description <- paste0(description, " of a total of ", n.subset)
-    }
-    if (n.subset < length(text))
-    {
-        description <- paste0(description, " (", Labels(subset), ")")
-    }
-    if (n.non.blank < n.subset)
-    {
-        description <- paste0(description, "; " , (n.subset - n.non.blank), " cases are blank")
-    }
-    word.bag$sample.description <- description
-
 
     # Convert all the text to lowercase first
     # Makes all other steps easier
     text <- tolower(text)
 
+    # Tag any stopwords that are phrases and add them to phrases list
+    # so that they are not tokenized in the text.
+    #if (remove.stopwords) {
+    #    stoplist <- convertPhrasesToTagged(stoplist)
+    #    phrases <- c(phrases, stoplist[which(grepl("\\+", stoplist))])
+    #}
 
     # Catch any phrases specified by the user now
     # so that they get treated as a unit.
@@ -364,6 +350,34 @@ InitializeWordBag = function(text,
         word.bag$transformed.tokenized <- tokenized
         word.bag$transformed.text <- text
     }
+
+    # Work out how much of the subset sample is blank before and after transformation
+    blanks.before <- sapply(text[subset], FUN = .isBlank)
+    n.non.blank <- length(which(!blanks.before))
+    blanks.after <- sapply(word.bag$transformed.text[subset], FUN = .isBlank)
+    n.non.blank.after.transform <- length(which(!blanks.after))
+
+    # Generate a description of the cases used
+    description <- paste0("n = ", n.non.blank, " cases used to process the text")
+    if (n.non.blank < n.subset)
+    {
+        description <- paste0(description, " of a total of ", n.subset)
+    }
+    if (n.subset < length(text))
+    {
+        description <- paste0(description, " (", Labels(subset), ")")
+    }
+    if (n.non.blank < n.subset)
+    {
+        description <- paste0(description, "; " , (n.subset - n.non.blank), " cases are blank")
+    }
+    if (n.non.blank.after.transform < n.non.blank)
+    {
+        description <- paste0(description, " before transformation; ", (n.subset - n.non.blank.after.transform),
+                              " cases are blank after transformation.")
+    }
+    word.bag$sample.description <- description
+
 
     word.bag$final.tokens <- current.tokens
     word.bag$final.counts <- current.counts

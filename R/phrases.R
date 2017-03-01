@@ -77,6 +77,16 @@ print.phraseList <- function(x, ...)
   print(my.dt)
 }
 
+# Convert whitespace within phrases to "+" in order to enable treatment as
+# as single unit.
+convertPhrasesToTagged <- function(phrases)
+{
+    split.phrases <- ftaTokenize(phrases)
+    tagged.phrases <- sapply(split.phrases, paste, collapse = "+")
+    return(tagged.phrases)
+}
+
+
 # This function adds a delimiter to any phrases found in the text.
 # In this framework when we want to treat a sequence of words as a
 # single unit we join them with "+" so that they don't get split
@@ -85,14 +95,7 @@ print.phraseList <- function(x, ...)
 # of text and adds the delimiter.
 replacePhrasesInText <- function(text, phrases)
 {
-  .convertPhrasesToTagged <- function(phrases)
-  {
-      split.phrases <- ftaTokenize(phrases)
-      tagged.phrases <- sapply(split.phrases, paste, collapse = "+")
-      return(tagged.phrases)
-  }
-
-  tagged.phrases <- .convertPhrasesToTagged(phrases)
+  tagged.phrases <- convertPhrasesToTagged(phrases)
   for (j in 1L:length(phrases))
   {
     text <- gsub(phrases[j], tagged.phrases[j], text)
