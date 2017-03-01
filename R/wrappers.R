@@ -68,6 +68,7 @@ AsTermMatrix = function(x,
 #'          text before scoring sentiment. For a description of the options see \code{\link{InitializeWordBag}}.
 #' @param pos.words A character vector containing words that should be scored positively.
 #' @param neg.words A character vector containing words that should be scored negatively.
+#' @param  blanks.as.missing Boolean indicating whether to treat blanks text as missing or return 0 (default).
 #' @inheritParams InitializeWordBag
 #' @inheritParams TagSentiment
 #' @inheritParams ScoreSentimentForString
@@ -94,7 +95,7 @@ AsSentimentMatrix <- function(x,
                               neg.words = get("ftaNegativeWords"),
                               check.simple.suffixes = FALSE,
                               simple.suffixes = c("s", "es", "ed", "d", "ing"),
-                              blanks.as.missing)
+                              blanks.as.missing = FALSE)
 {
 
     .sentimentScoresFromWordBag <- function(word.bag, pos.words = get("ftaPositiveWords"), neg.words = get("ftaNegativeWords"), blanks.as.missing)
