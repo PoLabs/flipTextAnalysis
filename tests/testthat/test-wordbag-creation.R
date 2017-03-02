@@ -27,6 +27,25 @@ test_that("Creating word bags with different operations", {
     expect_equal_to_reference(counts.spell.stem.manual, "counts-fav-wb-spell-stem-manual.rds")
     expect_true(min(wb.spell.stem.manual$final.counts) >= wb.spell.stem.manual$min.frequency)
 
+    # Replacement phrases
+    reps = c("whiskers on kittens", "hair on dogs", "blue satin", "red wool")
+    my.replacements <- matrix(reps, ncol = 2, byrow = TRUE)
+    wb.spell.stem.phrases <- InitializeWordBag(ftaFavoriteThings, operations = c("spelling", "replacement", "stemming"), manual.replacements = my.replacements)
+    transforms.spell.stem.phrases <- cbind(wb.spell.stem.phrases$tokens, wb.spell.stem.phrases$replace.tokens)
+    counts.spell.stem.phrases <- cbind(wb.spell.stem.phrases$counts, wb.spell.stem.phrases$replace.counts)
+    expect_equal_to_reference(transforms.spell.stem.phrases, "transforms-fav-wb-spell-stem-phrases.rds")
+    expect_equal_to_reference(counts.spell.stem.phrases, "counts-fav-wb-spell-stem-phrases.rds")
+    expect_true(min(wb.spell.stem.phrases$final.counts) >= wb.spell.stem.phrases$min.frequency)
+
+    # Phrase stopwords
+    my.stops <- c("kittens", "favorite things", "schnitzel with noodles")
+    wb.stop.phrases <- InitializeWordBag(ftaFavoriteThings, operations = c("spelling", "stemming"), stoplist = my.stops)
+    transforms.stop.phrases <- cbind(wb.stop.phrases$tokens, wb.stop.phrases$replace.tokens)
+    counts.stop.phrases <- cbind(wb.stop.phrases$counts, wb.stop.phrases$replace.counts)
+    expect_equal_to_reference(transforms.stop.phrases, "transforms-fav-wb-stop-phrases.rds")
+    expect_equal_to_reference(counts.stop.phrases, "counts-fav-wb-stop-phrases.rds")
+    expect_true(min(wb.stop.phrases$final.counts) >= wb.stop.phrases$min.frequency)
+
     # Spelling, higher min frequency
     wb.spell.min <- InitializeWordBag(ftaFavoriteThings, operations = c("spelling"), min.frequency = 3)
     expect_true(min(wb.spell.min$final.counts) >= wb.spell.min$min.frequency)

@@ -165,26 +165,28 @@ InitializeWordBag = function(text,
     # Makes all other steps easier
     text <- tolower(text)
 
-    # Add all phrases to be replaced to the phrases list so that they are not
-    # tokenized in the text.  Tag any phrases to be replaced so they are replaced in the text.
-    #if ("replacement" %in% operations)
-    #{
-    #    phrases.to.replace <- manual.replacements[isPhrase(manual.replacements[, 1]), 1]
-    #    if (!identical(phrases.to.replace, character(0))) {
-    #        phrases <- c(phrases, phrases.to.replace)
-    #        manual.replacements[isPhrase(manual.replacements[, 1]), 1] <- convertPhrasesToTagged(phrases.to.replace)
-    #    }
-    #}
+    # Add phrases to be replaced to the phrases list so that they are not tokenized in the text.
+    # Tag phrases to be replaced and replacement phrases so they are treated as single units.
+    if ("replacement" %in% operations)
+    {
+        phrases.to.replace <- manual.replacements[isPhrase(manual.replacements[, 1]), 1]
+        replacement.phrases <- manual.replacements[isPhrase(manual.replacements[, 2]), 2]
+        if (!identical(c(phrases.to.replace, replacement.phrases), character(0))) {
+            phrases <- c(phrases, phrases.to.replace)  # what if p.t.r. are already in phrases?????
+            manual.replacements[isPhrase(manual.replacements[, 1]), 1] <- convertPhrasesToTagged(phrases.to.replace)
+            manual.replacements[isPhrase(manual.replacements[, 2]), 2] <- convertPhrasesToTagged(replacement.phrases)
+        }
+    }
 
     # Add all phrases that are stopwords to the phrases list so that they are not
     # tokenized in the text.  Tag any stopword phrases so they are removed from the text.
-    #if (remove.stopwords) {
-    #    stop.phrases <- stoplist[isPhrase(stoplist)]
-    #    if (!identical(stop.phrases, character(0))) {
-    #        phrases <- c(phrases, stop.phrases)
-    #        stoplist[isPhrase(stoplist)] <- convertPhrasesToTagged(stop.phrases)
-    #    }
-    #}
+    if (remove.stopwords) {
+        stop.phrases <- stoplist[isPhrase(stoplist)]
+        if (!identical(stop.phrases, character(0))) {
+            phrases <- c(phrases, stop.phrases)
+            stoplist[isPhrase(stoplist)] <- convertPhrasesToTagged(stop.phrases)
+        }
+    }
 
     # Catch any phrases specified by the user now
     # so that they get treated as a unit.
@@ -214,7 +216,7 @@ InitializeWordBag = function(text,
     tokens <- tokens.counts$tokens
     counts <- tokens.counts$counts
 
-    # If manual replacements have been specified, these words need to
+    # If manual replacements have been specified, these words/phrases need to
     # be added to the tokens
     if (!is.null(manual.replacements)) {
         # Add entries for any new tokens to the existing vector of tokens
@@ -223,7 +225,7 @@ InitializeWordBag = function(text,
         extra.tokens <- unique(extra.tokens)
 
         for (j in 1L:length(extra.tokens)) {
-            if (! extra.tokens[j] %in% tokens) {
+            if (!extra.tokens[j] %in% tokens) {
                 current.length <- length(tokens)
                 tokens[current.length + 1] <- extra.tokens[j]
                 counts[current.length + 1] <- 0
