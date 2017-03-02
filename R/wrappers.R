@@ -43,7 +43,9 @@ AsTermMatrix = function(x,
                         sparse = FALSE)
 {
     if (class(x) == "wordBag") {
-        tdm <- termMatrixFromText(x$transformed.text, min.frequency = min.frequency, sparse = sparse)
+        missing.message.removed <- x$transformed.text
+        missing.message.removed[x$transformed.text == "<NO_WORDS_REMAIN_AFTER_PROCESSING>"] <- ""
+        tdm <- termMatrixFromText(missing.message.removed, min.frequency = min.frequency, sparse = sparse)
     } else if (class(x) == "character") {
         word.bag <- InitializeWordBag(x,
                                       remove.stopwords = remove.stopwords,
@@ -51,7 +53,9 @@ AsTermMatrix = function(x,
                                       operations = operations,
                                       spelling.dictionary = spelling.dictionary,
                                       manual.replacements = manual.replacements)
-        tdm <- termMatrixFromText(word.bag$transformed.text, min.frequency = min.frequency, sparse = sparse)
+        missing.message.removed <- word.bag$transformed.text
+        missing.message.removed[word.bag$transformed.text == "<NO_WORDS_REMAIN_AFTER_PROCESSING>"] <- ""
+        tdm <- termMatrixFromText(missing.message.removed, min.frequency = min.frequency, sparse = sparse)
     } else if (class(x) == "tidyText") {
         tdm <- termMatrixFromText(x, min.frequency = min.frequency, sparse = sparse)
     }
