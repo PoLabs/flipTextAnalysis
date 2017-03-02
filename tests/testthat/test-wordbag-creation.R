@@ -84,4 +84,11 @@ test_that("Handling of subsets (filters) and blank responses", {
                                    manual.replacements = my.replacements,
                                    subset = TRUE)
     expect_equal(wb.no.subset$sample.description, "n = 102 cases used to process the text of a total of 120; 18 cases are blank")
+
+    wb.stopwords <- InitializeWordBag(test.data.blanks,
+                                      operations = c("spelling", "stemming"),
+                                      stoplist = c("kittens", "things", "favourite", "wings", "moon", "springs", "roses", "raindrops", "mittens", "whiskers", "on", "and"),
+                                      subset = TRUE)
+    expect_equal(wb.stopwords$sample.description, "n = 102 cases used to process the text of a total of 120; 18 cases are blank before transformation; 22 cases are blank after transformation.")
+
 })
