@@ -372,7 +372,7 @@ InitializeWordBag = function(text,
     n.non.blank.after.transform <- length(which(!blanks.after))
 
     # Add message to highlight when processing has removed all words
-    word.bag$transformed.text[blanks.after == TRUE & blanks.before == FALSE] <- "<NO WORDS REMAIN AFTER PROCESSING>"
+    word.bag$transformed.text[blanks.after == TRUE & blanks.before == FALSE] <- "<NO_WORDS_REMAIN_AFTER_PROCESSING>"
 
     # Generate a description of the cases used
     description <- paste0("n = ", n.non.blank, " cases used to process the text")
