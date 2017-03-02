@@ -103,3 +103,8 @@ replacePhrasesInText <- function(text, phrases)
   return(text)
 }
 
+# Returns a Boolean indicating whether the text has an intevening space.
+isPhrase <- function(text)
+{
+    grepl("[[:print:]][[:space:]][[:print:]]", text)
+}

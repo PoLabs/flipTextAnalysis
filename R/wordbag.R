@@ -61,7 +61,7 @@ InitializeWordBag = function(text,
                 || class(manual.replacements[1, ]) != "character"
                 || ncol(manual.replacements) != 2)
             {
-                stop("Manual replacements should be specified as a two-column matrix with entries that are characters (words).")
+                stop("Manual replacements should be specified as a two-column matrix with entries that are characters (words or phrases).")
             }
 
             # The first column of the replacements can't have duplicates.
@@ -165,11 +165,25 @@ InitializeWordBag = function(text,
     # Makes all other steps easier
     text <- tolower(text)
 
-    # Tag any stopwords that are phrases and add them to phrases list
-    # so that they are not tokenized in the text.
+    # Add all phrases to be replaced to the phrases list so that they are not
+    # tokenized in the text.  Tag any phrases to be replaced so they are replaced in the text.
+    #if ("replacement" %in% operations)
+    #{
+    #    phrases.to.replace <- manual.replacements[isPhrase(manual.replacements[, 1]), 1]
+    #    if (!identical(phrases.to.replace, character(0))) {
+    #        phrases <- c(phrases, phrases.to.replace)
+    #        manual.replacements[isPhrase(manual.replacements[, 1]), 1] <- convertPhrasesToTagged(phrases.to.replace)
+    #    }
+    #}
+
+    # Add all phrases that are stopwords to the phrases list so that they are not
+    # tokenized in the text.  Tag any stopword phrases so they are removed from the text.
     #if (remove.stopwords) {
-    #    stoplist <- convertPhrasesToTagged(stoplist)
-    #    phrases <- c(phrases, stoplist[which(grepl("\\+", stoplist))])
+    #    stop.phrases <- stoplist[isPhrase(stoplist)]
+    #    if (!identical(stop.phrases, character(0))) {
+    #        phrases <- c(phrases, stop.phrases)
+    #        stoplist[isPhrase(stoplist)] <- convertPhrasesToTagged(stop.phrases)
+    #    }
     #}
 
     # Catch any phrases specified by the user now
@@ -356,6 +370,9 @@ InitializeWordBag = function(text,
     n.non.blank <- length(which(!blanks.before))
     blanks.after <- sapply(word.bag$transformed.text[subset], FUN = .isBlank)
     n.non.blank.after.transform <- length(which(!blanks.after))
+
+    # Add message to highlight when processing has removed all words
+    word.bag$transformed.text[blanks.after == TRUE & blanks.before == FALSE] <- "<NO WORDS REMAIN AFTER PROCESSING>"
 
     # Generate a description of the cases used
     description <- paste0("n = ", n.non.blank, " cases used to process the text")

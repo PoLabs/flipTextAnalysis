@@ -10,7 +10,7 @@ ftaTokenize <- function(text)
 
   # Remove apostrophes
   text <- lapply(text, gsub, pattern = "'", replacement = "")
-  # Remove all non-aplhanumeric characters, except + which is being used to
+  # Remove all non-alphanumeric characters, except + which is being used to
   # denote tokens joined as phrases
   text <- lapply(text, gsub, pattern = "[^[:alnum:][:space:]\\+]", replacement = " ")
 
