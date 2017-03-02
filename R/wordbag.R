@@ -388,11 +388,11 @@ InitializeWordBag = function(text,
     }
     if (n.non.blank < n.subset)
     {
-        description <- paste0(description, "; " , (n.subset - n.non.blank), " cases are blank")
+        description <- paste0(description, "; " , (n.subset - n.non.blank), " cases are blank before transformation")
     }
     if (n.non.blank.after.transform < n.non.blank)
     {
-        description <- paste0(description, " before transformation; ", (n.subset - n.non.blank.after.transform),
+        description <- paste0(description, "; ", (n.subset - n.non.blank.after.transform),
                               " cases are blank after transformation.")
     }
     word.bag$sample.description <- description
