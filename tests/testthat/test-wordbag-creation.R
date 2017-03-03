@@ -62,7 +62,7 @@ test_that("Handling of subsets (filters) and blank responses", {
                                    operations = c("spelling", "replacement", "stemming"),
                                    manual.replacements = my.replacements)
 
-    expect_equal(wb.blanks$sample.description, "n = 102 cases used to process the text of a total of 120; 18 cases are blank before transformation")
+    expect_equal(wb.blanks$sample.description, "n = 102 cases used to process the text of a total of 120; 18 cases are blank before transformation; 18 cases are blank after transformation.")
     expect_error(print.wordBag(wb.blanks), NA)
 
     .find.favorite <- function(str) {
@@ -73,7 +73,7 @@ test_that("Handling of subsets (filters) and blank responses", {
                                           operations = c("spelling", "replacement", "stemming"),
                                           manual.replacements = my.replacements,
                                           subset = my.test.subset)
-    expect_equal(wb.blanks.subset$sample.description, "n = 78 cases used to process the text of a total of 96 (my.test.subset); 18 cases are blank before transformation")
+    expect_equal(wb.blanks.subset$sample.description, "n = 78 cases used to process the text of a total of 96 (my.test.subset); 18 cases are blank before transformation; 18 cases are blank after transformation.")
     expect_equal(length(which(wb.blanks.subset$final.tokens == "favourite")), 0)
     expect_error(print.wordBag(wb.blanks.subset), NA)
 
@@ -83,7 +83,7 @@ test_that("Handling of subsets (filters) and blank responses", {
                                                 operations = c("spelling", "replacement", "stemming"),
                                                 manual.replacements = my.replacements,
                                                 subset = my.test.subset.named)
-    expect_equal(wb.blanks.subset.named$sample.description, "n = 78 cases used to process the text of a total of 96 (Doesn't mention 'favourite'); 18 cases are blank before transformation")
+    expect_equal(wb.blanks.subset.named$sample.description, "n = 78 cases used to process the text of a total of 96 (Doesn't mention 'favourite'); 18 cases are blank before transformation; 18 cases are blank after transformation.")
     expect_equal(length(which(wb.blanks.subset.named$final.tokens == "favourite")), 0)
     expect_error(print.wordBag(wb.blanks.subset.named), NA)
 
@@ -102,7 +102,7 @@ test_that("Handling of subsets (filters) and blank responses", {
                                    operations = c("spelling", "replacement", "stemming"),
                                    manual.replacements = my.replacements,
                                    subset = TRUE)
-    expect_equal(wb.no.subset$sample.description, "n = 102 cases used to process the text of a total of 120; 18 cases are blank before transformation")
+    expect_equal(wb.no.subset$sample.description, "n = 102 cases used to process the text of a total of 120; 18 cases are blank before transformation; 18 cases are blank after transformation.")
 
     wb.stopwords <- InitializeWordBag(test.data.blanks,
                                       operations = c("spelling", "stemming"),
