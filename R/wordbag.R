@@ -166,13 +166,14 @@ InitializeWordBag = function(text,
     text <- tolower(text)
 
     # Add phrases to be replaced to the phrases list so that they are not tokenized in the text.
+    # Add replacement phrases to the phrases list so that they are not tokenized in the text.
     # Tag phrases to be replaced and replacement phrases so they are treated as single units.
     if ("replacement" %in% operations)
     {
         phrases.to.replace <- manual.replacements[isPhrase(manual.replacements[, 1]), 1]
         replacement.phrases <- manual.replacements[isPhrase(manual.replacements[, 2]), 2]
         if (!identical(c(phrases.to.replace, replacement.phrases), character(0))) {
-            phrases <- c(phrases, phrases.to.replace)
+            phrases <- c(phrases, phrases.to.replace, replacement.phrases)
             manual.replacements[isPhrase(manual.replacements[, 1]), 1] <- convertPhrasesToTagged(phrases.to.replace)
             manual.replacements[isPhrase(manual.replacements[, 2]), 2] <- convertPhrasesToTagged(replacement.phrases)
         }
