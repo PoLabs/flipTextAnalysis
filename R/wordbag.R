@@ -172,7 +172,7 @@ InitializeWordBag = function(text,
         phrases.to.replace <- manual.replacements[isPhrase(manual.replacements[, 1]), 1]
         replacement.phrases <- manual.replacements[isPhrase(manual.replacements[, 2]), 2]
         if (!identical(c(phrases.to.replace, replacement.phrases), character(0))) {
-            phrases <- c(phrases, phrases.to.replace)  # what if p.t.r. are already in phrases?????
+            phrases <- c(phrases, phrases.to.replace)
             manual.replacements[isPhrase(manual.replacements[, 1]), 1] <- convertPhrasesToTagged(phrases.to.replace)
             manual.replacements[isPhrase(manual.replacements[, 2]), 2] <- convertPhrasesToTagged(replacement.phrases)
         }
@@ -374,7 +374,7 @@ InitializeWordBag = function(text,
     n.non.blank.after.transform <- length(which(!blanks.after))
 
     # Add message to highlight when processing has removed all words
-    word.bag$transformed.text[blanks.after == TRUE & blanks.before == FALSE] <- "<NO_WORDS_REMAIN_AFTER_PROCESSING>"
+    word.bag$transformed.text[subset][blanks.after == TRUE & blanks.before == FALSE] <- "<NO_WORDS_REMAIN_AFTER_PROCESSING>"
 
     # Generate a description of the cases used
     description <- paste0("n = ", n.non.blank, " cases used to process the text")
