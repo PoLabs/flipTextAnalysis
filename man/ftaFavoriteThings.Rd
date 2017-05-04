@@ -12,4 +12,3 @@ ftaFavoriteThings
 Simple text with spelling mistakes introduced.
 }
 \keyword{datasets}
-

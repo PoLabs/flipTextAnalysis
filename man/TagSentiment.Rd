@@ -41,4 +41,3 @@ token in the original text, as done by \code{\link{ScoreSentimentForString}}.
 \examples{
 TagSentiment(c("great","happy","the", "of", "bad", "terrible"))
 }
-

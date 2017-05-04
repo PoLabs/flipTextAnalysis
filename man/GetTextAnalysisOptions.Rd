@@ -30,4 +30,3 @@ standard options for text-cleaning, and generates a simple sequence of operation
 of a word bag. Word bag creation can take an arbitrary sequence, and this function interprets
 the user's inputs and converts it into a sensible, simple sequence.
 }
-

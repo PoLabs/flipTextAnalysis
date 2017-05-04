@@ -60,4 +60,3 @@ The scoring algorithm attempts to handle negation by looking for words like "not
 \examples{
 AsSentimentMatrix(ftaFavoriteThings)
 }
-

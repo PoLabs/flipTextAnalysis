@@ -27,4 +27,3 @@ Count the words appearing in text.
 MostFrequentWords(ftaFavoriteThings, min.frequency = 3)
 
 }
-

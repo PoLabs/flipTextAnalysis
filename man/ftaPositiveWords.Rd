@@ -12,4 +12,3 @@ ftaPositiveWords
 List of English words with positive sentiment.
 }
 \keyword{datasets}
-

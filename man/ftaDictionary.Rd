@@ -12,4 +12,3 @@ ftaDictionary
 English language dictionary.
 }
 \keyword{datasets}
-

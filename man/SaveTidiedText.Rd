@@ -16,4 +16,3 @@ A character vector containing the tidied text.
 Return the tidied text from a wordBag. This text is the result of the processing
 done by the wordBag.
 }
-

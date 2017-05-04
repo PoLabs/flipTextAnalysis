@@ -39,4 +39,3 @@ ScoreSentimentForString("im not very happy",
                          sentiment.tags = my.tags)
 
 }
-

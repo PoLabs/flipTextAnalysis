@@ -44,4 +44,3 @@ If the input is a character vector then the text will be tokenized to compute th
          then the sentiment will be computed based on the transformed text (i.e. using the
          results of the cleaning that has been done by the wordBag).
 }
-

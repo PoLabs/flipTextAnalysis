@@ -42,4 +42,3 @@ GetCorrections(tokens = c("hello", "hullo", "hollo", "hollow"),
                spelling.errors = FindSpellingErrors(c("hello", "hullo", "hollo", "hollow")),
                do.not.correct = c(0, 0, 0, 0))
 }
-

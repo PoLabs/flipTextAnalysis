@@ -14,4 +14,3 @@ Twitter Data Set from Donald Trump as used on
 http://varianceexplained.org/r/trump-tweets/
 }
 \keyword{datasets}
-

@@ -34,4 +34,3 @@ On it's own, stemming can often produce text which is not readable
 GetStemNames(c("string", "strings", "stringing", "hello"), c(10, 2, 2, 10))
 
 }
-

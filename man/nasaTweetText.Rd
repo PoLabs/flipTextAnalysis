@@ -12,4 +12,3 @@ nasaTweetText
 Text from tweets about NASA Announcement - Water on Marse.
 }
 \keyword{datasets}
-

@@ -40,4 +40,3 @@ Generate a matrix of sentiment scores from a character vector or wordBag object.
 AsTermMatrix(ftaFavoriteThings)
 
 }
-

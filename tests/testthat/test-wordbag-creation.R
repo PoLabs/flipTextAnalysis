@@ -28,7 +28,7 @@ test_that("Creating word bags with different operations", {
     expect_true(min(wb.spell.stem.manual$final.counts) >= wb.spell.stem.manual$min.frequency)
 
     # Replacement phrases
-    reps = c("whiskers on kittens", "hair on dogs", "blue satin", "red wool")
+    reps = c("whiskers on kittens", "hair on dogs", "blue satin", "red wool", "favorite things", "faves", "my", "your majesty")
     my.replacements <- matrix(reps, ncol = 2, byrow = TRUE)
     wb.spell.stem.phrases <- InitializeWordBag(ftaFavoriteThings, operations = c("spelling", "replacement", "stemming"), manual.replacements = my.replacements)
     transforms.spell.stem.phrases <- cbind(wb.spell.stem.phrases$tokens, wb.spell.stem.phrases$replace.tokens)

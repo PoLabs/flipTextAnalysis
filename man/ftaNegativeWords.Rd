@@ -12,4 +12,3 @@ ftaNegativeWords
 List of English words with negative sentiment.
 }
 \keyword{datasets}
-

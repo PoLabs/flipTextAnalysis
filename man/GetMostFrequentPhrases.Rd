@@ -26,4 +26,3 @@ Create a data frame containing the most frequent phrases in some text.
 GetMostFrequentPhrases(ftaFavoriteThings)
 
 }
-

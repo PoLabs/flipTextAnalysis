@@ -25,4 +25,3 @@ Identify spelling errors in a vector of strings by comparing with a dictionary.
 FindSpellingErrors(c("hello", "hullo", "hollo", "hollow"))
 
 }
-

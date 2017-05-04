@@ -12,4 +12,3 @@ ftaStopList
 List of English language stopwords.
 }
 \keyword{datasets}
-

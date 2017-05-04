@@ -40,4 +40,3 @@ An object of class \code{wordBag} containing the word bag details.
 \description{
 Create a wordBag object from a vector of strings.
 }
-
