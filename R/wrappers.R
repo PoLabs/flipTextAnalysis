@@ -24,6 +24,8 @@ termMatrixFromText = function(text, min.frequency = 5, sparse = FALSE) {
 #'          If \code{x} is a character vector then additional parameters can be supplied for processing the
 #'          text before scoring sentiment. For a description of the options see \code{\link{InitializeWordBag}}.
 #' @param sparse Whether to return the term matrix as a sparse matrix.
+#' @param subset A logical vector indicating which responses should be included in building the Term Document Matrix.
+#'               Rows for terms not included in the subset will be included, but all values will be zero.
 #' @inheritParams InitializeWordBag
 #'
 #' @return  A \code{matrix} with one row for each text response (referred to as a \code{document}) and once column for
@@ -40,11 +42,17 @@ AsTermMatrix = function(x,
                         operations = c("spelling", "stemming"),
                         spelling.dictionary = get("ftaDictionary"),
                         manual.replacements = NULL,
-                        sparse = FALSE)
+                        sparse = FALSE,
+                        subset = NULL)
 {
     if (class(x) == "wordBag") {
-        missing.message.removed <- replace(x$transformed.text, x$transformed.text == "<NO_WORDS_REMAIN_AFTER_PROCESSING>", "")
-        tdm <- termMatrixFromText(missing.message.removed, min.frequency = min.frequency, sparse = sparse)
+        input.text <- replace(x$transformed.text, x$transformed.text == "<NO_WORDS_REMAIN_AFTER_PROCESSING>", "")
+        if (!is.null(subset))
+        {
+            input.text[!subset] <- ""
+        }
+
+        tdm <- termMatrixFromText(input.text, min.frequency = min.frequency, sparse = sparse)
     } else if (class(x) == "character") {
         word.bag <- InitializeWordBag(x,
                                       remove.stopwords = remove.stopwords,
