@@ -54,6 +54,10 @@ AsTermMatrix = function(x,
 
         tdm <- termMatrixFromText(input.text, min.frequency = min.frequency, sparse = sparse)
     } else if (class(x) == "character") {
+        if (!is.null(subset))
+        {
+            x[!subset] <- ""
+        }
         word.bag <- InitializeWordBag(x,
                                       remove.stopwords = remove.stopwords,
                                       stoplist = stoplist,
@@ -63,6 +67,10 @@ AsTermMatrix = function(x,
         missing.message.removed <- replace(word.bag$transformed.text, word.bag$transformed.text == "<NO_WORDS_REMAIN_AFTER_PROCESSING>", "")
         tdm <- termMatrixFromText(missing.message.removed, min.frequency = min.frequency, sparse = sparse)
     } else if (class(x) == "tidyText") {
+        if (!is.null(subset))
+        {
+            x[!subset] <- ""
+        }
         tdm <- termMatrixFromText(x, min.frequency = min.frequency, sparse = sparse)
     }
     colnames(tdm) <- gsub("\\+", ".", colnames(tdm))

@@ -29,7 +29,8 @@ text before scoring sentiment. For a description of the options see \code{\link{
 
 \item{sparse}{Whether to return the term matrix as a sparse matrix.}
 
-\item{subset}{A logical vector indicating which responses should be included in building the Term Document Matrix.}
+\item{subset}{A logical vector indicating which responses should be included in building the Term Document Matrix.
+Rows for terms not included in the subset will be included, but all values will be zero.}
 }
 \value{
 A \code{matrix} with one row for each text response (referred to as a \code{document}) and once column for
