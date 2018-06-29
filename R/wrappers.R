@@ -1,15 +1,16 @@
 # Wrapper function for package tm's Term Matrix Construction
 # Returns a matrix with documents in rows, and terms in columns.
+#' @importFrom tm VectorSource VCorpus DocumentTermMatrix weightBin findFreqTerms
 termMatrixFromText = function(text, min.frequency = 5, sparse = FALSE) {
-    source <- tm::VectorSource(text)
-    corpus <- tm::VCorpus(source)
-    my.tdm <- tm::DocumentTermMatrix(corpus, control = list(wordLengths = c(1, Inf)))
-    my.tdm <- tm::weightBin(my.tdm)
+    source <- VectorSource(text)
+    corpus <- VCorpus(source)
+    my.tdm <- DocumentTermMatrix(corpus, control = list(wordLengths = c(1, Inf)))
+    my.tdm <- weightBin(my.tdm)
     # Get words which appear with certain frequency
     # and generate term matrix based on those words
-    my.dictionary <- tm::findFreqTerms(my.tdm, lowfreq = min.frequency)
-    my.tdm <- tm::DocumentTermMatrix(corpus, control = list(dictionary = my.dictionary, wordLengths = c(1, Inf)))
-    my.tdm <- tm::weightBin(my.tdm)
+    my.dictionary <- findFreqTerms(my.tdm, lowfreq = min.frequency)
+    my.tdm <- DocumentTermMatrix(corpus, control = list(dictionary = my.dictionary, wordLengths = c(1, Inf)))
+    my.tdm <- weightBin(my.tdm)
     if (!sparse)
         my.tdm <- as.matrix(my.tdm)
     return(invisible(my.tdm))

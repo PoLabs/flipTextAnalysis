@@ -4,7 +4,13 @@
 #'
 #' @param tokens A character vector containing the tokens to tag.
 #' @param pos.words A character vector containing the dictionary of positive words.
+#'        If not supplied, a standard list of positive words is used.
 #' @param neg.words A character vector containing the dictionary of negative words.
+#'        If not supplied, a standard list of negative words is used.
+#' @param supplementary.pos.words A character vector of words to supplement
+#'        \code{pos.words} in the case that the standard list is used.
+#' @param supplementary.neg.words A character vector of words to supplement
+#'        \code{neg.words} in the case that the standard list is used.
 #' @param check.simple.suffixes If true, whevenver a token is not found in
 #'        pos.words AND neg.words, the algorithm will attempt to trim suffixes
 #'        from the word and check the dictionaries again. This is to account for
@@ -28,8 +34,14 @@
 TagSentiment = function(tokens,
                         pos.words = get("ftaPositiveWords"),
                         neg.words = get("ftaNegativeWords"),
+                        supplementary.pos.words = NULL,
+                        supplementary.neg.words = NULL,
                         check.simple.suffixes = FALSE,
                         simple.suffixes = c("s", "es", "ed", "d", "ing")) {
+
+    pos.words <- c(pos.words, supplementary.pos.words)
+    neg.words <- c(neg.words, supplementary.neg.words)
+
     tagger = function(token)
     {
         if (token %in% pos.words)

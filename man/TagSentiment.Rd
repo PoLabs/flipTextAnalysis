@@ -5,15 +5,24 @@
 \title{\code{TagSentiment}}
 \usage{
 TagSentiment(tokens, pos.words = get("ftaPositiveWords"),
-  neg.words = get("ftaNegativeWords"), check.simple.suffixes = FALSE,
+  neg.words = get("ftaNegativeWords"), supplementary.pos.words = NULL,
+  supplementary.neg.words = NULL, check.simple.suffixes = FALSE,
   simple.suffixes = c("s", "es", "ed", "d", "ing"))
 }
 \arguments{
 \item{tokens}{A character vector containing the tokens to tag.}
 
-\item{pos.words}{A character vector containing the dictionary of positive words.}
+\item{pos.words}{A character vector containing the dictionary of positive words.
+If not supplied, a standard list of positive words is used.}
 
-\item{neg.words}{A character vector containing the dictionary of negative words.}
+\item{neg.words}{A character vector containing the dictionary of negative words.
+If not supplied, a standard list of negative words is used.}
+
+\item{supplementary.pos.words}{A character vector of words to supplement
+\code{pos.words} in the case that the standard list is used.}
+
+\item{supplementary.neg.words}{A character vector of words to supplement
+\code{neg.words} in the case that the standard list is used.}
 
 \item{check.simple.suffixes}{If true, whevenver a token is not found in
 pos.words AND neg.words, the algorithm will attempt to trim suffixes
