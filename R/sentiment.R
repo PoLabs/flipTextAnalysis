@@ -34,8 +34,8 @@
 TagSentiment = function(tokens,
                         pos.words = get("ftaPositiveWords"),
                         neg.words = get("ftaNegativeWords"),
-                        supplementary.pos.words = c('decentralized', 'moon', 'lambo', 'bull', 'hodl', 'long', 'pump'),
-                        supplementary.neg.words = c('bust', 'centralized', 'bear', 'fud', 'fomo', 'dump', 'bottleneck', 'shitcoin', 'short', 'rekt', 'vapourware'),
+                        supplementary.pos.words = c("decentralized", "moon", "lambo", "bull", "hodl", "long", "pump"),
+                        supplementary.neg.words = c("bust", "centralized", "bear", "fud", "fomo", "dump", "bottleneck", "shitcoin", "short", "rekt", "vapourware"),
                         check.simple.suffixes = FALSE,
                         simple.suffixes = c("s", "es", "ed", "d", "ing")) {
 
